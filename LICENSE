@@ -7,7 +7,7 @@ from LazyVim.
 1. Code and configuration: MIT License (LICENSES/MIT.txt)
    Copyright (c) 2026 luzikaj and contributors
    - scripts: fedora-setup.sh, build-spin.sh, files/bin/*, files/jetbrains/*,
-     tools/**, update/**, .github/**
+     tools/**, update/**, .github/**, docs/learn/trainer.html
    - kickstarts: niri-spin-base.ks, branding.ks
    - configs: everything else under files/ (keymaps, niri, keyd, xkb, fish,
      ghostty, foot, vimium, zed, k9s, virt, welcome, nvim except below)
@@ -16,7 +16,8 @@ from LazyVim.
    International (LICENSES/CC-BY-SA-4.0.txt)
    Copyright (c) 2026 luzikaj and contributors
    - *.md (README, BUILDING, DIFFERENCES, CHANGELOG, docs/)
-   - files/wallpapers/*, files/branding/* (logo, wordmark), files/docs/*.pdf
+   - files/wallpapers/*, files/branding/* (logo, wordmark), files/docs/*.pdf,
+     docs/learn/cheat-sheets.pdf
 
 3. From the LazyVim starter (https://github.com/LazyVim/starter):
    Apache License 2.0 (LICENSES/Apache-2.0.txt), unchanged copies of

@@ -1,0 +1,288 @@
+<title>One-Handed Key Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one working card (prompt + key capture) beside a right-hand keyboard map; decks and progress above. */
+:root {
+  --bg: #eef2f8; --panel: #ffffff; --panel-2: #f5f8fc; --line: #d4dde9;
+  --fg: #142033; --muted: #5a6a80; --accent: #1f6fd1; --accent-soft: #dbe8fa;
+  --ok: #1d8a4a; --ok-soft: #dcf2e4; --bad: #c2372b; --bad-soft: #fbe2df;
+  --cap: #ffffff; --cap-edge: #c7d2e1; --cap-dim: #e9eef5;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "DejaVu Sans Mono", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b1220; --panel: #121c2e; --panel-2: #0f1828; --line: #22324b;
+  --fg: #dce6f3; --muted: #8ea0b8; --accent: #6cb6ff; --accent-soft: #16304f;
+  --ok: #7ee08a; --ok-soft: #173826; --bad: #ff8a7a; --bad-soft: #3a1c1a;
+  --cap: #182540; --cap-edge: #2c4566; --cap-dim: #101a2b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0b1220; --panel: #121c2e; --panel-2: #0f1828; --line: #22324b;
+  --fg: #dce6f3; --muted: #8ea0b8; --accent: #6cb6ff; --accent-soft: #16304f;
+  --ok: #7ee08a; --ok-soft: #173826; --bad: #ff8a7a; --bad-soft: #3a1c1a;
+  --cap: #182540; --cap-edge: #2c4566; --cap-dim: #101a2b; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+h1 { font-size: 26px; margin: 0; letter-spacing: .2px; text-wrap: balance; }
+h1 small { display: block; font-size: 14px; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+.decks { display: flex; flex-wrap: wrap; gap: 8px; }
+.deck { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--fg);
+  border-radius: 999px; padding: 6px 14px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.deck .bar { width: 38px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.deck .bar i { display: block; height: 100%; background: var(--ok); }
+.deck[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.deck:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; min-width: 0; }
+.ctx { display: inline-block; font-family: var(--mono); font-size: 13px; color: var(--accent); background: var(--accent-soft);
+  border-radius: 6px; padding: 2px 8px; }
+.group { color: var(--muted); font-size: 13px; margin-left: 8px; }
+.action { font-size: 30px; font-weight: 600; line-height: 1.2; margin: 14px 0 6px; min-height: 2.4em; text-wrap: balance; }
+.ask { color: var(--muted); font-size: 14px; }
+.capture { margin-top: 16px; width: 100%; font: 600 22px/1 var(--mono); color: var(--fg); background: var(--panel-2);
+  border: 2px dashed var(--line); border-radius: 10px; padding: 16px 14px; caret-color: transparent; }
+.capture:focus { outline: none; border-color: var(--accent); border-style: solid; }
+.capture.ok { border-color: var(--ok); background: var(--ok-soft); }
+.capture.bad { border-color: var(--bad); background: var(--bad-soft); }
+.feedback { min-height: 3.2em; margin-top: 12px; font-size: 15px; }
+.feedback .k { font-family: var(--mono); font-weight: 600; background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 5px; padding: 0 6px; }
+.feedback.ok { color: var(--ok); } .feedback.bad { color: var(--bad); }
+.row-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+button.ghost { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--line);
+  border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+.stats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stats b { display: block; font-size: 20px; color: var(--fg); }
+
+.kb-card h2 { font-size: 15px; margin: 0 0 4px; }
+.kb-card p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+.kb-scroll { overflow-x: auto; }
+.kb { display: grid; gap: 5px; min-width: 560px; }
+.kbrow { display: flex; gap: 5px; }
+.kbrow .pad { flex: 0 0 auto; }
+.key { width: 38px; height: 44px; border-radius: 8px; background: var(--cap); border: 1px solid var(--cap-edge);
+  box-shadow: 0 2px 0 var(--cap-edge); display: grid; place-items: center; position: relative; flex: 0 0 auto; }
+.key b { font: 600 17px/1 var(--mono); }
+.key s { text-decoration: none; position: absolute; left: 5px; top: 3px; font: 10px/1 var(--mono); color: var(--muted); }
+.key.left { background: var(--cap-dim); opacity: .75; }
+.key.home { border-bottom: 3px solid var(--accent); }
+.key.hit { background: var(--ok-soft); border-color: var(--ok); }
+.key.want { background: var(--accent); border-color: var(--accent); }
+.key.want b, .key.want s { color: var(--bg); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -2px; }
+.legend .l1::before { background: var(--cap); border: 1px solid var(--cap-edge); border-bottom: 3px solid var(--accent); }
+.legend .l2::before { background: var(--accent); }
+.legend .l3::before { background: var(--cap-dim); border: 1px solid var(--cap-edge); }
+.note { font-size: 13px; color: var(--muted); background: var(--panel-2); border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
+@media (prefers-reduced-motion: no-preference) { .capture, .key { transition: background .15s, border-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>One-Handed Key Trainer <small>right-handed Dvorak · niri · Vimium C · fish · LazyVim</small></h1>
+    <nav class="decks" id="decks" aria-label="Weeks"></nav>
+  </header>
+
+  <div class="main">
+    <section class="card" aria-live="polite">
+      <div><span class="ctx" id="ctx">Mod +</span><span class="group" id="group"></span></div>
+      <div class="action" id="action">…</div>
+      <div class="ask" id="ask">Press the key.</div>
+      <input class="capture" id="capture" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+             aria-label="Press the key for this action" placeholder="click here, then press the key">
+      <div class="feedback" id="feedback"></div>
+      <div class="row-btns">
+        <button class="ghost" id="reveal" type="button">Show answer (Esc)</button>
+        <button class="ghost" id="reset" type="button">Reset this week's progress</button>
+      </div>
+      <div class="stats">
+        <div><b id="s-score">0 / 0</b>this round</div>
+        <div><b id="s-streak">0</b>in a row</div>
+        <div><b id="s-mastered">0 / 0</b>learned this week</div>
+      </div>
+    </section>
+
+    <section class="card kb-card">
+      <h2>Where the keys are</h2>
+      <p>Big letter: what your layout types. Small: the QWERTY keycap. After a miss, the right key lights up.</p>
+      <div class="kb-scroll"><div class="kb" id="kb"></div></div>
+      <div class="legend"><span class="l1">right hand rests here (e h t d)</span><span class="l2">the answer</span><span class="l3">left side</span></div>
+      <div class="note" id="note"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const DATA = /*DRILLS_JSON*/null;
+
+// Right-handed Dvorak (us dvorak-r): QWERTY keycap -> [unshifted, shifted]
+const ROWS = [
+  [["`","`","~"],["1","1","!"],["2","2","@"],["3","3","#"],["4","4","$"],["5","j","J"],["6","l","L"],["7","m","M"],["8","f","F"],["9","p","P"],["0","/","?"],["-","[","{"],["=","]","}"]],
+  [["Q","5","%"],["W","6","^"],["E","q","Q"],["R",".",">"],["T","o","O"],["Y","r","R"],["U","s","S"],["I","u","U"],["O","y","Y"],["P","b","B"],["[",";",":"],["]","=","+"],["\\","\\","|"]],
+  [["A","7","&"],["S","8","*"],["D","z","Z"],["F","a","A"],["G","e","E"],["H","h","H"],["J","t","T"],["K","d","D"],["L","c","C"],[";","k","K"],["'","-","_"]],
+  [["Z","9","("],["X","0",")"],["C","x","X"],["V",",","<"],["B","i","I"],["N","n","N"],["M","w","W"],[",","v","V"],[".","g","G"],["/","'","\""]]
+];
+const ROW_PAD = [0, 19, 29, 48];
+const LEFT = new Set(["`","1","2","3","4","Q","W","E","R","A","S","D","F","Z","X","C","V"]);
+const HOME = new Set(["G","H","J","K"]);
+const CAP = {};   // typed char -> {cap, shift}
+ROWS.flat().forEach(([cap, lo, up]) => {
+  if (!(lo in CAP)) CAP[lo] = { cap, shift: false };
+  if (!(up in CAP)) CAP[up] = { cap, shift: true };
+});
+const NAMED = { " ": "Space", "Enter": "Enter", "Backspace": "Backspace", "Insert": "Insert", "Delete": "Delete",
+  "Home": "Home", "End": "End", "PageUp": "PgUp", "PageDown": "PgDn", "ArrowRight": "→", "ScrollLock": "Scroll Lock" };
+const MODIFIERS = new Set(["Shift", "Control", "Alt", "AltGraph", "Meta", "OS", "Super", "Hyper", "CapsLock", "Fn", "Dead", "Unidentified", "Process"]);
+
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+// Items flattened per deck
+const decks = DATA.decks.map(d => ({ ...d, items: d.groups.flatMap(g => g.items.map(it => ({ ...it, ctx: g.ctx, group: g.name, id: d.id + ":" + (g.ctx || "") + ":" + it.a }))) }));
+let boxes = store.get("ohkt.boxes", {});           // item id -> 0..5 (Leitner box)
+let deckIdx = Math.min(store.get("ohkt.deck", 0), decks.length - 1);
+let cur = null, typed = [], round = { right: 0, total: 0 }, streak = 0, locked = false, recent = [];
+
+function keyLabel(k) {
+  if (k in NAMED) return NAMED[k];
+  return k;
+}
+function seqLabel(keys) { return keys.map(keyLabel).join(" "); }
+function capHint(keys) {
+  return keys.map(k => {
+    if (k in NAMED) return NAMED[k];
+    const c = CAP[k]; if (!c) return k;
+    return (c.shift ? "Shift + " : "") + "keycap " + c.cap;
+  }).join(", then ");
+}
+
+function buildKeyboard() {
+  const kb = $("kb"); kb.innerHTML = "";
+  ROWS.forEach((row, r) => {
+    const rowEl = document.createElement("div"); rowEl.className = "kbrow";
+    const pad = document.createElement("div"); pad.className = "pad"; pad.style.width = ROW_PAD[r] + "px"; rowEl.appendChild(pad);
+    row.forEach(([cap, lo]) => {
+      const k = document.createElement("div");
+      k.className = "key" + (LEFT.has(cap) ? " left" : "") + (HOME.has(cap) ? " home" : "");
+      k.dataset.cap = cap;
+      k.innerHTML = `<s>${cap}</s><b>${lo}</b>`;
+      rowEl.appendChild(k);
+    });
+    kb.appendChild(rowEl);
+  });
+}
+function lightKeys(keys, cls) {
+  document.querySelectorAll(".key." + cls).forEach(e => e.classList.remove(cls));
+  keys.forEach(k => { const c = CAP[k]; if (c) { const el = document.querySelector(`.key[data-cap="${CSS.escape(c.cap)}"]`); if (el) el.classList.add(cls); } });
+}
+
+function renderDecks() {
+  const nav = $("decks"); nav.innerHTML = "";
+  decks.forEach((d, i) => {
+    const learned = d.items.filter(it => (boxes[it.id] || 0) >= 3).length;
+    const b = document.createElement("button");
+    b.className = "deck"; b.type = "button"; b.setAttribute("aria-pressed", i === deckIdx ? "true" : "false");
+    b.innerHTML = `Week ${d.week}: ${d.title} <span class="bar" title="${learned} of ${d.items.length} learned"><i style="width:${Math.round(100 * learned / d.items.length)}%"></i></span>`;
+    b.addEventListener("click", () => { deckIdx = i; store.set("ohkt.deck", i); round = { right: 0, total: 0 }; streak = 0; recent = []; renderDecks(); next(); $("capture").focus(); });
+    nav.appendChild(b);
+  });
+  const d = decks[deckIdx];
+  const learned = d.items.filter(it => (boxes[it.id] || 0) >= 3).length;
+  $("s-mastered").textContent = `${learned} / ${d.items.length}`;
+  $("note").innerHTML = notes[d.id] || "";
+}
+
+const notes = {
+  w1: "Polish letters: the trainer asks for the letter you type <em>after</em> tapping Right Alt. Symbols and digits: type them as you would anywhere; the map shows where they live.",
+  w2: "Desktop shortcuts are <b>Mod + key</b>. niri catches Mod before the browser can, so here <b>press only the key</b> (no Right Alt).",
+  w3: "Vimium keys work on web pages when no text field is focused. fish items: type the letters of the short command.",
+  w4: "Normal mode in LazyVim (Zed in Helix mode moves the same way). Sequences: press the keys one after another; Space is the leader key."
+};
+
+function pick() {
+  const items = decks[deckIdx].items;
+  // weight: lower box = more likely; avoid the last few
+  const pool = items.filter(it => !recent.includes(it.id));
+  const weights = pool.map(it => 6 - (boxes[it.id] || 0));
+  let r = Math.random() * weights.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < pool.length; i++) { r -= weights[i]; if (r <= 0) return pool[i]; }
+  return pool[pool.length - 1];
+}
+function next() {
+  cur = pick(); typed = []; locked = false;
+  recent.push(cur.id); if (recent.length > Math.min(5, decks[deckIdx].items.length - 1)) recent.shift();
+  $("ctx").textContent = cur.ctx || "type";
+  $("ctx").hidden = !cur.ctx;
+  $("group").textContent = cur.group;
+  $("action").textContent = cur.a;
+  const n = cur.k.length;
+  $("ask").textContent = cur.ctx === "Mod +" ? "Press only the key that goes with Mod." : n > 1 ? `Press the ${n} keys in order.` : "Press the key.";
+  const cap = $("capture"); cap.value = ""; cap.className = "capture";
+  $("feedback").className = "feedback"; $("feedback").textContent = "";
+  lightKeys([], "want"); lightKeys([], "hit");
+}
+function finish(ok, revealed) {
+  locked = true;
+  round.total++; if (ok) { round.right++; streak++; } else streak = 0;
+  boxes[cur.id] = ok ? Math.min(5, (boxes[cur.id] || 0) + 1) : 0;
+  store.set("ohkt.boxes", boxes);
+  $("capture").className = "capture " + (ok ? "ok" : "bad");
+  const fb = $("feedback");
+  const ans = `<span class="k">${seqLabel(cur.k)}</span>`;
+  if (ok) { fb.className = "feedback ok"; fb.innerHTML = `Right: ${ans}`; lightKeys(cur.k, "hit"); }
+  else {
+    fb.className = "feedback bad";
+    fb.innerHTML = (revealed ? "Answer: " : "Not quite. It's ") + `${ans}${cur.k.every(k => k in NAMED) ? "" : ` <span style="color:var(--muted)">(${capHint(cur.k)})</span>`}. Press it once to continue.`;
+    lightKeys(cur.k, "want");
+  }
+  $("s-score").textContent = `${round.right} / ${round.total}`;
+  $("s-streak").textContent = streak;
+  renderDecks();
+  if (ok) setTimeout(next, 650);
+  else { typed = []; locked = "retype"; }
+}
+
+$("capture").addEventListener("keydown", e => {
+  if (MODIFIERS.has(e.key)) return;
+  if (e.key === "Tab") return;              // keep keyboard navigation of the page
+  e.preventDefault();
+  if (!cur) return;
+  if (e.key === "Escape") { if (!locked) finish(false, true); return; }
+  if (locked === true) return;
+  typed.push(e.key);
+  $("capture").value = seqLabel(typed);
+  const want = cur.k;
+  const okSoFar = typed.every((k, i) => k === want[i]);
+  if (locked === "retype") {              // after a miss: type the right answer once
+    if (!okSoFar) { typed = []; $("capture").value = ""; return; }
+    if (typed.length === want.length) { lightKeys([], "want"); next(); }
+    return;
+  }
+  if (!okSoFar) { finish(false, false); return; }
+  if (typed.length === want.length) finish(true, false);
+});
+$("capture").addEventListener("beforeinput", e => e.preventDefault());
+$("capture").addEventListener("blur", () => { $("capture").placeholder = "click here to continue"; });
+$("capture").addEventListener("focus", () => { $("capture").placeholder = "press the key"; });
+$("reveal").addEventListener("click", () => { if (cur && !locked) finish(false, true); $("capture").focus(); });
+$("reset").addEventListener("click", () => {
+  decks[deckIdx].items.forEach(it => delete boxes[it.id]); store.set("ohkt.boxes", boxes);
+  round = { right: 0, total: 0 }; streak = 0; $("s-score").textContent = "0 / 0"; $("s-streak").textContent = "0";
+  renderDecks(); next(); $("capture").focus();
+});
+
+buildKeyboard(); renderDecks(); next();
+$("capture").focus();
+</script>

@@ -21,6 +21,9 @@ that has its own shortcuts follows the same idea:
 | [Welcome window](welcome.md) | The installer and first-steps checklist |
 | [Virtual machines](virtualization.md) | virt-manager (KVM): keys, 3D guests, keyboard inside guests |
 
+**Learning the system:** [printable cheat sheets](learn/cheat-sheets.pdf) (one A4 page per week, with a
+daily drill checklist) and an [interactive key trainer](learn/trainer.html) (open it in a browser).
+
 ## How keys are written here
 
 Shortcuts are named by the **letter the layout types** (right-handed Dvorak),

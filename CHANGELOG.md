@@ -3,6 +3,9 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-11
+- Learning aids: weekly cheat sheets with daily drills (`docs/learn/cheat-sheets.pdf`)
+  and an interactive key trainer (`docs/learn/trainer.html`), both built from
+  `tools/learn/drills.json`.
 - Renamed to **One-Handed Fedora Remix** for the public repository; new logo
   wordmark and wallpaper heading. Licenses: MIT (code, configs), CC BY-SA 4.0
   (docs, artwork), Apache-2.0 (LazyVim starter files).

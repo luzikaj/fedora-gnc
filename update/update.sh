@@ -122,7 +122,8 @@ put "$F/foot/foot.ini" "$HOME/.config/foot/foot.ini"
 ok "new Ghostty windows start fish (your login shell stays as it is)"
 ok "Mod + Enter opens foot instead if Ghostty can't start"
 for f in "$F"/docs/*.md; do put "$f" "$HOME/Documents/OneHanded-Fedora-Remix-docs/$(basename "$f")"; done
-ok "shortcut guides: ~/Documents/OneHanded-Fedora-Remix-docs/"
+for f in "$F"/docs/learn/*; do put "$f" "$HOME/Documents/OneHanded-Fedora-Remix-docs/learn/$(basename "$f")"; done
+ok "shortcut guides: ~/Documents/OneHanded-Fedora-Remix-docs/ (learn/: cheat sheets to print, key trainer)"
 
 # ------------------------------------------------------------------ 5. dictation
 step "6/9  Dictation: ydotoold virtual keyboard for Speech Note"

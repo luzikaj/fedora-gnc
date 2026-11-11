@@ -21,6 +21,7 @@ for d in keyd niri ghostty fish foot vimium bin branding jetbrains virt; do
 done
 cp "$ROOT"/files/wallpapers/onehanded-remix-*.png "$F/wallpapers/"
 cp "$ROOT"/docs/*.md "$ROOT/DIFFERENCES.md" "$F/docs/"
+cp -r "$ROOT/docs/learn" "$F/docs/"
 
 # The name and logo step: the ISO's branding.ks %post, minus the installer profile.
 sed -n '/^%post/,/^%end/p' "$ROOT/branding.ks" | sed '1d;$d' \
