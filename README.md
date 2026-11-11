@@ -51,9 +51,9 @@ keyboard focus.
 
 ### 7. Places, not searching
 Apps open in **fixed places**: workspace `code` (editors, terminal, IDEs), `web`
-(browsers) and `notes` (Obsidian). With two screens, each screen has a role:
-the main one holds `code`, the second holds `web` and `notes`. With one
-screen (a laptop), the same three sit on it in the same order. You always know
+(browsers), `notes` (Obsidian) and `vm` (virtual machines). With two screens, each screen has a role:
+the main one holds `code` and `vm`, the second holds `web` and `notes`. With
+one screen (a laptop), all four sit on it in a fixed order. You always know
 where something is.
 
 ### 8. One layout, everywhere
@@ -93,6 +93,56 @@ records what changed and why.
 - Every step has a dry run.
 - keyd has an emergency stop: Backspace + Escape + Enter.
 
+## Why niri
+
+The desktop is built on **niri**, a *scrollable tiling* Wayland compositor:
+windows sit side by side as columns on an endless horizontal strip, and each
+monitor has its own vertical stack of workspaces. It was chosen because that
+model fits one-handed, keyboard-only work better than the alternatives.
+
+**Four directions are enough.** On the strip, every move is left, right, up or
+down: `e h t d` to focus, `o r s u` to move. There's no layout tree to
+manage, no split direction to choose first, no master/stack area. In i3 or
+Sway you decide *how* to split before opening a window; in niri you just open
+it.
+
+**Opening a window never squeezes the others.** A new window becomes a new
+column next to the current one; existing windows keep their size, and the
+strip scrolls. Classic tiling (i3, Sway, Hyprland) shrinks everything already
+on screen and then needs extra keystrokes to resize it back.
+
+**Every action is a key you choose.** All of niri's shortcuts live in its
+config file, which binds each action to whatever key you like, with a description
+that Mod + Insert shows. That made it possible to put *everything* on Mod + one
+right-hand key. GNOME and KDE Plasma come with hundreds of multi-modifier
+defaults built around two hands, and changing them all is a fight.
+
+**Places, per screen.** Named workspaces (`code`, `web`, `notes`, `vm`), pinned
+to a monitor, plus window rules that open each app on its workspace, are
+built in. That's what makes "you always know where something is" work, on two
+screens or one.
+
+**Easy to automate and safe to change.** The config is one text file with
+`include`s, so generated parts (window rules, the monitor layout) live in
+their own files. niri reloads it the moment it's saved, `niri validate`
+checks it, and `niri msg` lets scripts query and drive it: `onehand-monitors`
+and the Welcome window are built on that.
+
+**A small core, the panels from Dux.** niri does windows and input only. Dux
+Shell adds the bar, launcher, notifications and lock screen, without a full
+desktop environment's background services and settings to work around.
+
+**Modern and maintained.** It's Wayland-native (X11 apps run through
+xwayland-satellite), smooth on 4K and mixed-DPI screens, actively developed, and
+packaged for Fedora.
+
+**The trade-offs, honestly:**
+- Scrolling tiling takes a few days to get used to.
+- niri needs real 3D graphics: in a VM without them it won't start (see
+  [virtualization](docs/virtualization.md)).
+- It moves fast, so some features need a recent version (the kit uses Dux's
+  repository for that).
+
 **Personal use only.** The ISO includes proprietary apps (Chrome, Claude Code,
 Obsidian) and uses the Fedora name, so it isn't for redistribution.
 See [FEDORA-GNC.md](FEDORA-GNC.md) for everything that differs from stock Fedora.
@@ -111,6 +161,7 @@ See [FEDORA-GNC.md](FEDORA-GNC.md) for everything that differs from stock Fedora
 | Terminal | Ghostty + fish (autosuggestions, `z`, fzf); copy/paste without Shift; foot as a fallback |
 | Editors | LazyVim (Neovim) and Zed with the same keys; Fresh |
 | Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, AWS CLI, Claude Code |
+| Virtual machines | virt-manager on KVM, 3D guests, no password prompts; workspace `vm` |
 | Other apps | Obsidian, Typing Tutor, nnn (Firefox removed) |
 
 **Shortcut guides, one per tool:** [`docs/`](docs/README.md).
