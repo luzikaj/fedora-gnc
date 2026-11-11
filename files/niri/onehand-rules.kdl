@@ -3,6 +3,7 @@
 // Workspaces "code", "web" and "notes" are declared in onehand-monitors.kdl,
 // which `onehand-monitors` writes on every login for the screens it finds:
 //   main screen (ASUS)       code   -> Zed, Ghostty, JetBrains IDEs
+//                            vm     -> virt-manager, VM windows
 //   second screen (BenQ)     web    -> Brave, Brave Nightly, Chrome
 //                            notes  -> Obsidian
 // With one screen, all three are simply on it, in that order.
@@ -39,6 +40,13 @@ window-rule {
 window-rule {
     match app-id=r#"^jetbrains-toolbox$"#
     open-floating true
+}
+
+// ---- virtual machines -> "vm" (main screen): virt-manager and its VM
+// windows, the standalone viewer, GNOME Boxes
+window-rule {
+    match app-id=r#"^(virt-manager|virt-viewer|remote-viewer|org\.gnome\.Boxes)$"#
+    open-on-workspace "vm"
 }
 
 // ---- notes -> "notes"

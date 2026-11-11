@@ -6,3 +6,4 @@
 workspace "code"
 workspace "web"
 workspace "notes"
+workspace "vm"

@@ -1,0 +1,7 @@
+// Fedora GNC: administrators (group wheel) may manage virtual machines
+// (virt-manager, virsh, GNOME Boxes on qemu:///system) without a password prompt.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.libvirt.unix.manage" && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});

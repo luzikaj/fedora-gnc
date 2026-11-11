@@ -68,6 +68,9 @@ DNF_PACKAGES=(
     python3 python3-devel pipx uv   # Python 3: headers for native modules, pipx, uv
     dotnet-sdk-10.0                 # .NET 10 SDK (current LTS; command: dotnet)
     libXtst libXi libXrender xcb-util-keysyms gtk3   # what JetBrains Toolbox/IDEs need
+    # Virtual machines: KVM + libvirt + virt-manager (3D in guests via virtio-GPU)
+    virt-manager virt-install virt-viewer qemu-kvm
+    libvirt-daemon-kvm libvirt-daemon-config-network edk2-ovmf swtpm
 )
 
 # Packages to remove if installed (done after the new browsers are in place).
@@ -158,6 +161,8 @@ SYSTEM_FILES=(
     "bin/onehand-terminal|/usr/local/bin/onehand-terminal"
     # Checks right-handed Dvorak everywhere (console, login, disk unlock, desktop)
     "bin/onehand-keyboard-check|/usr/local/bin/onehand-keyboard-check"
+    # Administrators manage VMs without a password prompt (polkit)
+    "virt/50-onehand-libvirt.rules|/etc/polkit-1/rules.d/50-onehand-libvirt.rules"
     # Welcome window: install from the live USB, then a first-login checklist
     "bin/onehand-welcome|/usr/local/bin/onehand-welcome"
     "welcome/gnc-welcome.desktop|/usr/share/applications/gnc-welcome.desktop"
@@ -502,6 +507,12 @@ ExecStart=/usr/local/bin/onehand-welcome --launch
 WantedBy=niri.service
 UNIT
 systemctl --global enable onehand-welcome.service
+
+# Virtual machines: start libvirt's services on demand (socket activation).
+for s in virtqemud virtnetworkd virtstoraged virtnodedevd virtsecretd virtinterfaced virtnwfilterd; do
+    systemctl enable "\${s}.socket" 2>/dev/null || true
+    systemctl start "\${s}.socket" 2>/dev/null || true   # no-op while building the ISO
+done
 
 # Dictation: Speech Note types text through ydotoold (a virtual keyboard).
 # The socket is open to every local user, which is fine on a personal machine.

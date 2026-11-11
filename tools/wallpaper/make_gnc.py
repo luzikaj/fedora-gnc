@@ -141,7 +141,7 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
   <div class="card term"><h3>Terminal <small>Ghostty + fish</small></h3>{rows(term_rows)}</div>
   <div class="card mon"><h3>Two monitors</h3>
     <div class="screens">
-      <div class="scr main"><b>ASUS · main</b><span class="ws"><i>code</i> Zed, Ghostty</span></div>
+      <div class="scr main"><b>ASUS · main</b><span class="ws"><i>code</i> Zed, Ghostty</span><span class="ws"><i>vm</i> virt-manager</span></div>
       <div class="scr side"><b>BenQ · right</b><span class="ws"><i>web</i> browsers</span><span class="ws"><i>notes</i> Obsidian</span></div>
     </div>
     <div class="tip">Apps open on their screen by themselves.<br><kbd class="mod">Mod</kbd><kbd>Home</kbd> jump · <kbd>End</kbd> column · <kbd>z</kbd> workspace</div></div>

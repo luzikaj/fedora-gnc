@@ -11,6 +11,7 @@ Adds to your running one-handed Fedora + niri setup:
   - Ghostty runs fish; Ctrl+C / Ctrl+V copy and paste without Shift
   - the Fedora GNC name, logo and cheat-sheet wallpaper
   - development: Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox
+  - virtual machines: virt-manager (KVM), 3D guests, workspace "vm"
   - Helium browser removed
   - sticky keys forget a tap after 1 second (no stray capitals)
   - Mod + Enter opens foot when Ghostty can't start

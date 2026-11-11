@@ -1,7 +1,7 @@
 #!/bin/bash
 # onehand-monitors: sets up two screens for niri and pins the named workspaces.
 #
-#   main screen  (in front)     -> workspace "code"   (Zed, Ghostty)
+#   main screen  (in front)     -> workspaces "code" (Zed, Ghostty) and "vm" (virtual machines)
 #   second screen (to its side) -> workspaces "web" and "notes"
 #
 # Runs at every niri login (spawn-at-startup in config.kdl); run it by hand
@@ -59,6 +59,7 @@ find_screen() {   # index of the screen whose maker/model contains $1, or empty
         echo 'workspace "code"'
         echo 'workspace "web"'
         echo 'workspace "notes"'
+        echo 'workspace "vm"'
     else
         m="$(find_screen "$MAIN")"
         s="$(find_screen "$SECOND")"
@@ -89,6 +90,7 @@ find_screen() {   # index of the screen whose maker/model contains $1, or empty
         echo "workspace \"code\" { open-on-output \"$mn\"; }"
         echo "workspace \"web\" { open-on-output \"$sn\"; }"
         echo "workspace \"notes\" { open-on-output \"$sn\"; }"
+        echo "workspace \"vm\" { open-on-output \"$mn\"; }"
     fi
 } > "${out}.new"
 
@@ -104,7 +106,7 @@ echo "onehand-monitors: wrote $out"
 # Move already-open named workspaces where they belong (they only follow
 # open-on-output when created).
 if (( ${#screens[@]} >= 2 )); then
-    for ws in code:"$mn" web:"$sn" notes:"$sn"; do
+    for ws in code:"$mn" web:"$sn" notes:"$sn" vm:"$mn"; do
         niri msg action move-workspace-to-monitor --reference "${ws%%:*}" "${ws#*:}" >/dev/null 2>&1 || true
     done
     niri msg action focus-monitor "$mn" >/dev/null 2>&1 || true

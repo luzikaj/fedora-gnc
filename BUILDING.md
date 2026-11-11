@@ -7,7 +7,7 @@ been done end to end; the timings are from a real build in a VirtualBox VM.
 | You want to… | Go to |
 |---|---|
 | make a new installer ISO | [1–5](#1-prepare-a-build-machine) |
-| test the ISO in a VM | [6](#6-test-it-in-virtualbox) |
+| test the ISO in a VM | [6](#6-test-it-in-a-vm) |
 | install on a PC or laptop | [7](#7-install-on-real-hardware) |
 | update a machine that's already set up | [8](#8-update-machines-that-are-already-set-up) |
 | set up an existing Fedora/Ultramarine without reinstalling | [9](#9-set-up-an-existing-machine-without-the-iso) |
@@ -159,7 +159,26 @@ sha256sum Fedora-GNC-45-*.iso > Fedora-GNC-45.sha256    # note the checksum
 git tag iso-45-$(date +%Y%m%d) && git push --tags       # mark the commit it came from
 ```
 
-## 6. Test it in VirtualBox
+## 6. Test it in a VM
+
+### Test it in virt-manager (recommended on Linux)
+
+On a Fedora GNC (or any Fedora) machine, virt-manager gives the test VM real
+3D graphics, so niri and Ghostty work exactly as on hardware:
+
+```
+virt-install --name gnc-test --memory 6144 --vcpus 4 --disk size=40 \
+  --cdrom out/Fedora-GNC-45-*.iso --osinfo fedora-unknown --boot uefi \
+  --video model.type=virtio,model.acceleration.accel3d=yes \
+  --graphics spice,listen=none,gl.enable=yes
+```
+
+Or in virt-manager: new VM from the ISO, "Customize configuration before
+install", then Firmware **UEFI**, Video **Virtio + 3D acceleration**, Display
+Spice **Listen: None + OpenGL**. Details: [docs/virtualization.md](docs/virtualization.md).
+Remove the test VM afterwards with `virsh undefine gnc-test --nvram --remove-all-storage`.
+
+### Test it in VirtualBox (on Windows)
 
 1. **Copy the ISO out of the build VM** (e.g. through a shared folder) and
    **check the copy**. A cut-short copy has happened before. In PowerShell:

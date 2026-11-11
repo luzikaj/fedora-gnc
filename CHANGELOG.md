@@ -3,6 +3,10 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-11
+- Virtual machines: virt-manager on KVM with 3D guests, no password prompts for
+  administrators, workspace `vm` on the main screen; `docs/virtualization.md`;
+  BUILDING.md tests the ISO in virt-manager.
+- README: why niri.
 - Kit kept in Git: update package and wallpaper are built from the repository
   (`tools/make-update-package.sh`, `tools/wallpaper/build.sh`).
 

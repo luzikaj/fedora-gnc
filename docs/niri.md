@@ -64,7 +64,7 @@ Config: `~/.config/niri/config.kdl` (shortcuts), `onehand-rules.kdl`
 
 ## Two monitors
 
-The main screen (ASUS, in front) has the workspace **`code`**; the second
+The main screen (ASUS, in front) has the workspaces **`code`** and **`vm`**; the second
 screen (BenQ, on its right) has **`web`** and **`notes`**. Apps open on
 their own workspace:
 
@@ -73,6 +73,7 @@ their own workspace:
 | Zed, Ghostty / foot, JetBrains IDEs | `code` (main screen) |
 | Brave, Brave Nightly, Chrome | `web` (second screen) |
 | Obsidian | `notes` (second screen) |
+| virt-manager, VM windows, GNOME Boxes | `vm` (main screen, below `code`) |
 | Speech Note, volume mixer, picture-in-picture, file pickers, JetBrains Toolbox | float above everything |
 
 | Mod + | Action |

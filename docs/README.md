@@ -19,6 +19,7 @@ that has its own shortcuts follows the same idea:
 | [Ghostty and fish (terminal)](ghostty-fish.md) | Copy/paste, shell shortcuts, autosuggestions |
 | [k9s (Kubernetes)](k9s.md) | Right-hand replacements for k9s's left-hand actions |
 | [Welcome window](welcome.md) | The installer and first-steps checklist |
+| [Virtual machines](virtualization.md) | virt-manager (KVM): keys, 3D guests, keyboard inside guests |
 
 ## How keys are written here
 

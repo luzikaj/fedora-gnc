@@ -53,7 +53,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 2. development
-step "2/9  Development tools: Python 3, .NET 10, JetBrains Toolbox; Helium removed"
+step "2/9  Development tools: Python 3, .NET 10, JetBrains Toolbox, virt-manager; Helium removed"
 run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
@@ -66,6 +66,15 @@ if compgen -G "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:imput:helium.rep
     run sudo dnf copr remove -y imput/helium || warn "couldn't turn off Helium's COPR"
 fi
 ok "python3, uv, pipx, dotnet, jetbrains-toolbox (launcher: JetBrains Toolbox)"
+
+# Virtual machines: KVM + libvirt + virt-manager, no password prompts for admins
+run sudo dnf install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \
+    libvirt-daemon-kvm libvirt-daemon-config-network edk2-ovmf swtpm
+put "$F/virt/50-onehand-libvirt.rules" /etc/polkit-1/rules.d/50-onehand-libvirt.rules sudo
+for s in virtqemud virtnetworkd virtstoraged virtnodedevd virtsecretd virtinterfaced virtnwfilterd; do
+    run sudo systemctl enable --now "${s}.socket" 2>/dev/null || true
+done
+ok "virt-manager: VMs open on the workspace \"vm\" (docs: virtualization.md)"
 
 # ------------------------------------------------------------------ 2. keyboard
 step "3/9  Sticky Right Ctrl / Right Shift (keyd)"
