@@ -114,6 +114,7 @@ See [FEDORA-GNC.md](FEDORA-GNC.md) for everything that differs from stock Fedora
 | Other apps | Obsidian, Typing Tutor, nnn (Firefox removed) |
 
 **Shortcut guides, one per tool:** [`docs/`](docs/README.md).
+**Building the ISO, testing, installing and updating, step by step:** [BUILDING.md](BUILDING.md).
 
 ### Key summary
 
@@ -188,6 +189,9 @@ Run it as your normal user, not with sudo. Reboot afterwards. If the machine
 already has a login manager (such as GDM), it's kept: pick "niri" there.
 
 ## Build the ISO
+
+The short version is below; the full walkthrough with timings, testing and
+troubleshooting is in [BUILDING.md](BUILDING.md).
 
 On a Fedora machine of the release you want (about 30 GB free):
 
