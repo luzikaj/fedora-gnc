@@ -1,49 +1,121 @@
-# Fedora GNC: one-handed setup
+# Fedora GNC
 
-Your right-handed, one-handed Fedora desktop as one kit. Use it in either of
-two ways:
+**A Fedora desktop built to be used with one hand: the right one.**
+It's stock Fedora underneath, with the niri tiling desktop, a right-handed
+Dvorak keyboard with Polish letters, and every tool set up around the same few
+keys. This repository holds the whole system: it builds the installer ISO,
+sets up an existing Fedora or Ultramarine machine, and updates machines that
+are already set up.
 
-- **Set up an existing Fedora or Ultramarine machine:** `./fedora-setup.sh`
-- **Build a live USB / installer ISO** with everything already in it:
-  `./build-spin.sh`
+## Basic principles
 
-Both read the same lists and the same `files/` folder, so they always match.
+### 1. Everything within reach of the right hand
+The keyboard layout is right-handed Dvorak: the most-used letters sit under
+the right hand, and the right half of the keyboard does all the work.
+Nothing needs the left hand, and nothing needs two hands at once.
+
+### 2. The same four directions everywhere
+**`e h t d` = left, down, up, right** (keycaps G H J K, where the right hand
+rests). The row above, **`o r s u`**, *moves* things in the same directions.
+This holds in the window manager, both editors, the browser and the menus.
+Learn it once, use it everywhere.
+
+### 3. One modifier, one key
+Every desktop shortcut is **Mod + one key**, never two modifiers.
+**Mod = hold Right Alt**, under the right thumb.
+
+### 4. Tap or hold: one key, two jobs
+- **Right Alt:** hold = Mod. Tap, then a letter = Polish letter (ą ć ę ł ń ó ś ż ź).
+- **Right Ctrl, Right Shift:** *sticky*. Tap, then the key = Ctrl or Shift + key,
+  so combinations never need two keys held at once. A tap is forgotten after
+  1 second, and holding still works as usual.
+
+### 5. Keys keep their meaning across tools
+The same key does the same kind of thing everywhere:
+
+| Key | niri | LazyVim / Zed | Browser (Vimium C) |
+|---|---|---|---|
+| `e h t d` | focus ← ↓ ↑ → | move ← ↓ ↑ → | scroll ← ↓ ↑ → |
+| `o r s u` | move column / window | Vim's own (open, replace, …) | back · page ↓ · page ↑ · forward |
+| `k` | floating | delete | close tab |
+| `'` | launcher | | help |
+
+Where a tool's own key had to move to make room, it moved to a fixed,
+documented place (`docs/`).
+
+### 6. Keyboard first, voice second, mouse last
+Everything can be done from the keyboard. **Dictation** (Speech Note,
+offline, Polish) types into any window: Mod + `c` to speak, and Mod + `a`
+reads the clipboard aloud. The mouse is optional; the pointer follows the
+keyboard focus.
+
+### 7. Places, not searching
+Apps open in **fixed places**: workspace `code` (editors, terminal, IDEs), `web`
+(browsers) and `notes` (Obsidian). With two screens, each screen has a role:
+the main one holds `code`, the second holds `web` and `notes`. With one
+screen (a laptop), the same three sit on it in the same order. You always know
+where something is.
+
+### 8. One layout, everywhere
+Right-handed Dvorak is set **everywhere** a keyboard is read: the desktop and
+all its apps, the installer, the text console, the login screen and the
+disk-unlock prompt at boot. `onehand-keyboard-check` checks all of them.
+(Polish letters exist only on the desktop, so passwords use plain characters.)
+
+### 9. Help is always one key away
+- **Mod + Insert** lists every shortcut.
+- The **wallpaper** is a cheat sheet.
+- **`docs/`** has one guide per tool.
+- The **Welcome window** walks through installing and the first steps.
+
+### 10. It stays Fedora
+Fedora's packages, updates, SELinux and installer are used as they are. The
+system only *adds* (and removes Firefox): no Fedora package is rebuilt or
+patched, and `dnf upgrade` keeps working. Third-party apps come from their vendors' own
+repositories or Flathub.
+
+### 11. One source, three outputs
+This repository is the single source of truth:
+
+| Command | What it does |
+|---|---|
+| `./build-spin.sh` | builds the installer ISO |
+| `./fedora-setup.sh` | sets up an existing machine |
+| `tools/make-update-package.sh` | builds the update for machines that are already set up |
+
+All three read the same `files/`, so they can't drift apart. Git history
+records what changed and why.
+
+### 12. Changes are safe to make
+- Replaced files are kept as `.bak.<date>`.
+- A niri config that fails `niri validate` is rolled back.
+- The ISO build checks every repository and package before its long part starts.
+- Every step has a dry run.
+- keyd has an emergency stop: Backspace + Escape + Enter.
+
+**Personal use only.** The ISO includes proprietary apps (Chrome, Claude Code,
+Obsidian) and uses the Fedora name, so it isn't for redistribution.
+See [FEDORA-GNC.md](FEDORA-GNC.md) for everything that differs from stock Fedora.
+
+---
 
 ## What you get
 
-- **Keyboard:** right-handed Dvorak with Polish letters. **Hold Right Alt** =
-  Mod (or the Win key). **Tap Right Alt, then a letter** = ą ć ę ł ń ó ś ż ź.
-  **Sticky keys:** tap Right Ctrl or Right Shift, then the key (holding them
-  works as usual). All through keyd. The text console and login screen use plain
-  right-handed Dvorak: same keys, no Polish letters.
-- **niri** with your one-handed shortcuts (Mod + one key, no Shift, e h t d
-  directions) and **Dux Shell** (bar, launcher, notifications, clipboard, lock
-  screen, settings).
-- **Two monitors:** the ASUS (main, in front) gets the `code` workspace (Zed,
-  Ghostty); the BenQ (on its right) gets `web` (Brave, Brave Nightly, Chrome)
-  and `notes` (Obsidian). Apps open on their screen by themselves.
-- **Voice:** Speech Note dictates into any window and reads text aloud, offline.
-- **Browsers:** Vimium C in Brave, Brave Nightly and Chrome, with one-handed keys.
-- **Terminal:** Ghostty running fish (autosuggestions, `z` folder jumps, fzf).
-  Copy and paste with Ctrl+C / Ctrl+V, no Shift.
-- **Development:** Python 3 (with headers, pipx and uv), the .NET 10 SDK
-  (`dotnet`), and the JetBrains Toolbox App to install IntelliJ IDEA, PyCharm,
-  Rider and the other JetBrains IDEs (they open on the `code` workspace).
-- **Login:** a text login screen (greetd + tuigreet) that starts niri.
-- **Your configs:** Zed keymap, LazyVim (Neovim) with the same one-handed keys,
-  k9s plugins, and the niri tutorial PDF in `~/Documents`.
-- **Wallpaper:** the Fedora GNC cheat sheet with every shortcut, set on the first
-  login. Change it in Dux settings (Mod + PgDn).
-- **Apps:** Brave, Brave Nightly, Chrome, Ghostty, Zed, LazyVim (`nvim`),
-  lazygit, Fresh, k9s, nnn, AWS CLI, Claude Code, plus Obsidian, Speech Note and
-  Typing Tutor from Flathub. Firefox is removed.
+| Area | What it includes |
+|---|---|
+| Desktop | **niri** + **Dux Shell** (bar, launcher, notifications, clipboard, lock screen, settings); text login (greetd + tuigreet) |
+| Keyboard | `dvorak_r_pl` layout; keyd: Mod, Polish letters, sticky Ctrl/Shift |
+| Screens | named workspaces `code` · `web` · `notes`; ASUS main + BenQ right, or one laptop screen |
+| Voice | Speech Note dictation and read-aloud |
+| Browsers | Brave, Brave Nightly, Chrome; Vimium C with one-handed keys (`f` = bookmarks) |
+| Terminal | Ghostty + fish (autosuggestions, `z`, fzf); copy/paste without Shift; foot as a fallback |
+| Editors | LazyVim (Neovim) and Zed with the same keys; Fresh |
+| Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, AWS CLI, Claude Code |
+| Other apps | Obsidian, Typing Tutor, nnn (Firefox removed) |
 
-Mod + Insert shows every shortcut.
+**Shortcut guides, one per tool:** [`docs/`](docs/README.md).
 
-**Full shortcut guides, one per tool:** [`docs/`](docs/README.md): keyboard,
-niri, Speech Note, LazyVim, Zed, Vimium C, Ghostty and fish, k9s, Welcome window.
-
-### New keys
+### Key summary
 
 | Keys | Action |
 |---|---|
@@ -96,7 +168,6 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
 | `branding.ks` | The spin's name, "Fedora GNC", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |
 | `mount-internal-drives.sh` | Optional: mounts the NTFS drives of your original PC. Run it by hand: `sudo ./mount-internal-drives.sh --dry-run` first. |
-
 | `update/` | The update script for machines that are already set up; `tools/make-update-package.sh` packs it with the current files. |
 | `tools/` | `make-update-package.sh` (update package), `wallpaper/build.sh` (re-renders the cheat-sheet wallpaper). |
 | `docs/` | Shortcut guides, one per tool. |
