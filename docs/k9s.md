@@ -2,7 +2,7 @@
 
 k9s is a terminal UI for Kubernetes clusters (start it with `k9s`). Several
 of its most-used actions sit on keys that right-handed Dvorak puts on the
-left side of the keyboard. Fedora GNC adds **plugins** that repeat those
+left side of the keyboard. One-Handed Fedora Remix adds **plugins** that repeat those
 actions on right-hand keys with Shift. k9s's own keys keep working too.
 
 Config: `~/.config/k9s/plugins.yaml`.

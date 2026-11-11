@@ -1,4 +1,4 @@
-# Fedora GNC
+# One-Handed Fedora Remix
 
 **A Fedora desktop built to be used with one hand: the right one.**
 It's stock Fedora underneath, with the niri tiling desktop, a right-handed
@@ -145,7 +145,7 @@ packaged for Fedora.
 
 **Personal use only.** The ISO includes proprietary apps (Chrome, Claude Code,
 Obsidian) and uses the Fedora name, so it isn't for redistribution.
-See [FEDORA-GNC.md](FEDORA-GNC.md) for everything that differs from stock Fedora.
+See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedora.
 
 ---
 
@@ -218,7 +218,7 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `vimium/`, `k9s/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
 | `build-spin.sh` | Builds the live ISO. |
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
-| `branding.ks` | The spin's name, "Fedora GNC", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |
+| `branding.ks` | The spin's name, "One-Handed Fedora Remix", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |
 | `mount-internal-drives.sh` | Optional: mounts the NTFS drives of your original PC. Run it by hand: `sudo ./mount-internal-drives.sh --dry-run` first. |
 | `update/` | The update script for machines that are already set up; `tools/make-update-package.sh` packs it with the current files. |
 | `tools/` | `make-update-package.sh` (update package), `wallpaper/build.sh` (re-renders the cheat-sheet wallpaper). |
@@ -253,7 +253,7 @@ On a Fedora machine of the release you want (about 30 GB free):
 
 The live USB logs straight into niri and opens a **Welcome** window:
 install to disk, connect to Wi-Fi, or learn the keys (move with h / t or the
-arrows, Enter to choose). It's also in the launcher as "Install Fedora GNC".
+arrows, Enter to choose). It's also in the launcher as "Install One-Handed Fedora Remix".
 
 After installing, the Welcome window opens at each login until you choose
 "All done". It's a checklist: Wi-Fi, apps from Flathub, the Polish dictation
@@ -265,7 +265,7 @@ For a VirtualBox VM: 4 GB RAM or more, 2+ CPUs, VMSVGA graphics with 3D
 acceleration on. (Ghostty may not start in VirtualBox; the Welcome window uses
 the lighter foot terminal, which does.)
 
-"Fedora GNC" is fine for your own machines. If you ever share the ISO publicly,
+"One-Handed Fedora Remix" is fine for your own machines. If you ever share the ISO publicly,
 Fedora's trademark rules ask for a name like "GNC, a Fedora Remix".
 
 ## When something goes wrong
@@ -292,13 +292,13 @@ A change, from edit to machines:
 ```
 git switch -c sticky-timeout           # optional: a branch per change
 $EDITOR files/keyd/default.conf        # edit the files
-tools/wallpaper/build.sh               # only if shortcuts changed (update make_gnc.py first)
+tools/wallpaper/build.sh               # only if shortcuts changed (update make_wallpaper.py first)
 git add -A && git commit -m "keyd: forget sticky taps after 1 s"
 git push
 
 # on your PC (already set up):
-tools/make-update-package.sh && tar xzf dist/onehand-update-gnc.tar.gz -C /tmp \
-    && /tmp/onehand-update-gnc/update.sh
+tools/make-update-package.sh && tar xzf dist/onehand-update.tar.gz -C /tmp \
+    && /tmp/onehand-update/update.sh
 # new ISO, on a Fedora machine of the release you want:
 ./build-spin.sh --generate-only && ./build-spin.sh
 ```
@@ -310,7 +310,7 @@ Habits that keep it easy:
 - **Tag the commit an ISO was built from**: `git tag iso-45-20261110 && git push --tags`.
   `git diff iso-45-20261110` then shows what changed since that ISO.
 - **Keep the docs and the wallpaper in step** with shortcut changes: the guide
-  in `docs/` and `tools/wallpaper/make_gnc.py`.
+  in `docs/` and `tools/wallpaper/make_wallpaper.py`.
 - **GitHub checks** (`.github/workflows/check.yml`) run on every push: scripts
   parse, JSON and niri files are well-formed, the update package builds.
 - **Keep the repository private.** It contains your configs, and the ISO

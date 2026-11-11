@@ -13,8 +13,8 @@
 #
 # Optional settings via environment variables:
 #   RELEASE=45   Fedora release to build (default: the one this machine runs)
-#   NAME=...     ISO file name / disc label (default Fedora-GNC)
-#   PRODUCT=...  Name in the system, installer and boot menu (default "Fedora GNC")
+#   NAME=...     ISO file name / disc label (default OneHanded-Fedora-Remix)
+#   PRODUCT=...  Name in the system, installer and boot menu (default "One-Handed Fedora Remix")
 
 set -euo pipefail
 
@@ -24,8 +24,9 @@ BASE_KS="${HERE}/niri-spin-base.ks"
 BRANDING_KS="${HERE}/branding.ks"
 
 RELEASE="${RELEASE:-$(rpm -E %fedora 2>/dev/null || echo unknown)}"
-NAME="${NAME:-Fedora-GNC}"          # ISO file name and disc label (no spaces)
-PRODUCT="${PRODUCT:-Fedora GNC}"   # name shown in the system, installer and boot menu
+NAME="${NAME:-OneHanded-Fedora-Remix}"          # ISO file name and disc label (no spaces)
+PRODUCT="${PRODUCT:-One-Handed Fedora Remix}"
+VARIANT="${VARIANT:-One-Handed}"     # os-release VARIANT   # name shown in the system, installer and boot menu
 ARCH=x86_64
 # The kickstart can't hold paths with spaces (e.g. a download folder named
 # "fedora-onehand-setup (1)"), so build in a space-free folder in that case.
@@ -418,7 +419,7 @@ POST_EOF
 
         # The spin's own name (os-release, installer profile)
         if [[ -f "$BRANDING_KS" ]]; then
-            sed -e "s|@PRODUCT@|${PRODUCT}|g" -e "s|@VARIANT@|${PRODUCT#Fedora }|g" "$BRANDING_KS"
+            sed -e "s|@PRODUCT@|${PRODUCT}|g" -e "s|@VARIANT@|${VARIANT}|g" "$BRANDING_KS"
             echo
         fi
 

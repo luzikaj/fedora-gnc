@@ -1,7 +1,7 @@
 # LazyVim (Neovim)
 
 LazyVim is a ready-made Neovim setup (file tree, fuzzy finder, language
-servers, git). Fedora GNC keeps all of LazyVim and changes only the keys that a
+servers, git). One-Handed Fedora Remix keeps all of LazyVim and changes only the keys that a
 right-handed Dvorak layout puts in awkward places. Start it with `nvim`, or
 `v` in the fish shell.
 

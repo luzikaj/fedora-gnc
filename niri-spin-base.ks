@@ -38,7 +38,7 @@ kernel-modules-extra
 # Fedora's identity package. The installer's web interface (anaconda-webui)
 # uses the light "slitherer" browser only on a spin identity, and needs Firefox
 # otherwise. The i3 one only adds /usr/lib/os-release (which branding.ks
-# rewrites to "Fedora GNC") and Fedora's desktop service presets: no i3.
+# rewrites to "One-Handed Fedora Remix") and Fedora's desktop service presets: no i3.
 fedora-release-i3
 fedora-release-identity-i3
 -fedora-release-identity-basic
@@ -96,13 +96,13 @@ cat >> /var/lib/livesys/livesys-session-extra <<'LIVESYS_EOF'
 for f in /usr/share/applications/liveinst.desktop /usr/share/applications/anaconda.desktop; do
     [ -f "$f" ] && sed -i '/^NoDisplay=/d; /^\[Desktop Entry\]/a NoDisplay=true' "$f" || true
 done
-cat > /usr/share/applications/gnc-install.desktop <<'DESKTOP_EOF'
+cat > /usr/share/applications/onehanded-install.desktop <<'DESKTOP_EOF'
 [Desktop Entry]
 Type=Application
-Name=Install Fedora GNC
+Name=Install One-Handed Fedora Remix
 Comment=Install this system on the computer's disk
 Exec=/usr/local/bin/onehand-welcome --launch install
-Icon=fedora-gnc-logo
+Icon=onehanded-remix-logo
 Terminal=false
 Categories=System;
 Keywords=install;installer;anaconda;liveinst;disk;

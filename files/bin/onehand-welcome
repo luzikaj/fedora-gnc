@@ -1,5 +1,5 @@
 #!/bin/bash
-# onehand-welcome: the friendly start of Fedora GNC.
+# onehand-welcome: the friendly start of One-Handed Fedora Remix.
 #
 #   On the live USB: install to disk, connect to Wi-Fi, learn the keys.
 #   After installing: a one-time checklist (apps, dictation, browser keys,
@@ -29,10 +29,10 @@ if [[ "${1:-}" == --launch ]]; then
     for _ in $(seq 1 30); do niri_ready && break; sleep 1; done
     # foot draws without the GPU, so it also works in virtual machines.
     if command -v foot >/dev/null; then
-        exec niri msg action spawn -- foot --app-id=gnc.welcome --title="Fedora GNC" \
+        exec niri msg action spawn -- foot --app-id=onehanded.welcome --title="One-Handed Fedora Remix" \
             -o font=monospace:size=13 "$SELF" "$@"
     else
-        exec niri msg action spawn -- ghostty --class=gnc.welcome --title="Fedora GNC" -e "$SELF" "$@"
+        exec niri msg action spawn -- ghostty --class=onehanded.welcome --title="One-Handed Fedora Remix" -e "$SELF" "$@"
     fi
 fi
 
@@ -42,7 +42,7 @@ YEL=$'\e[38;5;221m'; SEL=$'\e[1;38;5;16;48;5;75m'
 
 banner() {
     clear
-    printf '\n  %s Fedora %sGNC%s   %sright hand only%s\n' "$B" "$BLUE" "$OFF" "$DIM" "$OFF"
+    printf '\n  %s%sOne-Handed%s %sFedora Remix%s   %sright hand only%s\n' "$B" "$BLUE" "$OFF" "$B" "$OFF" "$DIM" "$OFF"
     printf '  %s──────────────────────────────────────────────────────────%s\n\n' "$DIM" "$OFF"
 }
 pause() { printf '\n  %sPress Enter to go back%s ' "$DIM" "$OFF"; read -rs _; }
@@ -111,7 +111,7 @@ page_wifi() {
 # ----------------------------------------------------------- live USB
 live_install() {
     banner
-    say "${B}Install Fedora GNC on this computer${OFF}" ""
+    say "${B}Install One-Handed Fedora Remix on this computer${OFF}" ""
     say "The installer opens in its own window in a moment. In it:"
     say ""
     say " 1. Language: pick yours (the keyboard is already right-handed Dvorak)."
@@ -139,7 +139,7 @@ live_main() {
     [[ "${1:-}" == install ]] && live_install
     while true; do
         menu "Welcome! This is the live USB: nothing is installed yet." \
-            "Install Fedora GNC on this computer" \
+            "Install One-Handed Fedora Remix on this computer" \
             "Connect to Wi-Fi" \
             "Learn the one-handed keys" \
             "Just try it (close this window)"

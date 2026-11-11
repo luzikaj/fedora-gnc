@@ -1,9 +1,9 @@
 # branding.ks — the spin's own identity. build-spin.sh adds this to the
-# kickstart and replaces @PRODUCT@ with the name (default "Fedora GNC").
+# kickstart and replaces @PRODUCT@ with the name (default "One-Handed Fedora Remix").
 #
 # - /etc/os-release gets the name (a small boot service keeps it there, since
 #   Fedora updates rewrite /usr/lib/os-release, which it is copied from)
-# - the installer gets a profile for VARIANT_ID=gnc, so it shows this name
+# - the installer gets a profile for VARIANT_ID=onehanded, so it shows this name
 #   and uses the lightweight installer browser like Fedora's other spins
 
 %post --erroronfail
@@ -22,8 +22,8 @@ grep -v -E '^(NAME|PRETTY_NAME|VARIANT|VARIANT_ID|LOGO)=' "$src" > "$tmp"
     echo 'NAME="@PRODUCT@"'
     echo "PRETTY_NAME=\"@PRODUCT@ ${ver}\""
     echo 'VARIANT="@VARIANT@"'
-    echo 'VARIANT_ID=gnc'
-    echo 'LOGO=fedora-gnc-logo'
+    echo 'VARIANT_ID=onehanded'
+    echo 'LOGO=onehanded-remix-logo'
 } >> "$tmp"
 if [ -L /etc/os-release ] || ! cmp -s "$tmp" /etc/os-release; then
     rm -f /etc/os-release
@@ -51,15 +51,15 @@ WantedBy=sysinit.target
 UNIT_END
 systemctl enable onehand-branding.service
 
-cat > /etc/anaconda/profile.d/fedora-gnc.conf <<'CONF_END'
+cat > /etc/anaconda/profile.d/onehanded-remix.conf <<'CONF_END'
 # Anaconda configuration file for @PRODUCT@.
 [Profile]
-profile_id = fedora-gnc
+profile_id = onehanded-remix
 base_profile = fedora
 
 [Profile Detection]
 os_id = fedora
-variant_id = gnc
+variant_id = onehanded
 
 [User Interface]
 # Same lightweight installer browser as Fedora's other spins (no Firefox here).

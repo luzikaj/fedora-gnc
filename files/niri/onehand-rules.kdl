@@ -83,7 +83,7 @@ window-rule {
 
 // ---- the Welcome window (install, first steps): a floating box in the middle
 window-rule {
-    match app-id=r#"^gnc\.welcome$"#
+    match app-id=r#"^onehanded\.welcome$"#
     open-floating true
     default-column-width { fixed 1000; }
     default-window-height { fixed 680; }

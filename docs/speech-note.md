@@ -1,7 +1,7 @@
 # Speech Note: dictation and reading aloud
 
 Speech Note (from Flathub) turns speech into text and text into speech,
-**offline**, on your own computer. In Fedora GNC it types dictated text
+**offline**, on your own computer. In One-Handed Fedora Remix it types dictated text
 straight into whichever window has focus: an editor, the browser, a chat or
 the terminal.
 

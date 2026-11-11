@@ -2,12 +2,12 @@
 
 A small window that opens:
 
-- on the **live USB**: to install Fedora GNC, connect to Wi-Fi or learn the keys;
+- on the **live USB**: to install One-Handed Fedora Remix, connect to Wi-Fi or learn the keys;
 - on an **installed system**: at every login, until you choose "All done",
   as a checklist of first steps.
 
-Open it again any time from the launcher (Mod + `'`): **Welcome to Fedora GNC**.
-On the live USB, **Install Fedora GNC** in the launcher goes straight to installing.
+Open it again any time from the launcher (Mod + `'`): **Welcome to One-Handed Fedora Remix**.
+On the live USB, **Install One-Handed Fedora Remix** in the launcher goes straight to installing.
 
 ## Keys
 
@@ -24,7 +24,7 @@ On the live USB, **Install Fedora GNC** in the launcher goes straight to install
 
 | Item | What it does |
 |---|---|
-| Install Fedora GNC on this computer | explains the steps, then starts Fedora's installer |
+| Install One-Handed Fedora Remix on this computer | explains the steps, then starts Fedora's installer |
 | Connect to Wi-Fi | opens `nmtui` (arrow keys, Enter) |
 | Learn the one-handed keys | a one-page summary |
 | Just try it | closes the window |

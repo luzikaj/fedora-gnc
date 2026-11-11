@@ -11,7 +11,7 @@ Newest first. Note what changed and why; the ISO name carries the build date.
   (`tools/make-update-package.sh`, `tools/wallpaper/build.sh`).
 
 ## 2026-11-10
-- Fedora GNC name and logo; Welcome window (live installer + first-login checklist).
+- One-Handed Fedora Remix name and logo; Welcome window (live installer + first-login checklist).
 - Two monitors (ASUS main, BenQ right) with named workspaces and window rules.
 - Dictation with Speech Note; Vimium C with one-handed keys (`f` = bookmarks).
 - Ghostty with fish, copy/paste without Shift; foot as fallback (`onehand-terminal`).

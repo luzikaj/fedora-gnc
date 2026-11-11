@@ -1,7 +1,7 @@
 # Zed
 
 Zed (from Flathub) runs in **Helix mode**: you select first, then act (`w`
-selects a word, then `k` deletes it). On top of Helix's keys, Fedora GNC moves
+selects a word, then `k` deletes it). On top of Helix's keys, One-Handed Fedora Remix moves
 the directions to the right hand's resting keys, exactly like in
 [LazyVim](lazyvim.md).
 

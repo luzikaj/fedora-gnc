@@ -59,7 +59,7 @@ def cards(cs, side):
 
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
-LOGO = "file://" + os.path.join(HERE, "..", "..", "files", "branding", "fedora-gnc-logo.svg")
+LOGO = "file://" + os.path.join(HERE, "..", "..", "files", "branding", "onehanded-remix-logo.svg")
 page = f"""<!doctype html><html><head><meta charset="utf-8"><style>
 :root {{ --bg1:#0f1b2d; --bg2:#0b1220; --card:#121c2c; --line:#1e2b40; --text:#e8eef7; --muted:#9fb0c6;
         --niri:#6cb6ff; --vim:#7ee08a; --web:#f5b86b; --term:#c9a2ff; --voice:#ff8fa3; }}
@@ -120,7 +120,7 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
 </style></head><body>
 <header>
   <div class="brand"><img src="{LOGO}">
-    <div><div class="name">Fedora <b>GNC</b></div>
+    <div><div class="name">Fedora Remix <b>One-Handed</b></div>
     <div class="sub"><span class="n">niri</span> + <span class="v">LazyVim</span> · right hand only</div></div></div>
   <div class="legend">
     <div><span class="hl">Mod</span> = hold <kbd>Right Alt</kbd></div>
@@ -152,4 +152,4 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
   <div><b>fish</b> <code>v</code> nvim <code>g</code> git <code>lg</code> lazygit<span class="sep">·</span><code>zi</code> pick a folder<span class="sep">·</span><kbd>Alt</kbd><kbd>c</kbd> cd</div>
 </footer>
 </body></html>"""
-open(os.path.join(HERE, "wallpaper-gnc.html"), "w").write(page)
+open(os.path.join(HERE, "wallpaper.html"), "w").write(page)

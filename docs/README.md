@@ -1,6 +1,6 @@
-# Fedora GNC: keyboard shortcut guides
+# One-Handed Fedora Remix: keyboard shortcut guides
 
-Fedora GNC is set up to be used with **one hand, the right one**. Every tool
+One-Handed Fedora Remix is set up to be used with **one hand, the right one**. Every tool
 that has its own shortcuts follows the same idea:
 
 - **`e h t d` = left, down, up, right** (the right hand's resting keys)

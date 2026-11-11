@@ -1,4 +1,4 @@
-# Building Fedora GNC
+# Building One-Handed Fedora Remix
 
 How to turn this repository into a bootable installer ISO, test it and install
 it, plus how to update machines that are already set up. Every step here has
@@ -33,7 +33,7 @@ niri-spin-base.ks, branding.ks   ─┘                     (≈450 lines)   (Fe
   straight from the build folder; they're never written into the kickstart.
 
 **The ISO's Fedora release is the build machine's release.** Build on Fedora 45
-to get Fedora GNC 45. Building another release from the same machine isn't
+to get One-Handed Fedora Remix 45. Building another release from the same machine isn't
 supported by Fedora's tools.
 
 ---
@@ -65,11 +65,11 @@ sudo dnf upgrade --refresh -y && sudo reboot
 ## 2. Get the repository
 
 ```
-git clone git@github.com:YOUR-NAME/fedora-gnc.git
-cd fedora-gnc
+git clone git@github.com:YOUR-NAME/one-handed-fedora-remix.git
+cd one-handed-fedora-remix
 ```
 
-(Or unpack `fedora-gnc-repo.tar.gz`.) A folder path **without spaces** is best.
+(Or unpack `onehanded-remix-repo.tar.gz`.) A folder path **without spaces** is best.
 If it has spaces, the build automatically works in `~/onehand-spin-build`
 instead.
 
@@ -88,8 +88,8 @@ Everything is read from the repository; change it there before building.
 | apps, repositories, Flatpaks, removed packages | the lists at the top of `fedora-setup.sh` |
 | configs (keys, niri, editors, terminal …) | the files in `files/` |
 | language, time zone, live-image size | `niri-spin-base.ks` |
-| name in the system, installer, boot menu | `PRODUCT="…" ./build-spin.sh` (default `Fedora GNC`) |
-| ISO file name / disc label | `NAME=… ./build-spin.sh` (default `Fedora-GNC`, no spaces) |
+| name in the system, installer, boot menu | `PRODUCT="…" ./build-spin.sh` (default `One-Handed Fedora Remix`) |
+| ISO file name / disc label | `NAME=… ./build-spin.sh` (default `OneHanded-Fedora-Remix`, no spaces) |
 | free-space limit | `MIN_FREE_GB=… ./build-spin.sh` (default 28) |
 
 Commit changes before building, so the ISO matches a commit.
@@ -138,14 +138,14 @@ What you'll see, with times from a 4-CPU / 4 GB VM:
 
 | Stage | Last lines on screen | Took |
 |---|---|---|
-| installer starts | `anaconda 45.x for Fedora GNC 45 started` | 1 min |
+| installer starts | `anaconda 45.x for One-Handed Fedora Remix 45 started` | 1 min |
 | packages download and install | progress lines, then `Konfigurowanie zainstalowanego systemu` / `Configuring installed system` | ≈ 35 min |
 | boot image | `Tworzenie initramfs` / `Creating initramfs` | ≈ 3 min |
 | your setup steps | (configs, Toolbox, keyboard check, branding) | 1 min |
 | image installed | `Disk Image install successful` | |
 | **compression** | `Creating a squashfs only runtime` (silent, CPU at 100 %) | **≈ 30 min** |
 | live boot image | `Rebuilding initrds` | ≈ 5 min |
-| done | `Done: …/out/Fedora-GNC-45-<date>-<time>.iso` | |
+| done | `Done: …/out/OneHanded-Fedora-Remix-45-<date>-<time>.iso` | |
 
 The ISO ends up in **`out/`** (about 3.4 GB). To see whether a quiet stage is
 still working: `top` (look for `mksquashfs` or `dnf`), or
@@ -155,7 +155,7 @@ Then:
 
 ```
 cd out
-sha256sum Fedora-GNC-45-*.iso > Fedora-GNC-45.sha256    # note the checksum
+sha256sum OneHanded-Fedora-Remix-45-*.iso > OneHanded-Fedora-Remix-45.sha256    # note the checksum
 git tag iso-45-$(date +%Y%m%d) && git push --tags       # mark the commit it came from
 ```
 
@@ -163,12 +163,12 @@ git tag iso-45-$(date +%Y%m%d) && git push --tags       # mark the commit it cam
 
 ### Test it in virt-manager (recommended on Linux)
 
-On a Fedora GNC (or any Fedora) machine, virt-manager gives the test VM real
+On a One-Handed Fedora Remix (or any Fedora) machine, virt-manager gives the test VM real
 3D graphics, so niri and Ghostty work exactly as on hardware:
 
 ```
-virt-install --name gnc-test --memory 6144 --vcpus 4 --disk size=40 \
-  --cdrom out/Fedora-GNC-45-*.iso --osinfo fedora-unknown --boot uefi \
+virt-install --name remix-test --memory 6144 --vcpus 4 --disk size=40 \
+  --cdrom out/OneHanded-Fedora-Remix-45-*.iso --osinfo fedora-unknown --boot uefi \
   --video model.type=virtio,model.acceleration.accel3d=yes \
   --graphics spice,listen=none,gl.enable=yes
 ```
@@ -176,14 +176,14 @@ virt-install --name gnc-test --memory 6144 --vcpus 4 --disk size=40 \
 Or in virt-manager: new VM from the ISO, "Customize configuration before
 install", then Firmware **UEFI**, Video **Virtio + 3D acceleration**, Display
 Spice **Listen: None + OpenGL**. Details: [docs/virtualization.md](docs/virtualization.md).
-Remove the test VM afterwards with `virsh undefine gnc-test --nvram --remove-all-storage`.
+Remove the test VM afterwards with `virsh undefine remix-test --nvram --remove-all-storage`.
 
 ### Test it in VirtualBox (on Windows)
 
 1. **Copy the ISO out of the build VM** (e.g. through a shared folder) and
    **check the copy**. A cut-short copy has happened before. In PowerShell:
    ```
-   Get-FileHash .\Fedora-GNC-45-*.iso -Algorithm SHA256
+   Get-FileHash .\OneHanded-Fedora-Remix-45-*.iso -Algorithm SHA256
    ```
    The hash must equal the `sha256sum` from the build VM.
 2. **Create a VM:** type Fedora (64-bit), 4–8 GB RAM, 2–4 CPUs, 60 GB disk,
@@ -193,7 +193,7 @@ Remove the test VM afterwards with `virsh undefine gnc-test --nvram --remove-all
    (niri needs it. If VirtualBox can't offer 3D, test on real hardware instead.)
 4. **Boot.** The live session logs into niri and the **Welcome** window opens:
    - `h` / `t` or the arrows move, Enter chooses, Esc goes back.
-   - Choose **Install Fedora GNC on this computer**.
+   - Choose **Install One-Handed Fedora Remix on this computer**.
 5. In VirtualBox, **Ghostty doesn't start** (no GPU). Mod + Enter opens
    **foot** instead.
 
@@ -204,13 +204,13 @@ Remove the test VM afterwards with `virsh undefine gnc-test --nvram --remove-all
      choose **DD image mode**. Afterwards Windows shows a "RAW" partition and
      offers to format it: **cancel**.
    - **Linux:** Fedora Media Writer, or
-     `sudo dd if=Fedora-GNC-45-….iso of=/dev/sdX bs=4M status=progress oflag=sync`
+     `sudo dd if=OneHanded-Fedora-Remix-45-….iso of=/dev/sdX bs=4M status=progress oflag=sync`
      (sdX = the stick; check with `lsblk`).
 2. **Boot from the stick:** boot menu key at power-on (often F8, F11 or F12).
    Secure Boot can stay on.
 3. **Try first if you like:** the live session changes nothing on the disk.
 4. **Install** from the Welcome window, or the launcher (Mod + ') → *Install
-   Fedora GNC*. In the installer:
+   One-Handed Fedora Remix*. In the installer:
    - keep the keyboard as it is (right-handed Dvorak)
    - "use the whole disk" **erases** it; choose custom partitioning to keep data
    - create your user with **administrator** ticked
@@ -233,14 +233,14 @@ No reinstall needed. From the repository, on the machine to update:
 ```
 git pull
 tools/make-update-package.sh
-tar xzf dist/onehand-update-gnc.tar.gz -C /tmp
-/tmp/onehand-update-gnc/update.sh --dry-run    # what it would do
-/tmp/onehand-update-gnc/update.sh
+tar xzf dist/onehand-update.tar.gz -C /tmp
+/tmp/onehand-update/update.sh --dry-run    # what it would do
+/tmp/onehand-update/update.sh
 ```
 
 Then log out and in. Replaced files are kept as `.bak.<date>`, and a niri
 config that doesn't validate is rolled back. It also renames the system to
-"Fedora GNC" (step 8 of the script). On Ultramarine, see
+"One-Handed Fedora Remix" (step 8 of the script). On Ultramarine, see
 `update/README.txt` for how to undo that if you prefer the Ultramarine name.
 
 ## 9. Set up an existing machine without the ISO

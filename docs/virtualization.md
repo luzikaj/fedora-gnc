@@ -1,6 +1,6 @@
 # Virtual machines: virt-manager (KVM)
 
-Fedora GNC runs virtual machines with **KVM** (built into the kernel),
+One-Handed Fedora Remix runs virtual machines with **KVM** (built into the kernel),
 **libvirt** and **virt-manager**: Fedora's own virtualization stack. Guests get
 **3D graphics** (virtio-GPU with OpenGL), so a guest running niri, Ghostty
 or GNOME works properly inside the VM.
@@ -48,7 +48,7 @@ Give the guest the same layout, and the letters match:
 - **Polish letters in a Fedora guest:** copy `files/xkb/dvorak_r_pl` to the
   guest's `/etc/xkb/symbols/` and choose the layout `dvorak_r_pl`, or run
   `fedora-setup.sh` inside it
-- **a Fedora GNC guest:** nothing to do
+- **a One-Handed Fedora Remix guest:** nothing to do
 
 ## Creating a VM with 3D graphics
 
@@ -72,7 +72,7 @@ virt-install --name test --memory 6144 --vcpus 4 --disk size=40 \
   --graphics spice,listen=none,gl.enable=yes
 ```
 
-To test a freshly built Fedora GNC ISO this way, see [BUILDING.md](../BUILDING.md#test-it-in-virt-manager-recommended-on-linux).
+To test a freshly built One-Handed Fedora Remix ISO this way, see [BUILDING.md](../BUILDING.md#test-it-in-virt-manager-recommended-on-linux).
 
 ## Simpler alternative: GNOME Boxes
 

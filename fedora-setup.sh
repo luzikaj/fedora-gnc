@@ -140,8 +140,8 @@ USER_FILES=(
     "zed/settings.json|.var/app/dev.zed.Zed/config/zed/settings.json|keep"
     "k9s/plugins.yaml|.config/k9s/plugins.yaml"
     "docs/niri-tutorial.pdf|Documents/niri-tutorial.pdf"
-    "wallpapers/fedora-gnc-2560x1440.png|Pictures/Wallpapers/fedora-gnc-2560x1440.png"
-    "wallpapers/fedora-gnc-1920x1080.png|Pictures/Wallpapers/fedora-gnc-1920x1080.png"
+    "wallpapers/onehanded-remix-2560x1440.png|Pictures/Wallpapers/onehanded-remix-2560x1440.png"
+    "wallpapers/onehanded-remix-1920x1080.png|Pictures/Wallpapers/onehanded-remix-1920x1080.png"
     "wallpapers/niri-lazyvim-2560x1440.png|Pictures/Wallpapers/niri-lazyvim-2560x1440.png"
     "wallpapers/niri-lazyvim-1920x1080.png|Pictures/Wallpapers/niri-lazyvim-1920x1080.png"
     "wallpapers/niri-helix-cheatsheet-1920x1080.png|Pictures/Wallpapers/niri-helix-cheatsheet-1920x1080.png"
@@ -155,7 +155,7 @@ USER_FILES=(
 SYSTEM_FILES=(
     "xkb/dvorak_r_pl|/etc/xkb/symbols/dvorak_r_pl"
     "keyd/default.conf|/etc/keyd/default.conf"
-    "wallpapers/fedora-gnc-2560x1440.png|/usr/share/backgrounds/onehand/default.png"
+    "wallpapers/onehanded-remix-2560x1440.png|/usr/share/backgrounds/onehand/default.png"
     "bin/onehand-monitors|/usr/local/bin/onehand-monitors"
     # Mod+Enter: Ghostty, or foot when Ghostty can't start (VMs without 3D)
     "bin/onehand-terminal|/usr/local/bin/onehand-terminal"
@@ -165,16 +165,16 @@ SYSTEM_FILES=(
     "virt/50-onehand-libvirt.rules|/etc/polkit-1/rules.d/50-onehand-libvirt.rules"
     # Welcome window: install from the live USB, then a first-login checklist
     "bin/onehand-welcome|/usr/local/bin/onehand-welcome"
-    "welcome/gnc-welcome.desktop|/usr/share/applications/gnc-welcome.desktop"
+    "welcome/onehanded-welcome.desktop|/usr/share/applications/onehanded-welcome.desktop"
     # Vimium C (keyboard browsing) is installed in your main browsers: Brave and
     # Brave Nightly (both read /etc/brave) and Chrome. Your keys: ~/Documents/vimium-c-onehand.json
     "vimium/chromium-policy.json|/etc/brave/policies/managed/onehand-vimium-c.json"
     "vimium/chromium-policy.json|/etc/opt/chrome/policies/managed/onehand-vimium-c.json"
-    # Fedora GNC logo (os-release LOGO=fedora-gnc-logo)
-    "branding/fedora-gnc-logo.svg|/usr/share/icons/hicolor/scalable/apps/fedora-gnc-logo.svg"
-    "branding/fedora-gnc-logo-256.png|/usr/share/icons/hicolor/256x256/apps/fedora-gnc-logo.png"
-    "branding/fedora-gnc-logo-256.png|/usr/share/pixmaps/fedora-gnc-logo.png"
-    "branding/fedora-gnc-wordmark.svg|/usr/share/pixmaps/fedora-gnc-wordmark.svg"
+    # One-Handed Fedora Remix logo (os-release LOGO=onehanded-remix-logo)
+    "branding/onehanded-remix-logo.svg|/usr/share/icons/hicolor/scalable/apps/onehanded-remix-logo.svg"
+    "branding/onehanded-remix-logo-256.png|/usr/share/icons/hicolor/256x256/apps/onehanded-remix-logo.png"
+    "branding/onehanded-remix-logo-256.png|/usr/share/pixmaps/onehanded-remix-logo.png"
+    "branding/onehanded-remix-wordmark.svg|/usr/share/pixmaps/onehanded-remix-wordmark.svg"
 )
 
 # Set once, on each user's first niri login (through Dux Shell); after that
@@ -495,7 +495,7 @@ mkdir -p /etc/onehand
 printf '%s\n' ${FLATPAKS[*]} > /etc/onehand/flatpaks
 cat > /etc/systemd/user/onehand-welcome.service <<'UNIT'
 [Unit]
-Description=Fedora GNC welcome window (live USB and first logins)
+Description=One-Handed Fedora Remix welcome window (live USB and first logins)
 After=dms.service
 ConditionPathExists=!%h/.local/state/onehand/welcome-done
 

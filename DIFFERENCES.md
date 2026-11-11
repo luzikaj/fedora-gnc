@@ -1,6 +1,6 @@
-# Fedora GNC: what's different from Fedora
+# One-Handed Fedora Remix: what's different from Fedora
 
-Fedora GNC is a personal Fedora remix built for **one-handed, right-hand-only
+One-Handed Fedora Remix is a personal Fedora remix built for **one-handed, right-hand-only
 use**: a keyboard-driven tiling desktop where every shortcut is one modifier
 plus one key, with the same direction keys everywhere (window manager, editors,
 browser). It's built from stock Fedora packages plus a few well-known
@@ -14,7 +14,7 @@ The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
 
 ## At a glance
 
-| Area | Fedora (default) | Fedora GNC |
+| Area | Fedora (default) | One-Handed Fedora Remix |
 |---|---|---|
 | Desktop | GNOME (Workstation) | **niri** (scrollable tiling Wayland compositor) + **Dux Shell** (bar, launcher, notifications, lock screen) |
 | Login screen | GDM | **greetd + tuigreet** (text login that starts niri) |
@@ -28,7 +28,7 @@ The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
 | Multi-monitor | Manual | Screens detected at login; named workspaces pinned per screen; apps open on their screen |
 | Installer | GNOME live session + installer | Live session logs straight into niri; **Welcome window** with a guided install |
 | First login | GNOME Initial Setup | **Welcome checklist** (Wi-Fi, apps, dictation model, browser keys, screens, updates) |
-| Name / logo | Fedora Linux | "Fedora GNC" name in `/etc/os-release`, the installer and the boot menu; own logo |
+| Name / logo | Fedora Linux | "One-Handed Fedora Remix" name in `/etc/os-release`, the installer and the boot menu; own logo |
 
 ---
 
@@ -41,7 +41,7 @@ The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
   identity is the i3 spin's (`fedora-release-identity-i3`), only because
   Fedora's installer needs a spin identity to use its lightweight browser
   instead of Firefox. It installs no i3, and the name shown everywhere is
-  "Fedora GNC".
+  "One-Handed Fedora Remix".
 - **Unchanged from Fedora:** kernel, SELinux (enforcing), firewalld, NetworkManager,
   systemd, dnf, Flatpak, PipeWire. Updates still come from Fedora's own repositories.
 - **Locale defaults:** Polish (`pl_PL.UTF-8`), Europe/Warsaw time zone.
@@ -205,12 +205,12 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 
 ## 11. Branding
 
-- `/etc/os-release` says **Fedora GNC** (`VARIANT_ID=gnc`, `LOGO=fedora-gnc-logo`),
+- `/etc/os-release` says **One-Handed Fedora Remix** (`VARIANT_ID=onehanded`, `LOGO=onehanded-remix-logo`),
   kept in place by a small boot service, because Fedora updates rewrite
   `/usr/lib/os-release`. Everything else still identifies as Fedora
   (`ID=fedora`), so Fedora repositories and tools work unchanged.
 - An original GNC logo (not derived from Fedora's logo) in the icon theme.
-- Default wallpaper: the Fedora GNC cheat sheet (2560×1440 and 1920×1080).
+- Default wallpaper: the One-Handed Fedora Remix cheat sheet (2560×1440 and 1920×1080).
 
 ## 12. What's added to the system (for the curious)
 
@@ -226,7 +226,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `/usr/local/bin/fedora-setup` | The setup script, to set up further users or machines |
 | `/usr/share/backgrounds/onehand/default.png` | Default wallpaper |
 | `onehand-ydotoold.service` | Virtual keyboard for dictation |
-| `onehand-branding.service` | Keeps the Fedora GNC name in os-release |
+| `onehand-branding.service` | Keeps the One-Handed Fedora Remix name in os-release |
 | User units `onehand-wallpaper`, `onehand-welcome` | First-login wallpaper and Welcome window |
 | `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/` | Per-user configs (copied from `/etc/skel`) |
 
@@ -243,7 +243,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 
 ## 14. Licensing note
 
-Fedora GNC is for personal use on its owner's machines and isn't
+One-Handed Fedora Remix is for personal use on its owner's machines and isn't
 redistributed. It includes proprietary software (Google Chrome, Claude Code,
 Obsidian) under their own terms. A public release would need to follow
 Fedora's trademark rules, for example by renaming it to "GNC, a Fedora Remix"

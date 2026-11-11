@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
 # update.sh — bring your current one-handed Fedora + niri system up to
-# Fedora GNC: terminal fallback (foot), sticky-key timeout, keyboard check,
+# One-Handed Fedora Remix: terminal fallback (foot), sticky-key timeout, keyboard check,
 # shortcut guides, development tools (Python, .NET, JetBrains Toolbox), sticky keys, two monitors, window rules, dictation (Speech Note),
-# Vimium C, Ghostty with fish, the new wallpaper and the Fedora GNC name/logo.
+# Vimium C, Ghostty with fish, the new wallpaper and the One-Handed Fedora Remix name/logo.
 #
 # Usage (as your normal user, not with sudo; it asks for sudo itself):
-#   tar xzf onehand-update-gnc.tar.gz && cd onehand-update-gnc
+#   tar xzf onehand-update.tar.gz && cd onehand-update
 #   ./update.sh --dry-run    # show what it would do
 #   ./update.sh
 #
@@ -121,8 +121,8 @@ put "$F/fish/onehand.fish" "$HOME/.config/fish/conf.d/onehand.fish"
 put "$F/foot/foot.ini" "$HOME/.config/foot/foot.ini"
 ok "new Ghostty windows start fish (your login shell stays as it is)"
 ok "Mod + Enter opens foot instead if Ghostty can't start"
-for f in "$F"/docs/*.md; do put "$f" "$HOME/Documents/Fedora-GNC-docs/$(basename "$f")"; done
-ok "shortcut guides: ~/Documents/Fedora-GNC-docs/"
+for f in "$F"/docs/*.md; do put "$f" "$HOME/Documents/OneHanded-Fedora-Remix-docs/$(basename "$f")"; done
+ok "shortcut guides: ~/Documents/OneHanded-Fedora-Remix-docs/"
 
 # ------------------------------------------------------------------ 5. dictation
 step "6/9  Dictation: ydotoold virtual keyboard for Speech Note"
@@ -159,21 +159,21 @@ put "$F/vimium/vimium-c-onehand.json" "$HOME/Documents/vimium-c-onehand.json"
 ok "restart the browsers; then Vimium C Options -> Import ~/Documents/vimium-c-onehand.json"
 
 # ------------------------------------------------------------------ 7. name and logo
-step "8/9  Fedora GNC name and logo"
-put "$F/branding/fedora-gnc-logo.svg" /usr/share/icons/hicolor/scalable/apps/fedora-gnc-logo.svg sudo
-put "$F/branding/fedora-gnc-logo-256.png" /usr/share/icons/hicolor/256x256/apps/fedora-gnc-logo.png sudo
-put "$F/branding/fedora-gnc-logo-256.png" /usr/share/pixmaps/fedora-gnc-logo.png sudo
-put "$F/branding/fedora-gnc-wordmark.svg" /usr/share/pixmaps/fedora-gnc-wordmark.svg sudo
+step "8/9  One-Handed Fedora Remix name and logo"
+put "$F/branding/onehanded-remix-logo.svg" /usr/share/icons/hicolor/scalable/apps/onehanded-remix-logo.svg sudo
+put "$F/branding/onehanded-remix-logo-256.png" /usr/share/icons/hicolor/256x256/apps/onehanded-remix-logo.png sudo
+put "$F/branding/onehanded-remix-logo-256.png" /usr/share/pixmaps/onehanded-remix-logo.png sudo
+put "$F/branding/onehanded-remix-wordmark.svg" /usr/share/pixmaps/onehanded-remix-wordmark.svg sudo
 run sudo bash "$F/branding/apply-branding.sh"
 $DRY || ok "$(. /etc/os-release && echo "$PRETTY_NAME")"
 
 # ------------------------------------------------------------------ 8. wallpaper
-step "9/9  Fedora GNC wallpaper"
+step "9/9  One-Handed Fedora Remix wallpaper"
 walls="$HOME/Pictures/Wallpapers"
 for f in "$F"/wallpapers/*.png; do put "$f" "$walls/$(basename "$f")"; done
-put "$F/wallpapers/fedora-gnc-2560x1440.png" /usr/share/backgrounds/onehand/default.png sudo
+put "$F/wallpapers/onehanded-remix-2560x1440.png" /usr/share/backgrounds/onehand/default.png sudo
 run sudo restorecon -R /etc/keyd /etc/brave /etc/opt/chrome /usr/local/bin /usr/share/icons/hicolor /usr/share/pixmaps /usr/share/backgrounds/onehand 2>/dev/null || true
-pick="$walls/fedora-gnc-2560x1440.png"
+pick="$walls/onehanded-remix-2560x1440.png"
 if $DRY; then
     printf '    [dry-run] dms ipc call wallpaper set %s\n' "$pick"
 elif command -v dms >/dev/null && dms ipc call wallpaper set "$pick" >/dev/null 2>&1; then
