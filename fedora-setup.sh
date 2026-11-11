@@ -14,7 +14,6 @@
 # Run as your normal user (not root). The script calls sudo where needed,
 # and puts your personal config files in your own home folder.
 # Safe to re-run: config files it replaces are backed up with a date suffix.
-# (The internal NTFS drives have their own script: mount-internal-drives.sh.)
 
 set -euo pipefail
 

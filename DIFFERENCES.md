@@ -4,8 +4,9 @@ One-Handed Fedora Remix is a personal Fedora remix built for **one-handed, right
 use**: a keyboard-driven tiling desktop where every shortcut is one modifier
 plus one key, with the same direction keys everywhere (window manager, editors,
 browser). It's built from stock Fedora packages plus a few well-known
-third-party repositories, and is used only on its owner's machines. It isn't
-published, and it isn't affiliated with or endorsed by the Fedora Project.
+third-party repositories. The repository that builds it is public; built ISOs
+are used only on its owner's machines. It's an unofficial Fedora Remix, not
+affiliated with or endorsed by the Fedora Project.
 
 This page lists what was changed compared with a standard Fedora installation.
 The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
@@ -209,7 +210,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
   kept in place by a small boot service, because Fedora updates rewrite
   `/usr/lib/os-release`. Everything else still identifies as Fedora
   (`ID=fedora`), so Fedora repositories and tools work unchanged.
-- An original GNC logo (not derived from Fedora's logo) in the icon theme.
+- An original logo (not derived from Fedora's logo) in the icon theme.
 - Default wallpaper: the One-Handed Fedora Remix cheat sheet (2560×1440 and 1920×1080).
 
 ## 12. What's added to the system (for the curious)
@@ -243,10 +244,12 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 
 ## 14. Licensing note
 
-One-Handed Fedora Remix is for personal use on its owner's machines and isn't
-redistributed. It includes proprietary software (Google Chrome, Claude Code,
-Obsidian) under their own terms. A public release would need to follow
-Fedora's trademark rules, for example by renaming it to "GNC, a Fedora Remix"
-and swapping in Fedora's generic branding packages. It would also need to
-download proprietary apps from their vendors at install time, rather than
-shipping them on the ISO, and to publish the source packages.
+The repository's own files are open: code and configs under MIT, docs and
+artwork under CC BY-SA 4.0 (see [LICENSE](LICENSE)). The name follows Fedora's
+Remix rules ("Fedora Remix" kept together, no Fedora logo).
+
+Built ISOs are for personal use and aren't redistributed: they include
+proprietary software (Google Chrome, Claude Code, Obsidian) under their own
+terms. Publishing an ISO would also need Fedora's generic branding packages,
+proprietary apps downloaded from their vendors at install time instead of
+shipped on the ISO, and the source packages published alongside it.

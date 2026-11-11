@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Shell scripts parse
         run: |
-          for f in fedora-setup.sh build-spin.sh mount-internal-drives.sh update/update.sh \
+          for f in fedora-setup.sh build-spin.sh update/update.sh \
                    tools/*.sh tools/wallpaper/build.sh files/bin/* files/jetbrains/*; do
             bash -n "$f" && echo "ok  $f"
           done

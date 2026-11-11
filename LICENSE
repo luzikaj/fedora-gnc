@@ -1,0 +1,31 @@
+One-Handed Fedora Remix: licensing
+==================================
+
+This repository uses two licenses for its own work, plus one for files taken
+from LazyVim.
+
+1. Code and configuration: MIT License (LICENSES/MIT.txt)
+   Copyright (c) 2026 luzikaj and contributors
+   - scripts: fedora-setup.sh, build-spin.sh, files/bin/*, files/jetbrains/*,
+     tools/**, update/**, .github/**
+   - kickstarts: niri-spin-base.ks, branding.ks
+   - configs: everything else under files/ (keymaps, niri, keyd, xkb, fish,
+     ghostty, foot, vimium, zed, k9s, virt, welcome, nvim except below)
+
+2. Documentation and artwork: Creative Commons Attribution-ShareAlike 4.0
+   International (LICENSES/CC-BY-SA-4.0.txt)
+   Copyright (c) 2026 luzikaj and contributors
+   - *.md (README, BUILDING, DIFFERENCES, CHANGELOG, docs/)
+   - files/wallpapers/*, files/branding/* (logo, wordmark), files/docs/*.pdf
+
+3. From the LazyVim starter (https://github.com/LazyVim/starter):
+   Apache License 2.0 (LICENSES/Apache-2.0.txt), unchanged copies of
+   - files/nvim/init.lua
+   - files/nvim/lua/config/lazy.lua
+
+Trademarks: "Fedora" and the Fedora logo are trademarks of Red Hat, Inc. This
+is an unofficial Fedora Remix, not endorsed by or affiliated with the Fedora
+Project. The licenses above cover this repository's own files only; the apps
+the build installs come from their vendors under their own licenses, and some
+(Google Chrome, Claude Code, Obsidian) may not be redistributed, which is why
+built ISOs are for personal use and are not published.

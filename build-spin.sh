@@ -289,9 +289,7 @@ make_payload() {
     local kit="$stage/root/usr/local/share/fedora-onehand-setup"
     mkdir -p "$kit"
     cp -r "${HERE}/files" "$SETUP" "$kit/"
-    for f in mount-internal-drives.sh README.md; do
-        [[ -f "${HERE}/${f}" ]] && cp "${HERE}/${f}" "$kit/"
-    done
+    cp "${HERE}/README.md" "$kit/"
     chmod -R u=rwX,go=rX "$stage"
     tar -C "$stage" --owner=0 --group=0 -czf "$WORK/payload.tar.gz" root skel
     local mb=$(( $(stat -c %s "$WORK/payload.tar.gz") / 1048576 ))

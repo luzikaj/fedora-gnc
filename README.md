@@ -143,8 +143,9 @@ packaged for Fedora.
 - It moves fast, so some features need a recent version (the kit uses Dux's
   repository for that).
 
-**Personal use only.** The ISO includes proprietary apps (Chrome, Claude Code,
-Obsidian) and uses the Fedora name, so it isn't for redistribution.
+**The ISO is for personal use.** The repository is open (see [License](#license)),
+but the ISO it builds includes proprietary apps (Chrome, Claude Code, Obsidian),
+so built ISOs aren't for redistribution.
 See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedora.
 
 ---
@@ -219,7 +220,6 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | `build-spin.sh` | Builds the live ISO. |
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
 | `branding.ks` | The spin's name, "One-Handed Fedora Remix", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |
-| `mount-internal-drives.sh` | Optional: mounts the NTFS drives of your original PC. Run it by hand: `sudo ./mount-internal-drives.sh --dry-run` first. |
 | `update/` | The update script for machines that are already set up; `tools/make-update-package.sh` packs it with the current files. |
 | `tools/` | `make-update-package.sh` (update package), `wallpaper/build.sh` (re-renders the cheat-sheet wallpaper). |
 | `docs/` | Shortcut guides, one per tool. |
@@ -265,8 +265,8 @@ For a VirtualBox VM: 4 GB RAM or more, 2+ CPUs, VMSVGA graphics with 3D
 acceleration on. (Ghostty may not start in VirtualBox; the Welcome window uses
 the lighter foot terminal, which does.)
 
-"One-Handed Fedora Remix" is fine for your own machines. If you ever share the ISO publicly,
-Fedora's trademark rules ask for a name like "GNC, a Fedora Remix".
+The repository is public, but built ISOs aren't for sharing: they include
+apps that may not be redistributed (see [License](#license)).
 
 ## When something goes wrong
 
@@ -315,4 +315,17 @@ Habits that keep it easy:
   parse, JSON and niri files are well-formed, the update package builds.
 - **Keep the repository private.** It contains your configs, and the ISO
   includes proprietary apps that can't be shared publicly.
+
+## License
+
+- **Code and configs:** [MIT](LICENSES/MIT.txt)
+- **Docs, wallpapers and logo:** [CC BY-SA 4.0](LICENSES/CC-BY-SA-4.0.txt)
+- **Two LazyVim starter files:** [Apache-2.0](LICENSES/Apache-2.0.txt)
+
+[LICENSE](LICENSE) lists which file is under which license.
+
+*Fedora* is a trademark of Red Hat, Inc. This is an unofficial Fedora Remix,
+not affiliated with or endorsed by the Fedora Project. The ISO it builds
+includes apps that may not be redistributed, so built ISOs are for personal
+use only.
 
