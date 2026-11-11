@@ -1,0 +1,58 @@
+#!/bin/bash
+# install-jetbrains-toolbox [ROOT]
+#
+# Installs the latest JetBrains Toolbox App (the launcher for IntelliJ IDEA,
+# PyCharm, Rider, ...) into ROOT/opt/jetbrains-toolbox, checksum-verified,
+# with a launcher entry and a `jetbrains-toolbox` command. ROOT defaults to /
+# (run with sudo); build-spin.sh passes the ISO's staging folder.
+#
+# On first start, Toolbox sets itself up in ~/.local/share/JetBrains/Toolbox,
+# updates itself there, and installs the IDEs you pick, per user.
+
+set -euo pipefail
+root="${1:-}"
+api='https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release'
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+
+json="$(curl -fsSL "$api")"
+url="$(jq -r '.TBA[0].downloads.linux.link // empty' <<<"$json")"
+sum_url="$(jq -r '.TBA[0].downloads.linux.checksumLink // empty' <<<"$json")"
+ver="$(jq -r '.TBA[0].version // "?"' <<<"$json")"
+[[ "$url" == https://* && "$sum_url" == https://* ]] \
+    || { echo "JetBrains didn't return a download link for Linux" >&2; exit 1; }
+
+curl -fsSL -o "$tmp/toolbox.tar.gz" "$url"
+want="$(curl -fsSL "$sum_url" | awk '{print $1; exit}')"
+have="$(sha256sum "$tmp/toolbox.tar.gz" | cut -d' ' -f1)"
+[[ -n "$want" && "$want" == "$have" ]] \
+    || { echo "JetBrains Toolbox checksum mismatch; not installing" >&2; exit 1; }
+
+dest="$root/opt/jetbrains-toolbox"
+rm -rf "$dest.new"; mkdir -p "$dest.new"
+tar -xzf "$tmp/toolbox.tar.gz" -C "$dest.new" --strip-components=1
+exe="$(cd "$dest.new" && find . -maxdepth 2 -type f -name jetbrains-toolbox -perm -u+x | head -n1)"
+[[ -n "$exe" ]] || { echo "Unexpected Toolbox archive layout; not installing" >&2; rm -rf "$dest.new"; exit 1; }
+icon="$(cd "$dest.new" && find . -maxdepth 3 -type f \( -name '*toolbox*.svg' -o -name '*toolbox*.png' \) | head -n1)"
+rm -rf "$dest"; mv "$dest.new" "$dest"
+chmod -R u=rwX,go=rX "$dest"
+
+exe="/opt/jetbrains-toolbox/${exe#./}"
+icon="${icon:+/opt/jetbrains-toolbox/${icon#./}}"
+mkdir -p "$root/usr/local/bin" "$root/usr/share/applications"
+ln -sfn "$exe" "$root/usr/local/bin/jetbrains-toolbox"
+# Same file name as the entry Toolbox writes for itself in ~/.local/share/
+# applications, so after its first start the launcher shows just one.
+cat > "$root/usr/share/applications/jetbrains-toolbox.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=JetBrains Toolbox
+Comment=Install and update JetBrains IDEs
+Exec=$exe
+Icon=${icon:-applications-development}
+Terminal=false
+Categories=Development;IDE;
+Keywords=jetbrains;intellij;idea;pycharm;rider;ide;
+EOF
+chmod 644 "$root/usr/share/applications/jetbrains-toolbox.desktop"
+echo "JetBrains Toolbox ${ver} installed in ${dest}"

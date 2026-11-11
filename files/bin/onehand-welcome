@@ -1,0 +1,305 @@
+#!/bin/bash
+# onehand-welcome: the friendly start of Fedora GNC.
+#
+#   On the live USB: install to disk, connect to Wi-Fi, learn the keys.
+#   After installing: a one-time checklist (apps, dictation, browser keys,
+#   screens, updates). Open it again any time from the launcher: "Welcome".
+#
+#   onehand-welcome            show the menu in this terminal
+#   onehand-welcome --launch   open it in its own window (used at login)
+#   onehand-welcome install    go straight to installing (live USB)
+
+set -uo pipefail
+SELF="$(readlink -f "$0")"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/onehand"
+LIVE=false
+grep -qw 'rd.live.image' /proc/cmdline 2>/dev/null && LIVE=true
+[[ "${ONEHAND_WELCOME_LIVE:-}" == 1 ]] && LIVE=true    # for testing
+
+# ----------------------------------------------------------- open a window
+niri_ready() {
+    if [[ -z "${NIRI_SOCKET:-}" ]]; then
+        local s; s="$(ls -t "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/niri.*.sock 2>/dev/null | head -1)"
+        [[ -n "$s" ]] && export NIRI_SOCKET="$s"
+    fi
+    niri msg version >/dev/null 2>&1
+}
+if [[ "${1:-}" == --launch ]]; then
+    shift
+    for _ in $(seq 1 30); do niri_ready && break; sleep 1; done
+    # foot draws without the GPU, so it also works in virtual machines.
+    if command -v foot >/dev/null; then
+        exec niri msg action spawn -- foot --app-id=gnc.welcome --title="Fedora GNC" \
+            -o font=monospace:size=13 "$SELF" "$@"
+    else
+        exec niri msg action spawn -- ghostty --class=gnc.welcome --title="Fedora GNC" -e "$SELF" "$@"
+    fi
+fi
+
+# ----------------------------------------------------------- drawing helpers
+B=$'\e[1m'; DIM=$'\e[2m'; OFF=$'\e[0m'; BLUE=$'\e[38;5;75m'; GREEN=$'\e[38;5;114m'
+YEL=$'\e[38;5;221m'; SEL=$'\e[1;38;5;16;48;5;75m'
+
+banner() {
+    clear
+    printf '\n  %s Fedora %sGNC%s   %sright hand only%s\n' "$B" "$BLUE" "$OFF" "$DIM" "$OFF"
+    printf '  %s──────────────────────────────────────────────────────────%s\n\n' "$DIM" "$OFF"
+}
+pause() { printf '\n  %sPress Enter to go back%s ' "$DIM" "$OFF"; read -rs _; }
+say()   { printf '  %s\n' "$@"; }
+done_mark() { mkdir -p "$STATE"; touch "$STATE/welcome-$1"; }
+is_done()   { [[ -e "$STATE/welcome-$1" ]]; }
+spawn() { if niri_ready; then niri msg action spawn -- "$@" >/dev/null 2>&1; else ( "$@" >/dev/null 2>&1 & ); fi; }
+
+# menu "Title" "item" ... -> CHOICE = index, or -1 for Esc
+# Keys: h / t (your down / up), arrows, Enter; Esc closes.
+menu() {
+    local title="$1"; shift
+    local items=("$@") n=$# sel=${MENU_SEL:-0} key rest
+    while true; do
+        banner
+        say "$title" ""
+        local i
+        for i in "${!items[@]}"; do
+            if (( i == sel )); then printf '  %s ▶ %-50s %s\n' "$SEL" "${items[i]}" "$OFF"
+            else printf '     %-50s\n' "${items[i]}"; fi
+        done
+        printf '\n  %sh t or ↓ ↑ move   ·   Enter choose   ·   Esc close%s\n' "$DIM" "$OFF"
+        IFS= read -rsn1 key
+        case "$key" in
+            h|j) sel=$(( (sel + 1) % n )) ;;
+            t|k) sel=$(( (sel - 1 + n) % n )) ;;
+            "")  CHOICE=$sel; MENU_SEL=$sel; return ;;
+            $'\e')
+                if IFS= read -rsn2 -t 0.05 rest; then
+                    case "$rest" in
+                        "[B") sel=$(( (sel + 1) % n )) ;;
+                        "[A") sel=$(( (sel - 1 + n) % n )) ;;
+                    esac
+                else
+                    CHOICE=-1; return
+                fi ;;
+        esac
+    done
+}
+
+# ----------------------------------------------------------- shared pages
+page_keys() {
+    banner
+    say "${B}The one-handed keys${OFF}" ""
+    say "${BLUE}Mod${OFF}       = hold ${B}Right Alt${OFF} (or the Win key)"
+    say "${BLUE}Polish${OFF}    = tap Right Alt, then a c e l n o s z x  →  ą ć ę ł ń ó ś ż ź"
+    say "${YEL}Sticky${OFF}    = tap Right Ctrl or Right Shift, then the key"
+    say ""
+    say "Mod + '        open an app (type its name)"
+    say "Mod + Enter    terminal"
+    say "Mod + e h t d  move between windows (← ↓ ↑ →)"
+    say "Mod + Bksp     close the window"
+    say "Mod + Insert   ${B}every shortcut${OFF}"
+    say "" "The wallpaper is a cheat sheet of all of them."
+    pause
+}
+
+page_wifi() {
+    if command -v nmtui >/dev/null; then
+        nmtui-connect || nmtui
+    else
+        banner; say "Use the network icon in the top bar to connect."; pause
+    fi
+}
+
+# ----------------------------------------------------------- live USB
+live_install() {
+    banner
+    say "${B}Install Fedora GNC on this computer${OFF}" ""
+    say "The installer opens in its own window in a moment. In it:"
+    say ""
+    say " 1. Language: pick yours (the keyboard is already right-handed Dvorak)."
+    say " 2. Disk: choose where to install. ${YEL}Using the whole disk erases it.${OFF}"
+    say " 3. Create your user and keep ${B}administrator${OFF} ticked."
+    say " 4. Wait for it to finish, then restart and remove the USB stick."
+    say ""
+    say "After restarting you log in on a text screen; niri starts by itself,"
+    say "and a short checklist like this one helps with the rest."
+    say ""
+    printf '  %sPress Enter to start the installer, Esc to go back%s ' "$DIM" "$OFF"
+    local k; IFS= read -rsn1 k
+    [[ "$k" == $'\e' ]] && return
+    printf '\n\n  Starting the installer… (its messages appear here)\n\n'
+    # Started as the desktop user, liveinst switches to root itself (pkexec,
+    # allowed without a password for the logged-in user) and tells the
+    # installer whose desktop to open its window on. With sudo it can't, and
+    # stops with "root Wayland socket not found".
+    liveinst
+    printf '\n  The installer has closed.\n'
+    pause
+}
+
+live_main() {
+    [[ "${1:-}" == install ]] && live_install
+    while true; do
+        menu "Welcome! This is the live USB: nothing is installed yet." \
+            "Install Fedora GNC on this computer" \
+            "Connect to Wi-Fi" \
+            "Learn the one-handed keys" \
+            "Just try it (close this window)"
+        case "$CHOICE" in
+            0) live_install ;;
+            1) page_wifi ;;
+            2) page_keys ;;
+            *) exit 0 ;;
+        esac
+    done
+}
+
+# ----------------------------------------------------------- installed system
+FLATPAK_LIST="${ONEHAND_FLATPAKS:-/etc/onehand/flatpaks}"
+flatpak_list() { grep -v -e '^[[:space:]]*#' -e '^[[:space:]]*$' "$FLATPAK_LIST" 2>/dev/null; }
+
+page_apps() {
+    banner
+    say "${B}Apps from Flathub${OFF}" ""
+    if [[ ! -s "$FLATPAK_LIST" ]]; then
+        say "No app list found ($FLATPAK_LIST)."; pause; return
+    fi
+    local id missing=()
+    while read -r id; do
+        [[ -n "$id" ]] || continue
+        if flatpak info "$id" >/dev/null 2>&1; then say "${GREEN}✓${OFF} $id"
+        else say "${DIM}…${OFF} $id"; missing+=("$id"); fi
+    done < <(flatpak_list)
+    say ""
+    if (( ${#missing[@]} == 0 )); then
+        say "All installed."; done_mark apps; pause; return
+    fi
+    if systemctl is-active --quiet niri-spin-flatpaks.service 2>/dev/null; then
+        say "They're being downloaded in the background right now."
+    fi
+    printf '  %sPress Enter to install the missing ones now (needs internet), Esc to go back%s ' "$DIM" "$OFF"
+    local k; IFS= read -rsn1 k; [[ "$k" == $'\e' ]] && return
+    echo; echo
+    if sudo flatpak install -y --noninteractive flathub "${missing[@]}"; then
+        done_mark apps; say "" "${GREEN}Done.${OFF}"
+    else
+        say "" "${YEL}Not finished. Check the internet connection and try again.${OFF}"
+    fi
+    pause
+}
+
+page_voice() {
+    banner
+    say "${B}Dictation and read-aloud (Speech Note)${OFF}" ""
+    if ! flatpak info net.mkiol.SpeechNote >/dev/null 2>&1; then
+        say "Speech Note isn't installed yet: do \"Apps from Flathub\" first."; pause; return
+    fi
+    say "Speech Note opens now. Once, in its settings:"
+    say " 1. Find ${B}Languages and models${OFF}, choose ${B}Polish${OFF}."
+    say " 2. Download a speech-to-text model (Whisper is good) and a voice."
+    say " 3. Set the listening mode to ${B}One sentence${OFF}: it stops by itself."
+    say ""
+    say "Then, in any window:  Mod + c dictate · Mod + i stop"
+    say "                      Mod + a read the clipboard aloud · Mod + x stop"
+    spawn flatpak run net.mkiol.SpeechNote
+    done_mark voice
+    pause
+}
+
+page_vimium() {
+    local opts="chrome-extension://hfjbmagddngcpeloejdejnfgbamkjaeg/pages/options.html"
+    banner
+    say "${B}Browser keys (Vimium C)${OFF}" ""
+    say "Vimium C is installed in Brave, Brave Nightly and Chrome automatically."
+    say "Load your one-handed keys once per browser:"
+    say ""
+    say " 1. Open Vimium C's options (puzzle-piece icon → Vimium C → Options)."
+    say " 2. At the bottom: ${B}Import settings${OFF}."
+    say " 3. Pick ${B}Documents/vimium-c-onehand.json${OFF}."
+    say ""
+    say "Keys: e h t d scroll · i open a link · a c switch tab · ' help"
+    say ""
+    printf '  %sEnter: open the options in Brave · c: in Chrome · Esc: back%s ' "$DIM" "$OFF"
+    local k; IFS= read -rsn1 k
+    case "$k" in
+        "") spawn brave-browser "$opts"; done_mark vimium ;;
+        c)  spawn google-chrome "$opts"; done_mark vimium ;;
+    esac
+}
+
+page_screens() {
+    banner
+    say "${B}Screens${OFF}" ""
+    say "Main screen (ASUS): workspace ${BLUE}code${OFF} → Zed, Ghostty"
+    say "Second screen (BenQ, right): ${BLUE}web${OFF} → browsers, ${BLUE}notes${OFF} → Obsidian"
+    say "Apps open on their screen by themselves. Mod + Home jumps across."
+    say ""
+    if command -v onehand-monitors >/dev/null; then
+        onehand-monitors && say "" "${GREEN}✓${OFF} Screens set up." \
+            || say "" "${YEL}Couldn't read the screens (is niri running?).${OFF}"
+        say "" "Plug in a screen later? Run: onehand-monitors"
+    fi
+    done_mark screens
+    pause
+}
+
+page_updates() {
+    banner
+    say "${B}Updates${OFF}" ""
+    sudo dnf upgrade --refresh -y && flatpak update -y --noninteractive \
+        && { done_mark updates; say "" "${GREEN}✓ Up to date.${OFF}"; } \
+        || say "" "${YEL}Some updates didn't finish; try again later.${OFF}"
+    pause
+}
+
+page_kbcheck() {
+    banner
+    say "${B}Right-handed Dvorak everywhere${OFF}" ""
+    if onehand-keyboard-check; then
+        done_mark kbcheck
+    else
+        echo
+        printf '  %sPress Enter to fix it (asks for your password), Esc to go back%s ' "$DIM" "$OFF"
+        local k; IFS= read -rsn1 k
+        if [[ "$k" != $'\e' ]]; then echo; onehand-keyboard-check --fix && done_mark kbcheck; fi
+    fi
+    pause
+}
+
+page_help() {
+    page_keys
+    [[ -f "$HOME/Documents/niri-tutorial.pdf" ]] && spawn xdg-open "$HOME/Documents/niri-tutorial.pdf"
+    done_mark keys
+}
+
+installed_main() {
+    local t
+    while true; do
+        t() { if is_done "$1"; then printf '✓ %s' "$2"; else printf '  %s' "$2"; fi; }
+        menu "Welcome to your new system. A few one-time steps:" \
+            "$(t network 'Network and Wi-Fi')" \
+            "$(t apps 'Apps from Flathub')" \
+            "$(t voice 'Dictation: download the Polish model')" \
+            "$(t vimium 'Browser keys: import Vimium C settings')" \
+            "$(t screens 'Screens: ASUS + BenQ')" \
+            "$(t keys 'The one-handed keys and the niri tutorial')" \
+            "$(t kbcheck 'Check right-handed Dvorak everywhere')" \
+            "$(t updates 'Check for updates')" \
+            "All done: don't show this at login again"
+        case "$CHOICE" in
+            0) page_wifi; done_mark network ;;
+            1) page_apps ;;
+            2) page_voice ;;
+            3) page_vimium ;;
+            4) page_screens ;;
+            5) page_help ;;
+            6) page_kbcheck ;;
+            7) page_updates ;;
+            8) mkdir -p "$STATE"; touch "$STATE/welcome-done"
+               banner; say "It won't open at login any more." \
+                   "Find it again in the launcher (Mod + ') as ${B}Welcome${OFF}."
+               sleep 2; exit 0 ;;
+            *) exit 0 ;;
+        esac
+    done
+}
+
+if $LIVE; then live_main "$@"; else installed_main; fi

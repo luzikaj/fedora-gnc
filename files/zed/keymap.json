@@ -1,0 +1,65 @@
+// Zed keymap for RIGHT-HANDED (one-handed) Dvorak, Helix mode.
+// Same scheme as the Helix config.toml:
+//
+//   resting keys   e = ←   h = ↓   t = ↑   d = →
+//   k = delete (was d)   j = till char (was t)   l = word end (was e)
+//   D = delete without yanking   ctrl-t in insert = back to normal
+//
+// Put this in ~/.config/zed/keymap.json and add to ~/.config/zed/settings.json:
+//   "helix_mode": true
+[
+  {
+    // Normal and select mode share the same motions; in select mode
+    // they extend the selection, just like in Helix.
+    "context": "(vim_mode == helix_normal || vim_mode == helix_select) && !menu",
+    "bindings": {
+      // Movement on the home row
+      "e": "vim::WrappingLeft",
+      "h": ["vim::Down", { "display_lines": true }],
+      "t": ["vim::Up", { "display_lines": true }],
+      "d": "vim::WrappingRight",
+
+      // Displaced commands
+      "k": "vim::HelixDelete",
+      "shift-d": "editor::Delete", // delete without yanking
+      "j": ["vim::PushFindForward", { "before": true, "multiline": true }],
+      "l": "vim::NextWordEnd",
+      "shift-l": ["vim::NextWordEnd", { "ignore_punctuation": true }],
+
+      // View: z h / z t scroll, Z H / Z T half page, z u = cursor line to top
+      "z h": "vim::LineDown",
+      "z t": "vim::LineUp",
+      "z shift-h": "vim::ScrollDown",
+      "z shift-t": "vim::ScrollUp",
+      "z u": "editor::ScrollCursorTop",
+      "z c": "editor::ScrollCursorCenter",
+      "z b": "editor::ScrollCursorBottom",
+
+      // Splits: space w + e/h/t/d moves, shift swaps
+      "space w e": "workspace::ActivatePaneLeft",
+      "space w h": "workspace::ActivatePaneDown",
+      "space w t": "workspace::ActivatePaneUp",
+      "space w d": "workspace::ActivatePaneRight",
+      "space w shift-e": "workspace::SwapPaneLeft",
+      "space w shift-h": "workspace::SwapPaneDown",
+      "space w shift-t": "workspace::SwapPaneUp",
+      "space w shift-d": "workspace::SwapPaneRight",
+
+      "ctrl-w e": "workspace::ActivatePaneLeft",
+      "ctrl-w h": "workspace::ActivatePaneDown",
+      "ctrl-w t": "workspace::ActivatePaneUp",
+      "ctrl-w d": "workspace::ActivatePaneRight",
+      "ctrl-w shift-e": "workspace::SwapPaneLeft",
+      "ctrl-w shift-h": "workspace::SwapPaneDown",
+      "ctrl-w shift-t": "workspace::SwapPaneUp",
+      "ctrl-w shift-d": "workspace::SwapPaneRight"
+    }
+  },
+  {
+    // Leave insert mode without reaching for Esc (right Ctrl + t)
+    "context": "vim_mode == insert",
+    "bindings": {
+      "ctrl-t": "vim::NormalBefore"
+    }
+  }
+]

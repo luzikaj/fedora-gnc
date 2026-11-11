@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome to Fedora GNC
+GenericName=Welcome
+Comment=Install, first steps and the one-handed keys
+Exec=/usr/local/bin/onehand-welcome --launch
+Icon=fedora-gnc-logo
+Terminal=false
+Categories=System;Settings;
+Keywords=welcome;install;setup;help;keys;

@@ -1,0 +1,49 @@
+# Quick checks on every push: scripts parse, configs are well-formed.
+# (The ISO itself is built on your own Fedora machine with ./build-spin.sh.)
+name: check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell scripts parse
+        run: |
+          for f in fedora-setup.sh build-spin.sh mount-internal-drives.sh update/update.sh \
+                   tools/*.sh tools/wallpaper/build.sh files/bin/* files/jetbrains/*; do
+            bash -n "$f" && echo "ok  $f"
+          done
+      - name: JSON files parse (Zed's allow comments and trailing commas)
+        run: |
+          python3 - <<'PY'
+          import glob, json, re, sys
+          def strip(t):
+              t = re.sub(r'"(?:\\.|[^"\\])*"|//[^\n]*|/\*.*?\*/',
+                         lambda m: m.group(0) if m.group(0).startswith('"') else '', t, flags=re.S)
+              return re.sub(r',(\s*[}\]])', r'\1', t)
+          bad = 0
+          for f in sorted(glob.glob("files/vimium/*.json") + glob.glob("files/zed/*.json")):
+              try:
+                  json.loads(strip(open(f).read()) if "/zed/" in f else open(f).read())
+                  print("ok ", f)
+              except Exception as e:
+                  print("BAD", f, e); bad = 1
+          sys.exit(bad)
+          PY
+      - name: niri config braces balance
+        run: |
+          python3 - <<'PY'
+          import re, glob, sys
+          bad = 0
+          for f in glob.glob("files/niri/*.kdl"):
+              t = re.sub(r'r#".*?"#|"(?:\\.|[^"\\])*"|//[^\n]*', '', open(f).read(), flags=re.S)
+              if t.count("{") != t.count("}"):
+                  print("UNBALANCED", f); bad = 1
+              else:
+                  print("ok ", f)
+          sys.exit(bad)
+          PY
+      - name: Update package builds
+        run: tools/make-update-package.sh
+      - name: ShellCheck (advice only)
+        run: shellcheck -S warning fedora-setup.sh build-spin.sh update/update.sh files/bin/* || true

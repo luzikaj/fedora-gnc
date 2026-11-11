@@ -1,0 +1,28 @@
+#!/bin/bash
+# onehand-terminal: open Ghostty, or foot if Ghostty can't start.
+#
+# Ghostty needs working 3D graphics; in virtual machines without them it closes
+# straight away. Then foot (drawn without the GPU) opens instead, and is used
+# directly for the rest of this login.
+#   onehand-terminal [ARGS…]   extra arguments go to the terminal
+
+flag="${XDG_RUNTIME_DIR:-/tmp}/onehand-terminal-use-foot"
+
+if [[ ! -e "$flag" ]] && command -v ghostty >/dev/null; then
+    ghostty "$@" &
+    pid=$!
+    # A working Ghostty keeps running (or hands the window to an already
+    # running Ghostty and exits with 0). A failing one exits with an error.
+    for _ in 1 2 3 4 5 6; do
+        sleep 0.5
+        kill -0 "$pid" 2>/dev/null || break
+    done
+    if kill -0 "$pid" 2>/dev/null; then
+        wait "$pid"; exit $?
+    fi
+    wait "$pid" && exit 0
+    touch "$flag"
+    command -v notify-send >/dev/null && \
+        notify-send -a Terminal "Ghostty couldn't start" "Using the foot terminal instead (no 3D graphics?)." || true
+fi
+exec foot "$@"

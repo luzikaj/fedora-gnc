@@ -1,0 +1,111 @@
+#!/bin/bash
+# onehand-keyboard-check: is right-handed Dvorak in force everywhere?
+#
+#   onehand-keyboard-check         check every place the layout is set
+#   onehand-keyboard-check --fix   set it again where it's wrong (asks for sudo)
+#
+# Layers checked:
+#   desktop (niri, and every app in it)  layout dvorak_r_pl from /etc/xkb
+#   text console + login screen          /etc/vconsole.conf
+#   disk-unlock prompt at boot           the console keymap inside the initramfs
+#   X11 setting (GDM, other desktops)    localectl X11 layout
+#   key remapping                        keyd (Right Alt, sticky Ctrl/Shift)
+
+set -uo pipefail
+FIX=false; [[ "${1:-}" == --fix ]] && FIX=true
+CONSOLE_MAPS=(dvorak-r us-dvorak-r)      # identical letters; first one found wins
+X_LAYOUT=us X_VARIANT=dvorak-r
+problems=0
+
+ok()   { printf '  \e[32m✓\e[0m %s\n' "$*"; }
+bad()  { printf '  \e[31m✗\e[0m %s\n' "$*"; problems=$((problems + 1)); }
+note() { printf '  \e[2m%s\e[0m\n' "$*"; }
+section() { printf '\n\e[1m%s\e[0m\n' "$*"; }
+
+keymap_exists() {
+    find /usr/lib/kbd/keymaps /lib/kbd/keymaps -name "$1.map*" 2>/dev/null | grep -q .
+}
+best_console_map() {
+    local m; for m in "${CONSOLE_MAPS[@]}"; do keymap_exists "$m" && { echo "$m"; return; }; done
+}
+
+# ---------------------------------------------------------------- desktop
+section "Desktop (niri and all apps in it)"
+if [[ -f /etc/xkb/symbols/dvorak_r_pl ]]; then ok "layout file /etc/xkb/symbols/dvorak_r_pl"
+else bad "layout file /etc/xkb/symbols/dvorak_r_pl is missing (niri would fall back to US QWERTY)"; fi
+cfg="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
+if grep -qE '^\s*layout\s+"dvorak_r_pl"' "$cfg" 2>/dev/null; then ok "niri config uses layout \"dvorak_r_pl\""
+else bad "niri config ($cfg) doesn't set layout \"dvorak_r_pl\""; fi
+if command -v niri >/dev/null && niri msg keyboard-layouts >/dev/null 2>&1; then
+    note "niri reports: $(niri msg keyboard-layouts 2>/dev/null | tr '\n' ' ' | sed 's/  */ /g')"
+fi
+for f in "$HOME/.config/xkb/symbols/"*; do
+    [[ -e "$f" ]] && note "note: $f overrides files of the same name in /etc/xkb"
+done
+
+# ---------------------------------------------------------------- console
+section "Text console and login screen"
+want="$(best_console_map)"
+have="$(sed -n 's/^KEYMAP=//p' /etc/vconsole.conf 2>/dev/null | tr -d '"')"
+if [[ -z "$want" ]]; then
+    bad "no right-handed Dvorak console keymap installed (needs: sudo dnf install kbd-legacy)"
+elif [[ " ${CONSOLE_MAPS[*]} " == *" $have "* ]] && keymap_exists "$have"; then
+    ok "console keymap: $have"
+else
+    bad "console keymap is '${have:-unset}', should be $want"
+fi
+
+# ---------------------------------------------------------------- disk unlock
+section "Disk-unlock prompt at boot"
+if grep -qvE '^\s*(#|$)' /etc/crypttab 2>/dev/null; then
+    img="/boot/initramfs-$(uname -r).img"
+    if command -v lsinitrd >/dev/null && [[ -r "$img" ]]; then
+        inmap="$(lsinitrd "$img" -f /etc/vconsole.conf 2>/dev/null | sed -n 's/^KEYMAP=//p' | tr -d '"')"
+        if [[ " ${CONSOLE_MAPS[*]} " == *" $inmap "* ]]; then ok "boot image uses $inmap"
+        else bad "boot image uses '${inmap:-unknown}' (rebuild it: sudo dracut -f)"; fi
+    else
+        note "can't read $img (run as root to check)"
+    fi
+    note "the unlock prompt has no Polish letters: keep the disk passphrase to plain characters"
+else
+    ok "no encrypted disks"
+fi
+
+# ---------------------------------------------------------------- X11 setting
+section "X11 setting (GDM, other desktops)"
+xl="$(localectl status 2>/dev/null | sed -n 's/^ *X11 Layout: *//p')"
+xv="$(localectl status 2>/dev/null | sed -n 's/^ *X11 Variant: *//p')"
+if [[ "$xl" == "$X_LAYOUT" && "$xv" == "$X_VARIANT" ]]; then ok "X11 layout: $xl ($xv)"
+else bad "X11 layout is '${xl:-unset}${xv:+ ($xv)}', should be $X_LAYOUT ($X_VARIANT)"; fi
+
+# ---------------------------------------------------------------- keyd
+section "Key remapping (keyd)"
+if systemctl is-active --quiet keyd 2>/dev/null; then ok "keyd is running"
+else bad "keyd isn't running (Right Alt as Mod, sticky Ctrl/Shift won't work)"; fi
+if grep -q '^rightalt *= *overload(meta, *oneshot(altgr))' /etc/keyd/default.conf 2>/dev/null; then
+    ok "Right Alt: hold = Mod, tap = Polish letters"
+else bad "/etc/keyd/default.conf doesn't have the Right Alt rule"; fi
+
+# ---------------------------------------------------------------- result / fix
+echo
+if (( problems == 0 )); then
+    printf '\e[32mRight-handed Dvorak is in force everywhere.\e[0m\n'
+    exit 0
+fi
+printf '\e[33m%d problem(s).\e[0m\n' "$problems"
+if ! $FIX; then
+    echo "Run: onehand-keyboard-check --fix"
+    exit 1
+fi
+
+echo; echo "Fixing…"
+[[ -n "$want" ]] || { sudo dnf install -y kbd-legacy; want="$(best_console_map)"; }
+[[ -n "$want" ]] && sudo localectl set-keymap --no-convert "$want"
+sudo localectl set-x11-keymap --no-convert "$X_LAYOUT" "" "$X_VARIANT"
+sudo systemctl enable --now keyd 2>/dev/null || true
+if grep -qvE '^\s*(#|$)' /etc/crypttab 2>/dev/null; then
+    echo "Rebuilding the boot image so the disk-unlock prompt uses it (a minute or two)…"
+    sudo dracut -f
+fi
+[[ -f /etc/xkb/symbols/dvorak_r_pl ]] || echo "The layout file is missing: re-run fedora-setup (or the update) to put it back."
+echo; exec "$0"

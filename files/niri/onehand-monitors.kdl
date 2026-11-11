@@ -1,0 +1,8 @@
+// onehand-monitors.kdl: written by `onehand-monitors` at every niri login.
+// This starting version is for one screen; with two screens it is rewritten
+// with their names and positions. To edit it yourself and stop it being
+// rewritten, add a line:  // KEEP-MINE
+
+workspace "code"
+workspace "web"
+workspace "notes"

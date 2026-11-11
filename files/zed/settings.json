@@ -1,0 +1,6 @@
+// Zed settings for the one-handed setup (installed only if you have no
+// settings.json yet; otherwise add the line below to yours).
+{
+  // keymap.json is written for Helix mode
+  "helix_mode": true
+}

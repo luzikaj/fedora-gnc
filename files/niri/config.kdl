@@ -1,0 +1,229 @@
+// niri config: one-handed RIGHT-hand Dvorak with Polish letters
+// Put it at ~/.config/niri/config.kdl (keep your own `output` blocks),
+// and the layout file at ~/.config/xkb/symbols/dvorak_r_pl.
+//
+// Polish: tap Right Alt, then a c e l n o s z x -> ą ć ę ł ń ó ś ż ź
+// Mod = hold Right Alt (via keyd, tap = Polish letter) or the left Win key.
+//
+// niri matches binds by the letter your layout types, so the binds below
+// use dvorak-r letters. For reference, physical (QWERTY-position) -> letter:
+//
+//   [6]=l  [7]=m  [8]=f  [9]=p  [0]=slash  [-]=bracketleft  [=]=bracketright
+//   [Y]=r  [U]=s  [I]=u  [O]=y  [P]=b      [[]=semicolon    []]=equal
+//   [H]=h  [J]=t  [K]=d  [L]=c  [;]=k      [']=minus
+//   [N]=n  [M]=w  [,]=v  [.]=g  [/]=apostrophe
+//
+// Cheat sheet, by the letters on your right-handed Dvorak keycaps.
+// Every shortcut is Mod + ONE key, no Shift.
+//
+//   Number row   l width preset   m narrower   f wider   p center   / tabs
+//                [ notifications  ] clipboard  Backspace close window
+//   Top row      o move column left   r move window down   s move window up
+//                u move column right  y fullscreen   b maximize
+//                ; = pull in / push out
+//   Home row     e h t d focus left / down / up / right (same as Helix)
+//                k floating
+//                - overview   Enter terminal
+//   Bottom row   n workspace up   w workspace down
+//                v send column to workspace up   g send column down
+//                ' launcher
+//   Nav cluster  Insert all shortcuts   Delete lock   PgUp previous workspace
+//                PgDn Dux settings      Home other monitor   End send column
+//                to other monitor
+//   Free keys    c dictate into the window (Speech Note)   i stop dictating
+//                a read the clipboard aloud   x stop reading / cancel
+//                z move the whole workspace to the other monitor
+//   Far away     Pause force-close (kills the app; deliberately hard to hit)
+//   Arrows       volume up / down, Left mute, Right play/pause
+//   F9           audio devices (pavucontrol)
+//
+// Two monitors: workspaces "code" (main screen), "web" and "notes" (second
+// screen) come from onehand-monitors.kdl; app placement from onehand-rules.kdl.
+//
+// Needs niri 25.11+ (for `include`) and Dux Shell's files in ~/.config/niri/dms/.
+
+input {
+    keyboard {
+        xkb {
+            // Custom layout from /etc/xkb/symbols/dvorak_r_pl (check it with
+            // `onehand-keyboard-check`):
+            // us(dvorak-r) + Polish letters on AltGr + Menu key as Super.
+            layout "dvorak_r_pl"
+        }
+        // repeat-delay 600
+        // repeat-rate 25
+        numlock
+    }
+
+    // Mod = Super = the Menu key (and the left Super key).
+    mod-key "Super"
+    mod-key-nested "Alt"
+
+    // Keyboard-first: move the pointer with focus so it never sits on the
+    // wrong window, and don't let a stray pointer steal focus.
+    warp-mouse-to-focus
+    // focus-follows-mouse max-scroll-amount="0%"
+
+    // Pressing Mod + [6]..[0] for the workspace you're already on
+    // jumps back to the previous one.
+    workspace-auto-back-and-forth
+
+    touchpad {
+        tap
+        natural-scroll
+    }
+}
+
+layout {
+    gaps 12
+
+    // Keep the focused column on screen without jumping around constantly.
+    center-focused-column "on-overflow"
+    always-center-single-column
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+    preset-window-heights {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+
+    // A strong focus ring matters when you navigate by keyboard only.
+    focus-ring {
+        width 4
+        active-color "#7fc8ff"
+        inactive-color "#505050"
+    }
+    border {
+        off
+    }
+}
+
+prefer-no-csd
+
+// Dux Shell provides the bar, launcher, notifications and lock screen,
+// so waybar / fuzzel / swaylock are no longer started here.
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// Dux Shell's panels sit in the backdrop of the overview.
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+
+// ---- One-handed extras: screens + named workspaces, and where apps open.
+include "onehand-monitors.kdl"
+include "onehand-rules.kdl"
+
+// Work out the screens (ASUS main, BenQ second) at every login.
+spawn-at-startup "onehand-monitors"
+// Speech Note waits in the tray, so dictation starts instantly.
+spawn-sh-at-startup "flatpak info net.mkiol.SpeechNote >/dev/null 2>&1 && flatpak run net.mkiol.SpeechNote --start-in-tray"
+
+// ---- Dux Shell managed files (theme colors, gaps, alt-tab, its own binds).
+// They come AFTER the layout above, so the Dux theme wins on colors and gaps,
+// but BEFORE the binds below, so the one-handed binds win on any clash
+// (Dux's defaults use Mod+V / M / N / Y, which are our [,] [7] [N] [O] keys).
+include "dms/colors.kdl"
+include "dms/layout.kdl"
+include "dms/alttab.kdl"
+include "dms/binds.kdl"
+
+binds {
+    // Mod + one key, no Shift anywhere. [brackets] = physical key.
+
+    // ------------------------------------------------ home row: focus & basics
+    // Same directions as Helix: e h t d = left / down / up / right.
+    Mod+e hotkey-overlay-title="Focus left [e]" { focus-column-left; }
+    Mod+h hotkey-overlay-title="Focus down / next workspace [h]" { focus-window-or-workspace-down; }
+    Mod+t hotkey-overlay-title="Focus up / previous workspace [t]" { focus-window-or-workspace-up; }
+    Mod+d hotkey-overlay-title="Focus right [d]" { focus-column-right; }
+    Mod+k hotkey-overlay-title="Floating on/off [k]" { toggle-window-floating; }
+    Mod+minus repeat=false hotkey-overlay-title="Overview [-]" { toggle-overview; }
+    Mod+Return repeat=false hotkey-overlay-title="Terminal [Enter]" { spawn "onehand-terminal"; }
+
+    // ------------------------------------------------ audio: arrow keys
+    // (focus already lives on e h t d, so the arrows do sound instead).
+    // wpctl talks to PipeWire directly, so these work even if Dux is down;
+    // Dux still shows its volume pop-up when the level changes.
+    Mod+Up    allow-when-locked=true hotkey-overlay-title="Volume up [Up]" { spawn-sh "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"; }
+    Mod+Down  allow-when-locked=true hotkey-overlay-title="Volume down [Down]" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }
+    Mod+Left  allow-when-locked=true repeat=false hotkey-overlay-title="Mute on/off [Left]" { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    Mod+Right allow-when-locked=true repeat=false hotkey-overlay-title="Play/pause [Right]" { spawn-sh "playerctl play-pause"; }
+    // Choose speakers / headphones / microphone in a window.
+    Mod+F9 repeat=false hotkey-overlay-title="Audio devices [F9]" { spawn "pavucontrol"; }
+
+    // ------------------------------------------------ top row: move windows
+    // o r s u sit right above e h t d: same directions, but MOVE instead of focus.
+    Mod+o hotkey-overlay-title="Move column left [o]" { move-column-left; }
+    Mod+r hotkey-overlay-title="Move window down [r]" { move-window-down-or-to-workspace-down; }
+    Mod+s hotkey-overlay-title="Move window up [s]" { move-window-up-or-to-workspace-up; }
+    Mod+u hotkey-overlay-title="Move column right [u]" { move-column-right; }
+    Mod+y repeat=false hotkey-overlay-title="Fullscreen [y]" { fullscreen-window; }
+    Mod+b repeat=false hotkey-overlay-title="Maximize column [b]" { maximize-column; }
+    Mod+semicolon hotkey-overlay-title="Pull window in from left [;]" { consume-or-expel-window-left; }
+    Mod+equal     hotkey-overlay-title="Push window out right [=]" { consume-or-expel-window-right; }
+    Mod+backslash repeat=false hotkey-overlay-title="Fullscreen [\\]" { fullscreen-window; }
+
+    // ------------------------------------------------ bottom row: workspaces
+    Mod+n hotkey-overlay-title="Workspace up [n]" { focus-workspace-up; }
+    Mod+w hotkey-overlay-title="Workspace down [w]" { focus-workspace-down; }
+    Mod+v hotkey-overlay-title="Send column to workspace up [v]" { move-column-to-workspace-up; }
+    Mod+g hotkey-overlay-title="Send column to workspace down [g]" { move-column-to-workspace-down; }
+    Mod+apostrophe repeat=false hotkey-overlay-title="Launcher [']" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+
+    // ------------------------------------------------ number row: size & panels
+    Mod+l hotkey-overlay-title="Cycle column width [l]" { switch-preset-column-width; }
+    Mod+m hotkey-overlay-title="Narrower [m]" { set-column-width "-10%"; }
+    Mod+f hotkey-overlay-title="Wider [f]" { set-column-width "+10%"; }
+    Mod+p hotkey-overlay-title="Center column [p]" { center-column; }
+    Mod+slash repeat=false hotkey-overlay-title="Tabbed column [/]" { toggle-column-tabbed-display; }
+    Mod+bracketleft repeat=false hotkey-overlay-title="Notifications [[]" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
+    Mod+bracketright repeat=false hotkey-overlay-title="Clipboard []]" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
+    Mod+BackSpace repeat=false hotkey-overlay-title="Close window [Backspace]" { close-window; }
+
+    // ------------------------------------------------ nav cluster: less frequent
+    Mod+Insert repeat=false hotkey-overlay-title="All shortcuts [Insert]" { spawn "dms" "ipc" "call" "keybinds" "toggle" "niri"; }
+    Mod+Delete repeat=false hotkey-overlay-title="Lock screen [Delete]" { spawn "dms" "ipc" "call" "lock" "lock"; }
+    Mod+Page_Up repeat=false hotkey-overlay-title="Previous workspace [PgUp]" { focus-workspace-previous; }
+    Mod+Page_Down repeat=false hotkey-overlay-title="Dux settings [PgDn]" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
+    Mod+Home repeat=false hotkey-overlay-title="Other monitor [Home]" { focus-monitor-next; }
+    Mod+End  repeat=false hotkey-overlay-title="Send column to other monitor [End]" { move-column-to-monitor-next; }
+    Mod+z    repeat=false hotkey-overlay-title="Move workspace to other monitor [z]" { move-workspace-to-monitor-next; }
+
+    // ------------------------------------------------ voice: Speech Note
+    // Dictation types into the focused window; reading speaks the clipboard.
+    // First time: open Speech Note and download a Polish speech model.
+    Mod+c repeat=false hotkey-overlay-title="Dictate into window [c]" { spawn "flatpak" "run" "net.mkiol.SpeechNote" "--action" "start-listening-active-window"; }
+    Mod+i repeat=false hotkey-overlay-title="Stop dictating [i]" { spawn "flatpak" "run" "net.mkiol.SpeechNote" "--action" "stop-listening"; }
+    Mod+a repeat=false hotkey-overlay-title="Read clipboard aloud [a]" { spawn "flatpak" "run" "net.mkiol.SpeechNote" "--action" "start-reading-clipboard"; }
+    Mod+x repeat=false hotkey-overlay-title="Stop reading / cancel [x]" { spawn "flatpak" "run" "net.mkiol.SpeechNote" "--action" "cancel"; }
+
+    // Force-close for apps that ignore close (e.g. VLC). Needs: sudo dnf install jq
+    // Deliberately on a far key so you can't hit it by accident.
+    Mod+Pause repeat=false hotkey-overlay-title="Force close app [Pause]" { spawn-sh "kill $(niri msg --json focused-window | jq -r .pid)"; }
+
+    // ------------------------------------------------ screenshots & misc
+    Print      { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Mod+Print  { screenshot-window; }
+    Mod+Scroll_Lock allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    // Mouse wheel, for the times you do grab the mouse.
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+
+    // Media / volume / brightness keys come from dms/binds.kdl (with on-screen OSD).
+}

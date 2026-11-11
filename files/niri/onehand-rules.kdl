@@ -1,0 +1,82 @@
+// onehand-rules.kdl: where apps open and how (included from config.kdl).
+//
+// Workspaces "code", "web" and "notes" are declared in onehand-monitors.kdl,
+// which `onehand-monitors` writes on every login for the screens it finds:
+//   main screen (ASUS)       code   -> Zed, Ghostty, JetBrains IDEs
+//   second screen (BenQ)     web    -> Brave, Brave Nightly, Chrome
+//                            notes  -> Obsidian
+// With one screen, all three are simply on it, in that order.
+// To stop an app moving, delete its `open-on-workspace` line.
+
+// ---- your main browsers -> "web", two thirds wide
+// (Brave, Brave Nightly, Chrome)
+window-rule {
+    match app-id=r#"^(brave-browser|brave-browser-nightly|google-chrome)$"#
+    open-on-workspace "web"
+    default-column-width { proportion 0.66667; }
+}
+
+// ---- editor and terminal -> "code"
+window-rule {
+    match app-id=r#"^dev\.zed\.Zed"#
+    open-on-workspace "code"
+    default-column-width { proportion 0.66667; }
+}
+window-rule {
+    match app-id=r#"^(com\.mitchellh\.ghostty|foot)$"#
+    open-on-workspace "code"
+    default-column-width { proportion 0.5; }
+}
+
+// JetBrains IDEs (IntelliJ IDEA, PyCharm, Rider ...) -> "code"; their
+// Toolbox launcher floats wherever you open it.
+window-rule {
+    match app-id=r#"^jetbrains-"#
+    exclude app-id=r#"^jetbrains-toolbox$"#
+    open-on-workspace "code"
+    default-column-width { proportion 0.66667; }
+}
+window-rule {
+    match app-id=r#"^jetbrains-toolbox$"#
+    open-floating true
+}
+
+// ---- notes -> "notes"
+window-rule {
+    match app-id=r#"^(md\.obsidian\.Obsidian|obsidian)$"#
+    open-on-workspace "notes"
+    default-column-width { proportion 0.66667; }
+}
+
+// ---- small tools float above everything and don't take the keyboard focus
+// Speech Note (dictation) must leave focus on the window you're dictating into.
+window-rule {
+    match app-id=r#"^(net\.mkiol\.SpeechNote|dsnote)$"#
+    open-floating true
+    open-focused false
+}
+window-rule {
+    match app-id=r#"^org\.pulseaudio\.pavucontrol$"#
+    open-floating true
+    default-column-width { fixed 900; }
+    default-window-height { fixed 600; }
+}
+
+// ---- pop-ups that should never become a full column
+window-rule {
+    match title=r#"^Picture[- ]in[- ]Picture$"#
+    open-floating true
+}
+window-rule {
+    // File pickers (the portal's own windows)
+    match app-id=r#"^xdg-desktop-portal"#
+    open-floating true
+}
+
+// ---- the Welcome window (install, first steps): a floating box in the middle
+window-rule {
+    match app-id=r#"^gnc\.welcome$"#
+    open-floating true
+    default-column-width { fixed 1000; }
+    default-window-height { fixed 680; }
+}
