@@ -2,6 +2,12 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-12
+- Mod + j: switch focus between floating and tiled windows (a floating window
+  could hide a tiled one with no key to reach it).
+- Welcome window tiles itself while the installer runs, so the installer's
+  window is alone in front (it opened behind the Welcome window).
+
 ## 2026-11-11
 - Learning aids: weekly cheat sheets with daily drills (`docs/learn/cheat-sheets.pdf`)
   and an interactive key trainer (`docs/learn/trainer.html`), both built from

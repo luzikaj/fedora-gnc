@@ -65,6 +65,7 @@
           {"a": "Cycle column width", "k": ["l"]}, {"a": "Narrower", "k": ["m"]},
           {"a": "Wider", "k": ["f"]}, {"a": "Center column", "k": ["p"]},
           {"a": "Tabbed column", "k": ["/"]}, {"a": "Floating on/off", "k": ["k"]},
+          {"a": "Switch focus: floating ↔ tiled", "k": ["j"]},
           {"a": "Fullscreen", "k": ["y"]}, {"a": "Maximize column", "k": ["b"]}
         ]},
         {"name": "Workspaces and screens", "ctx": "Mod +", "items": [

@@ -21,6 +21,7 @@ Config: `~/.config/niri/config.kdl` (shortcuts), `onehand-rules.kdl`
 | `t` | focus window above (or the previous workspace) | [J] |
 | `d` | focus column right | [K] |
 | `k` | window floating on/off | [;] |
+| `j` | **switch focus between floating and tiled windows** (floating ones sit on top) | [5] |
 | `-` | overview of all workspaces | ['] |
 | Enter | new terminal (Ghostty; foot if Ghostty can't start, e.g. in a VM) | |
 

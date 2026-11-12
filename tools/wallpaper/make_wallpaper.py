@@ -12,7 +12,7 @@ niri_cards = [
              (niri("-"), "Overview"), (niri("Ins"), "All shortcuts"), (niri("Del"), "Lock")]),
  ("Focus · Move", [(niri("e","d"), "Focus column ← →"), (niri("h","t"), "Focus window ↓ ↑"),
              (niri("o","u"), "Move column ← →"), (niri("r","s"), "Move window ↓ ↑"),
-             (niri(";","="), "Stack / unstack"), (niri("k"), "Floating")]),
+             (niri(";","="), "Stack / unstack"), (niri("k"), "Floating"), (niri("j"), "Focus float ↔ tiled")]),
  ("Size", [(niri("l"), "Width ⅓ ½ ⅔ full"), (niri("m","f"), "Narrower / wider"), (niri("p"), "Center"),
              (niri("/"), "Tabs"), (niri("b"), "Maximize"), (niri("y"), "Fullscreen")]),
  ("Workspaces · Monitors", [(niri("n","w"), "Workspace ↑ ↓"), (niri("v","g"), "Send column ↑ ↓"),

@@ -151,6 +151,8 @@ binds {
     Mod+t hotkey-overlay-title="Focus up / previous workspace [t]" { focus-window-or-workspace-up; }
     Mod+d hotkey-overlay-title="Focus right [d]" { focus-column-right; }
     Mod+k hotkey-overlay-title="Floating on/off [k]" { toggle-window-floating; }
+    // Floating windows sit above the columns; this jumps between the two.
+    Mod+j hotkey-overlay-title="Focus: floating ↔ tiled [j]" { switch-focus-between-floating-and-tiling; }
     Mod+minus repeat=false hotkey-overlay-title="Overview [-]" { toggle-overview; }
     Mod+Return repeat=false hotkey-overlay-title="Terminal [Enter]" { spawn "onehand-terminal"; }
 

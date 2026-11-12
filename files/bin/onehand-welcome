@@ -130,7 +130,16 @@ live_install() {
     # allowed without a password for the logged-in user) and tells the
     # installer whose desktop to open its window on. With sudo it can't, and
     # stops with "root Wayland socket not found".
+    # This window floats in the middle of the screen, exactly where the
+    # installer's window opens. Make it a normal column while the installer
+    # runs, so the installer is alone in front; float it again afterwards.
+    local wid=""
+    if niri_ready; then
+        wid="$(niri msg --json focused-window 2>/dev/null | jq -r '.id // empty' 2>/dev/null)"
+        [[ -n "$wid" ]] && niri msg action move-window-to-tiling --id "$wid" >/dev/null 2>&1
+    fi
     liveinst
+    [[ -n "$wid" ]] && niri msg action move-window-to-floating --id "$wid" >/dev/null 2>&1
     printf '\n  The installer has closed.\n'
     pause
 }
