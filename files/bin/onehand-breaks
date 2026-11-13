@@ -1,0 +1,154 @@
+#!/bin/bash
+# onehand-breaks: break reminders. One hand does all the work, so give it rests.
+#
+# Every 25 minutes of use: a 20-second micro break (a notification with one
+# short exercise). Every third break: a 5-minute break in a small window with a
+# countdown. Stepping away counts: 2 idle minutes reset the timer, and 5 idle
+# minutes (or a locked screen) count as the long break.
+#
+#   onehand-breaks daemon    run in the background (started at niri login)
+#   onehand-breaks pause     (Mod + ,) pause reminders for an hour; again: resume
+#   onehand-breaks now       take a long break now
+#   onehand-breaks status    time to the next break
+#
+# Settings (in ~/.config/environment.d/onehand.conf, then log in again):
+#   ONEHAND_BREAKS=off              no reminders at all
+#   ONEHAND_BREAK_EVERY=25          minutes of use between breaks
+#   ONEHAND_BREAK_SECONDS=20        length of a micro break
+#   ONEHAND_LONG_BREAK_EVERY=3      every Nth break is a long one (0 = never)
+#   ONEHAND_LONG_BREAK_MINUTES=5    length of a long break
+#   ONEHAND_BREAK_PAUSE_MINUTES=60  how long Mod + , pauses them
+
+set -uo pipefail
+EVERY=$(( ${ONEHAND_BREAK_EVERY:-25} * 60 ))
+MICRO=${ONEHAND_BREAK_SECONDS:-20}
+LONG_EVERY=${ONEHAND_LONG_BREAK_EVERY:-3}
+LONG=$(( ${ONEHAND_LONG_BREAK_MINUTES:-5} * 60 ))
+PAUSE=$(( ${ONEHAND_BREAK_PAUSE_MINUTES:-60} * 60 ))
+IDLE_AFTER=120          # seconds without input before you count as away
+TICK=${ONEHAND_BREAK_TICK:-10}
+dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/onehand-breaks"
+mkdir -p "$dir"
+
+get() { cat "$dir/$1" 2>/dev/null || echo "${2:-0}"; }
+put() { echo "$2" > "$dir/$1.tmp" && mv -f "$dir/$1.tmp" "$dir/$1"; }
+now() { date +%s; }
+say() {
+    if command -v notify-send >/dev/null; then
+        notify-send -a "Breaks" -i preferences-desktop-accessibility "$@" 2>/dev/null || true
+    else echo "$*"; fi
+}
+
+MICRO_TIPS=(
+    "Let your arm hang down and shake your hand loose."
+    "Spread your fingers wide, hold for 5 seconds, relax. Three times."
+    "Circle your wrist slowly, five times each way."
+    "Look at something far away, out of the window if you can."
+    "Drop your shoulder, then roll it back slowly five times."
+    "Rest your hand in your lap, palm up, and breathe out slowly."
+    "Make a loose fist, then open it wide. Five times."
+)
+LONG_TIPS=(
+    "Stand up and walk around: get a glass of water."
+    "Let both arms hang and shake them loose for a few seconds."
+    "Circle your wrist slowly, ten times each way."
+    "Spread your fingers wide, hold for 5 seconds, relax. Five times."
+    "Tilt your head gently to each side; roll your shoulders back."
+    "Look far away for a while; blink slowly a few times."
+)
+
+# A long break in a small floating window with a countdown (or a notification).
+open_long() {
+    if [[ -z "${WAYLAND_DISPLAY:-}" ]] || ! command -v foot >/dev/null; then
+        say -u critical "Time for a ${ONEHAND_LONG_BREAK_MINUTES:-5}-minute break" "${LONG_TIPS[*]}"
+        return
+    fi
+    niri msg --json windows 2>/dev/null | jq -e 'any(.[]; .app_id == "onehand-break")' >/dev/null && return
+    foot --app-id=onehand-break --title="Break" onehand-breaks screen >/dev/null 2>&1 &
+}
+
+screen() {
+    local left=$LONG key i
+    printf '\e[?25l'; trap 'printf "\e[?25h"' EXIT
+    draw() {
+        printf '\e[H\e[2J\n   \e[1mTime for a break\e[0m   %d:%02d\n\n' $(( left / 60 )) $(( left % 60 ))
+        for i in "${LONG_TIPS[@]}"; do printf '   ·  %s\n' "$i"; done
+        printf '\n   \e[2mEnter: done · p: in 5 minutes · Backspace: skip this one\e[0m\n'
+    }
+    while (( left > 0 )); do
+        draw
+        if IFS= read -rsn1 -t 1 key; then
+            case "$key" in
+                "") put long_done "$(now)"; exit 0 ;;                         # Enter
+                p|P) put active $(( EVERY - 300 )); put count $(( $(get count) - 1 )); exit 0 ;;
+                $'\x7f'|$'\b') exit 0 ;;                                   # Backspace
+            esac
+        fi
+        left=$(( left - 1 ))
+    done
+    put long_done "$(now)"
+    printf '\a\e[H\e[2J\n   \e[1mWell done.\e[0m Back to work.\n'
+    read -rsn1 -t 10 || true
+}
+
+daemon() {
+    [[ "${ONEHAND_BREAKS:-on}" == off ]] && exit 0
+    exec 9>"$dir/lock"
+    flock -n 9 || { echo "onehand-breaks: already running"; exit 0; }
+    put active 0; put count 0; rm -f "$dir/away_since"
+    # Idle detection (niri supports it): after IDLE_AFTER seconds without input
+    # write when you left; on return, count the time away.
+    if command -v swayidle >/dev/null; then
+        swayidle -w timeout "$IDLE_AFTER" "date +%s > '$dir/away_since'" \
+                    resume "'$0' _back" &
+        trap 'kill $! 2>/dev/null' EXIT
+    fi
+    while sleep "$TICK"; do
+        [[ -e "$dir/away_since" ]] && continue
+        (( $(get paused_until) > $(now) )) && continue
+        put active $(( $(get active) + TICK ))
+        (( $(get active) < EVERY )) && continue
+        put active 0
+        put count $(( $(get count) + 1 ))
+        if (( LONG_EVERY > 0 && $(get count) % LONG_EVERY == 0 )); then
+            open_long
+        else
+            say -t $(( MICRO * 1000 )) "Micro break · ${MICRO} seconds" \
+                "${MICRO_TIPS[$(( RANDOM % ${#MICRO_TIPS[@]} ))]}"
+        fi
+    done
+}
+
+back() {   # called by swayidle when you return
+    local since away
+    since="$(get away_since "$(now)")"; rm -f "$dir/away_since"
+    away=$(( $(now) - since + IDLE_AFTER ))
+    put active 0                                      # any time away is a micro break
+    if (( away >= LONG )); then put count 0; fi       # a long one restarts the cycle
+}
+
+status() {
+    if [[ "${ONEHAND_BREAKS:-on}" == off ]]; then echo "break reminders: off"; return; fi
+    local left=$(( EVERY - $(get active) )) p
+    p=$(( $(get paused_until) - $(now) ))
+    if (( p > 0 )); then echo "break reminders: paused for $(( (p + 59) / 60 )) more min"; return; fi
+    local kind=micro
+    (( LONG_EVERY > 0 && ($(get count) + 1) % LONG_EVERY == 0 )) && kind=long
+    echo "next break ($kind) in $(( (left + 59) / 60 )) min of use"
+}
+
+case "${1:-status}" in
+    daemon) daemon ;;
+    _back)  back ;;
+    screen) screen ;;
+    now)    open_long ;;
+    pause)
+        if (( $(get paused_until) > $(now) )); then
+            put paused_until 0; say "Break reminders back on" "$(status)"
+        else
+            put paused_until $(( $(now) + PAUSE ))
+            say "Break reminders paused" "For $(( PAUSE / 60 )) minutes. Mod + , turns them back on."
+        fi ;;
+    status) status ;;
+    *) echo "usage: onehand-breaks daemon|pause|now|status" >&2; exit 2 ;;
+esac

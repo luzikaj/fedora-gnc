@@ -1,0 +1,116 @@
+#!/bin/bash
+# onehand-snapshots: Btrfs snapshots, so a bad update or a deleted file can be undone.
+#
+#   - Every dnf install / update / remove takes a "pre" and a "post" snapshot of
+#     the system (snapper, through dnf5's actions plugin). The last 10 are kept.
+#   - Your home folder gets an hourly snapshot: the last 6 hours, 7 days and
+#     2 weeks are kept.
+#   - VM disk images (/var/lib/libvirt/images) are left out, so big VM disks
+#     don't fill the drive.
+#
+#   onehand-snapshots list              what's there (system and home)
+#   onehand-snapshots changes N         files a dnf transaction changed (N = its pre number)
+#   onehand-snapshots undo N            put the system's files back as they were before
+#                                       transaction N (asks first; then reboot)
+#   onehand-snapshots files PATH [K]    older copies of a file or folder in your home
+#                                       (K: copy the one from home snapshot K next to it)
+#   onehand-snapshots setup             (root) set it all up; runs once by itself
+#   onehand-snapshots dnf-pre PID | dnf-post N    (used by dnf; not for you)
+#
+# First try `sudo dnf history undo last` for a bad update; `undo` here is the
+# bigger hammer for when the system is in a mess.
+
+set -uo pipefail
+mark=/var/lib/onehand/snapshots-setup
+sn() { if (( EUID == 0 )); then snapper "$@"; else sudo snapper "$@"; fi; }
+
+setup() {
+    (( EUID == 0 )) || { echo "run as root: sudo onehand-snapshots setup" >&2; exit 1; }
+    command -v snapper >/dev/null || { echo "snapper isn't installed (sudo dnf install snapper)"; exit 0; }
+    if [[ "$(findmnt -no FSTYPE /)" != btrfs ]]; then
+        echo "The system isn't on Btrfs (live USB, or a different disk layout): no snapshots."
+        exit 0
+    fi
+    # VM images in their own subvolume, so system snapshots don't keep old VM disks.
+    local img=/var/lib/libvirt/images
+    if ! btrfs subvolume show "$img" >/dev/null 2>&1; then
+        if [[ ! -d "$img" ]] || [[ -z "$(ls -A "$img" 2>/dev/null)" ]]; then
+            rmdir "$img" 2>/dev/null || true
+            mkdir -p "$(dirname "$img")"
+            btrfs subvolume create "$img" >/dev/null && chmod 711 "$img"
+            command -v restorecon >/dev/null && restorecon -R "$img"
+        else
+            echo "Note: $img already holds VM disks; they stay inside system snapshots."
+        fi
+    fi
+    if ! snapper -c root get-config >/dev/null 2>&1; then
+        snapper -c root create-config / || { echo "couldn't set up system snapshots" >&2; exit 1; }
+    fi
+    snapper -c root set-config TIMELINE_CREATE=no NUMBER_CLEANUP=yes NUMBER_LIMIT=10 \
+        NUMBER_LIMIT_IMPORTANT=4 ALLOW_GROUPS=wheel SYNC_ACL=yes
+    if [[ "$(findmnt -no FSTYPE /home)" == btrfs ]]; then
+        if ! snapper -c home get-config >/dev/null 2>&1; then
+            snapper -c home create-config /home || echo "couldn't set up home snapshots" >&2
+        fi
+        snapper -c home set-config TIMELINE_CREATE=yes TIMELINE_CLEANUP=yes \
+            TIMELINE_LIMIT_HOURLY=6 TIMELINE_LIMIT_DAILY=7 TIMELINE_LIMIT_WEEKLY=2 \
+            TIMELINE_LIMIT_MONTHLY=0 TIMELINE_LIMIT_YEARLY=0 ALLOW_GROUPS=wheel SYNC_ACL=yes 2>/dev/null || true
+    fi
+    systemctl enable --now snapper-timeline.timer snapper-cleanup.timer 2>/dev/null || true
+    snapper -c root create -c number -d "One-Handed Fedora Remix: snapshots set up" >/dev/null || true
+    mkdir -p "$(dirname "$mark")" && touch "$mark"
+    echo "Snapshots are on: system before/after every dnf change, home hourly."
+}
+
+case "${1:-list}" in
+    setup) setup ;;
+    dnf-pre)
+        # Prints the pre-snapshot number for dnf to hand to dnf-post.
+        n=""
+        if [[ -e "$mark" ]] && snapper -c root get-config >/dev/null 2>&1; then
+            d="$(ps -o args= -p "${2:-$PPID}" 2>/dev/null | cut -c1-120)"
+            n="$(snapper -c root create -t pre -c number -p -d "${d:-dnf}" 2>/dev/null)"
+        fi
+        echo "tmp.onehand_pre=${n:-none}" ;;
+    dnf-post)
+        if [[ "${2:-none}" =~ ^[0-9]+$ ]]; then
+            snapper -c root create -t post --pre-number "$2" -c number -d "dnf (done)" 2>/dev/null || true
+        fi
+        echo "tmp.onehand_pre" ;;
+    list)
+        echo "== System (before/after every dnf change)"; sn -c root list
+        if snapper -c home get-config >/dev/null 2>&1 || sudo -n true 2>/dev/null; then
+            echo; echo "== Home (hourly)"; sn -c home list 2>/dev/null || true
+        fi ;;
+    changes)
+        [[ "${2:-}" =~ ^[0-9]+$ ]] || { echo "usage: onehand-snapshots changes N   (N from: onehand-snapshots list)" >&2; exit 2; }
+        post="$(sn -c root --csvout list --columns number,pre-number | awk -F, -v p="$2" '$2==p {print $1}' | tail -1)"
+        sn -c root status "$2..${post:-0}" ;;
+    undo)
+        [[ "${2:-}" =~ ^[0-9]+$ ]] || { echo "usage: onehand-snapshots undo N   (N = a 'pre' number from: onehand-snapshots list)" >&2; exit 2; }
+        post="$(sn -c root --csvout list --columns number,pre-number | awk -F, -v p="$2" '$2==p {print $1}' | tail -1)"
+        echo "This puts the system's files back as they were before snapshot $2:"
+        sn -c root status "$2..${post:-0}" | head -20; echo "…"
+        read -rp "Go ahead? Type yes: " a
+        [[ "$a" == yes ]] || { echo "Nothing changed."; exit 0; }
+        sn -c root create -c number -d "before undo of $2" >/dev/null || true
+        sn -c root undochange "$2..${post:-0}" && echo "Done. Restart the computer now." ;;
+    files)
+        path="$(realpath -m "${2:?usage: onehand-snapshots files PATH [K]}")"
+        rel="${path#/home/}"
+        [[ "$rel" != "$path" ]] || { echo "Only files under /home are snapshotted hourly." >&2; exit 2; }
+        if [[ -n "${3:-}" ]]; then
+            src="/home/.snapshots/$3/snapshot/$rel"
+            [[ -e "$src" ]] || { echo "Not in home snapshot $3." >&2; exit 1; }
+            dest="${path}.from-snapshot-$3"
+            cp -a --reflink=auto "$src" "$dest" && echo "Copied to $dest"
+        else
+            for d in /home/.snapshots/*/snapshot; do
+                n="${d#/home/.snapshots/}"; n="${n%/snapshot}"
+                [[ -e "$d/$rel" ]] && printf '%6s  %s  %s\n' "$n" \
+                    "$(stat -c '%y' "$d/$rel" | cut -c1-16)" "$(du -sh "$d/$rel" 2>/dev/null | cut -f1)"
+            done | sort -n
+            echo "Copy one back next to the original: onehand-snapshots files '$2' K"
+        fi ;;
+    *) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+esac

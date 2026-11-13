@@ -92,6 +92,8 @@ records what changed and why.
 - A niri config that fails `niri validate` is rolled back.
 - The ISO build checks every repository and package before its long part starts.
 - Every step has a dry run.
+- Every dnf change takes a Btrfs snapshot before and after, and your home
+  folder one every hour: `onehand-snapshots undo` / `files` ([snapshots](docs/snapshots.md)).
 - keyd has an emergency stop: Backspace + Escape + Enter.
 
 ## Why niri
@@ -165,6 +167,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, AWS CLI, Claude Code |
 | Virtual machines | virt-manager on KVM, 3D guests, no password prompts; workspace `vm` |
 | Other apps | Obsidian, Typing Tutor, nnn (Firefox removed) |
+| Everyday care | break reminders for your hand (micro break every 25 min, Mod + , pauses); window finder (Mod + .); Btrfs snapshots before/after every update and hourly for home |
 
 **Shortcut guides, one per tool:** [`docs/`](docs/README.md).
 **Building the ISO, testing, installing and updating, step by step:** [BUILDING.md](BUILDING.md).
@@ -177,6 +180,8 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | Mod + c / i | dictate into the focused window / stop dictating |
 | Mod + a / x | read the clipboard aloud / stop reading |
 | Mod + Home / End / z | other monitor / send column there / send whole workspace there |
+| Mod + . | find any window by typing (Enter right away: back to the previous window) |
+| Mod + , | pause the break reminders for an hour / back on |
 | tap Right Ctrl, then key | Ctrl + key (same for Right Shift) |
 | Ctrl + C / Ctrl + V (Ghostty) | copy (when text is selected) / paste |
 

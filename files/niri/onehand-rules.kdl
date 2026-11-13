@@ -81,6 +81,20 @@ window-rule {
     open-floating true
 }
 
+// ---- window list (Mod + .) and the long break: small floating boxes in the middle
+window-rule {
+    match app-id=r#"^onehand-windows$"#
+    open-floating true
+    default-column-width { fixed 900; }
+    default-window-height { fixed 420; }
+}
+window-rule {
+    match app-id=r#"^onehand-break$"#
+    open-floating true
+    default-column-width { fixed 760; }
+    default-window-height { fixed 340; }
+}
+
 // ---- the Welcome window (install, first steps): a floating box in the middle
 window-rule {
     match app-id=r#"^onehanded\.welcome$"#

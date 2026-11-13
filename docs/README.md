@@ -20,6 +20,7 @@ that has its own shortcuts follows the same idea:
 | [k9s (Kubernetes)](k9s.md) | Right-hand replacements for k9s's left-hand actions |
 | [Welcome window](welcome.md) | The installer and first-steps checklist |
 | [Virtual machines](virtualization.md) | virt-manager (KVM): keys, 3D guests, keyboard inside guests |
+| [Snapshots](snapshots.md) | Undo a bad update or get back a deleted file (system before/after every dnf run, home hourly) |
 
 **Learning the system:** [printable cheat sheets](learn/cheat-sheets.pdf) (one A4 page per week, with a
 daily drill checklist) and an [interactive key trainer](learn/trainer.html) (open it in a browser).

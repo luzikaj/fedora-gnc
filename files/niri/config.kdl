@@ -129,6 +129,8 @@ include "onehand-rules.kdl"
 
 // Work out the screens (ASUS main, BenQ second) at every login.
 spawn-at-startup "onehand-monitors" "--login"
+// Break reminders: a micro break every 25 min of use, every third one long (Mod + , pauses).
+spawn-at-startup "onehand-breaks" "daemon"
 // Speech Note waits in the tray, so dictation starts instantly.
 spawn-sh-at-startup "flatpak info net.mkiol.SpeechNote >/dev/null 2>&1 && flatpak run net.mkiol.SpeechNote --start-in-tray"
 
@@ -185,6 +187,9 @@ binds {
     Mod+v hotkey-overlay-title="Send column to workspace up [v]" { move-column-to-workspace-up; }
     Mod+g hotkey-overlay-title="Send column to workspace down [g]" { move-column-to-workspace-down; }
     Mod+apostrophe repeat=false hotkey-overlay-title="Launcher [']" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    // Every open window in one list, the last used first: type to find, Enter to jump.
+    // Mod + . then Enter flips between your last two windows.
+    Mod+period repeat=false hotkey-overlay-title="Find a window [.]" { spawn "onehand-windows"; }
 
     // ------------------------------------------------ number row: size & panels
     Mod+l hotkey-overlay-title="Cycle column width [l]" { switch-preset-column-width; }
@@ -206,7 +211,7 @@ binds {
     // asleep; you stay on the main screen), or from there brings it back.
     // Mod+q: put the second screen to sleep / wake it.
     Mod+End  repeat=false hotkey-overlay-title="Send window to the other screen [End]" { spawn "onehand-second-screen" "send"; }
-    Mod+q    repeat=false hotkey-overlay-title="Second screen: wake / sleep [q]" { spawn "onehand-second-screen" "toggle"; }
+    Mod+q    repeat=false hotkey-overlay-title="Second screen: sleep / wake [q]" { spawn "onehand-second-screen" "toggle"; }
     Mod+z    repeat=false hotkey-overlay-title="Move workspace to other monitor [z]" { move-workspace-to-monitor-next; }
 
     // ------------------------------------------------ voice: Speech Note
@@ -219,6 +224,9 @@ binds {
 
     // Force-close for apps that ignore close (e.g. VLC). Needs: sudo dnf install jq
     // Deliberately on a far key so you can't hit it by accident.
+    // Break reminders: pause for an hour (meetings, deadlines); press again to resume.
+    Mod+comma repeat=false hotkey-overlay-title="Pause break reminders [,]" { spawn "onehand-breaks" "pause"; }
+
     Mod+Pause repeat=false hotkey-overlay-title="Force close app [Pause]" { spawn-sh "kill $(niri msg --json focused-window | jq -r .pid)"; }
 
     // ------------------------------------------------ screenshots & misc

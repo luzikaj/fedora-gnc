@@ -1,0 +1,65 @@
+#!/bin/bash
+# onehand-windows: find any open window by typing, and jump to it (Mod + .).
+#
+# Opens a small floating list of every window on every workspace and screen,
+# the most recently used first, with the cursor already on the window you used
+# before this one: Mod + . then Enter flips between your last two windows.
+# Type a few letters of the app, title or workspace ("brave", "obs", "web") to
+# narrow it down; Up / Down (or Ctrl + t / Ctrl + h) move; Enter jumps;
+# Backspace on an empty line or Mod + Backspace closes the list.
+#
+#   onehand-windows          open the list (in its own floating terminal)
+#   onehand-windows --list   print the list (id, workspace, app, title)
+
+set -uo pipefail
+
+list() {
+    local ws win
+    ws="$(niri msg --json workspaces 2>/dev/null || echo '[]')"
+    win="$(niri msg --json windows 2>/dev/null || echo '[]')"
+    jq -r -n --argjson ws "$ws" --argjson win "$win" '
+        def pad($n): if length >= $n then .[0:$n-1] + " " else . + (" " * ($n - length)) end;
+        ($ws | map({key: (.id|tostring), value: (.name // ("ws " + (.idx|tostring)))}) | from_entries) as $wsname
+        | $win
+        | map(select((.app_id // "") != "onehand-windows"))
+        | sort_by(if .is_focused then 0 else 1 end, -((.focus_timestamp.secs // 0) * 1000 + ((.focus_timestamp.nanos // 0) / 1000000 | floor)))
+        | .[]
+        | [ (.id|tostring),
+            ($wsname[(.workspace_id // -1)|tostring] // "floating"),
+            ((.app_id // "?") as $a
+              | {"brave-browser": "Brave", "brave-browser-nightly": "Brave Nightly",
+                 "google-chrome": "Chrome", "com.mitchellh.ghostty": "Ghostty",
+                 "foot": "Terminal", "virt-manager": "Virtual machines"}[$a]
+                // ($a | split(".") | last | sub("^jetbrains-"; "")
+                     | if test("^[a-z]") then (.[0:1] | ascii_upcase) + .[1:] else . end)),
+            (.title // "") ]
+        | .[1] |= pad(8) | .[2] |= pad(15)
+        | @tsv'
+}
+
+pick() {
+    local choice id
+    choice="$(list | fzf --delimiter=$'\t' --with-nth=2.. --nth=1.. --tabstop=1 \
+        --layout=reverse --no-sort --cycle --info=hidden --no-scrollbar \
+        --prompt='window › ' --header='type to find · Enter jump · Backspace on empty: close' \
+        --bind 'ctrl-h:down,ctrl-t:up,load:pos(2)' \
+        --bind 'backward-eof:abort')" || exit 0
+    id="$(cut -f1 <<<"$choice")"
+    [[ -n "$id" ]] && niri msg action focus-window --id "$id" >/dev/null 2>&1
+}
+
+case "${1:-}" in
+    --list) list ;;
+    --pick) pick ;;
+    "")
+        # One list at a time: pressing Mod + . again just focuses it.
+        open="$(niri msg --json windows 2>/dev/null | jq -r 'map(select(.app_id == "onehand-windows")) | .[0].id // empty')"
+        if [[ -n "$open" ]]; then niri msg action focus-window --id "$open" >/dev/null 2>&1; exit 0; fi
+        if command -v foot >/dev/null; then
+            exec foot --app-id=onehand-windows --title="Windows" onehand-windows --pick
+        else
+            exec ghostty --class=onehand-windows --title=Windows -e onehand-windows --pick
+        fi
+        ;;
+    *) echo "usage: onehand-windows [--list]" >&2; exit 2 ;;
+esac

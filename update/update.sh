@@ -42,8 +42,8 @@ put() {
 $DRY || sudo -v
 
 # ------------------------------------------------------------------ 1. packages
-step "1/9  Packages: fish, zoxide, ydotool, Speech Note"
-run sudo dnf install -y --skip-unavailable fish zoxide fzf ydotool jq kbd-legacy foot
+step "1/10  Packages: fish, zoxide, ydotool, Speech Note"
+run sudo dnf install -y --skip-unavailable fish zoxide fzf ydotool jq kbd-legacy foot swayidle
 if command -v flatpak >/dev/null; then
     run sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
     run sudo flatpak install -y --noninteractive flathub net.mkiol.SpeechNote \
@@ -53,7 +53,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 2. development
-step "2/9  Development tools: Python 3, .NET 10, JetBrains Toolbox, virt-manager; Helium removed"
+step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, virt-manager; Helium removed"
 run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
@@ -77,18 +77,20 @@ done
 ok "virt-manager: VMs open on the workspace \"vm\" (docs: virtualization.md)"
 
 # ------------------------------------------------------------------ 2. keyboard
-step "3/9  Sticky Right Ctrl / Right Shift (keyd)"
+step "3/10  Sticky Right Ctrl / Right Shift (keyd)"
 put "$F/keyd/default.conf" /etc/keyd/default.conf sudo
 run sudo systemctl restart keyd || warn "keyd didn't restart; reboot to apply"
 ok "tap Right Ctrl or Right Shift, then the key (a tap is forgotten after 1 s)"
 
 # ------------------------------------------------------------------ 3. niri
-step "4/9  niri: two monitors, window rules, dictation keys"
+step "4/10  niri: screens, window switcher, break reminders, dictation keys"
 nd="$HOME/.config/niri"
 put "$F/bin/onehand-monitors" /usr/local/bin/onehand-monitors sudo 755
 put "$F/bin/onehand-second-screen" /usr/local/bin/onehand-second-screen sudo 755
 put "$F/bin/onehand-keyboard-check" /usr/local/bin/onehand-keyboard-check sudo 755
 put "$F/bin/onehand-terminal" /usr/local/bin/onehand-terminal sudo 755
+put "$F/bin/onehand-windows" /usr/local/bin/onehand-windows sudo 755
+put "$F/bin/onehand-breaks" /usr/local/bin/onehand-breaks sudo 755
 put "$F/niri/onehand-rules.kdl" "$nd/onehand-rules.kdl"
 if [[ -e "$nd/onehand-monitors.kdl" ]]; then ok "keeping your onehand-monitors.kdl"
 else put "$F/niri/onehand-monitors.kdl" "$nd/onehand-monitors.kdl"; fi
@@ -114,7 +116,7 @@ if ! $DRY && [[ -n "${NIRI_SOCKET:-}" ]]; then
 fi
 
 # ------------------------------------------------------------------ 4. terminal
-step "5/9  Ghostty with fish, copy/paste without Shift"
+step "5/10  Ghostty with fish, copy/paste without Shift"
 gd="$HOME/.config/ghostty"
 put "$F/ghostty/config" "$gd/config"
 [[ -e "$gd/config.ghostty" ]] && warn "you also have $gd/config.ghostty; Ghostty reads both, check it doesn't override these keys"
@@ -127,7 +129,7 @@ for f in "$F"/docs/learn/*; do put "$f" "$HOME/Documents/OneHanded-Fedora-Remix-
 ok "shortcut guides: ~/Documents/OneHanded-Fedora-Remix-docs/ (learn/: cheat sheets to print, key trainer)"
 
 # ------------------------------------------------------------------ 5. dictation
-step "6/9  Dictation: ydotoold virtual keyboard for Speech Note"
+step "6/10  Dictation: ydotoold virtual keyboard for Speech Note"
 if $DRY; then
     printf '    [dry-run] create and start onehand-ydotoold.service; flatpak override for Speech Note\n'
 else
@@ -154,14 +156,14 @@ UNIT
 fi
 
 # ------------------------------------------------------------------ 6. browsers
-step "7/9  Vimium C for Brave, Brave Nightly and Chrome"
+step "7/10  Vimium C for Brave, Brave Nightly and Chrome"
 put "$F/vimium/chromium-policy.json" /etc/brave/policies/managed/onehand-vimium-c.json sudo
 put "$F/vimium/chromium-policy.json" /etc/opt/chrome/policies/managed/onehand-vimium-c.json sudo
 put "$F/vimium/vimium-c-onehand.json" "$HOME/Documents/vimium-c-onehand.json"
 ok "restart the browsers; then Vimium C Options -> Import ~/Documents/vimium-c-onehand.json"
 
 # ------------------------------------------------------------------ 7. name and logo
-step "8/9  One-Handed Fedora Remix name and logo"
+step "8/10  One-Handed Fedora Remix name and logo"
 put "$F/branding/onehanded-remix-logo.svg" /usr/share/icons/hicolor/scalable/apps/onehanded-remix-logo.svg sudo
 put "$F/branding/onehanded-remix-logo-256.png" /usr/share/icons/hicolor/256x256/apps/onehanded-remix-logo.png sudo
 put "$F/branding/onehanded-remix-logo-256.png" /usr/share/pixmaps/onehanded-remix-logo.png sudo
@@ -170,7 +172,7 @@ run sudo bash "$F/branding/apply-branding.sh"
 $DRY || ok "$(. /etc/os-release && echo "$PRETTY_NAME")"
 
 # ------------------------------------------------------------------ 8. wallpaper
-step "9/9  One-Handed Fedora Remix wallpaper"
+step "9/10  One-Handed Fedora Remix wallpaper"
 walls="$HOME/Pictures/Wallpapers"
 for f in "$F"/wallpapers/*.png; do put "$f" "$walls/$(basename "$f")"; done
 put "$F/wallpapers/onehanded-remix-2560x1440.png" /usr/share/backgrounds/onehand/default.png sudo
@@ -182,6 +184,23 @@ elif command -v dms >/dev/null && dms ipc call wallpaper set "$pick" >/dev/null 
     ok "set as wallpaper (per-monitor choice, e.g. 1920x1080 on the BenQ: Mod + PgDn)"
 else
     warn "couldn't set it automatically; pick it in Dux settings (Mod + PgDn)"
+fi
+
+# ------------------------------------------------------------------ 9. snapshots
+step "10/10  Snapshots before updates (Btrfs + snapper)"
+run sudo dnf install -y --skip-unavailable snapper libdnf5-plugin-actions
+put "$F/bin/onehand-snapshots" /usr/local/bin/onehand-snapshots sudo 755
+put "$F/snapshots/onehand-snapshots.actions" /etc/dnf/libdnf5-plugins/actions.d/onehand-snapshots.actions sudo
+put "$F/snapshots/onehand-snapshots-setup.service" /etc/systemd/system/onehand-snapshots-setup.service sudo
+run sudo restorecon -R /etc/dnf/libdnf5-plugins /etc/systemd/system/onehand-snapshots-setup.service 2>/dev/null || true
+run sudo systemctl daemon-reload
+run sudo systemctl enable onehand-snapshots-setup.service
+if $DRY; then
+    printf '    [dry-run] sudo onehand-snapshots setup\n'
+elif sudo /usr/local/bin/onehand-snapshots setup; then
+    ok "list them: onehand-snapshots list   (docs: snapshots.md)"
+else
+    warn "snapshots aren't set up; see: sudo onehand-snapshots setup"
 fi
 
 step "Check: right-handed Dvorak everywhere"

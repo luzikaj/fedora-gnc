@@ -9,7 +9,8 @@ D = '<i class="dot"></i>'   # custom one-handed key marker
 
 niri_cards = [
  ("Basics", [(niri("'"), "Launcher"), (niri("Enter"), "Terminal"), (niri("Bksp"), "Close"),
-             (niri("-"), "Overview"), (niri("Ins"), "All shortcuts"), (niri("Del"), "Lock")]),
+             (niri("-"), "Overview"), (niri("Ins"), "All shortcuts"), (niri("Del"), "Lock"),
+             (niri("."), "Find window")]),
  ("Focus · Move", [(niri("e","d"), "Focus column ← →"), (niri("h","t"), "Focus window ↓ ↑"),
              (niri("o","u"), "Move column ← →"), (niri("r","s"), "Move window ↓ ↑"),
              (niri(";","="), "Stack / unstack"), (niri("k"), "Floating"), (niri("j"), "Focus float ↔ tiled")]),
@@ -21,7 +22,7 @@ niri_cards = [
  ("Sound · Dux", [(niri("↑","↓"), "Volume"), (niri("←"), "Mute"), (niri("→"), "Play / pause"),
              (niri("F9"), "Audio devices"), (niri("[","]"), "Notifs / clipboard"), (niri("PgDn"), "Settings")]),
  ("Emergency · Misc", [(niri("Pause"), "Force close app"), (niri("ScrLk"), "Unblock shortcuts"), (keys("Print"), "Screenshot"),
-             (niri("Print"), "Window shot"), (niri("Wheel"), "Workspace ↑ ↓")]),
+             (niri("Print"), "Window shot"), (niri("Wheel"), "Workspace ↑ ↓"), (niri(","), "Pause breaks")]),
 ]
 nvim_cards = [
  ("Move", [(keys("e","h","t","d"), "← ↓ ↑ →"+D), (keys("w","b"), "Next word / back"),

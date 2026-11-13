@@ -48,6 +48,7 @@ Config: `~/.config/niri/config.kdl` (shortcuts), `onehand-rules.kdl`
 | `v` | send column to the workspace up | [,] |
 | `g` | send column to the workspace down | [.] |
 | `'` | **launcher**: type an app's name, Enter | [/] |
+| `.` | **find a window**: every open window, the last used first; type, Enter (see below) | [R] |
 | PgUp | back to the previous workspace | |
 
 ## Size and panels: number row
@@ -123,6 +124,7 @@ Details: [Speech Note](speech-note.md).
 | Print | screenshot of a selected area |
 | Ctrl + Print | screenshot of the whole screen |
 | Mod + Print | screenshot of the focused window |
+| Mod + `,` | pause the break reminders for an hour; again: back on (see below) [V] |
 | Mod + Pause | force-close an app that won't close (far away on purpose) |
 | Mod + Scroll Lock | pass all keys to the app (for remote desktops, VMs); press again to get them back |
 | Mod + mouse wheel | workspace up / down |
@@ -131,6 +133,41 @@ Media, volume and brightness keys on the keyboard work as usual, with an
 on-screen display from Dux.
 
 Screenshots are saved in `~/Pictures/Screenshots` and copied to the clipboard.
+
+## Finding a window
+
+**Mod + .** opens a small list of every open window, on every workspace and
+both screens, **the last used first**. The cursor already sits on the window
+you used before this one, so **Mod + . then Enter** flips between your last two
+windows. Otherwise type a few letters of the app, title or workspace (`brave`,
+`obs`, `web`) and press Enter. Up / Down (or Ctrl + t / Ctrl + h) move through
+the list; Backspace on an empty line closes it.
+
+## Break reminders
+
+One hand does all the work, so it gets regular rests:
+
+- every **25 minutes of use**: a **20-second micro break**, a notification with
+  one short exercise (shake your hand loose, spread your fingers, look far away);
+- every **third** break: a **5-minute break** in a small window with a countdown.
+  Enter: done · `p`: remind me in 5 minutes · Backspace: skip this one.
+
+Stepping away counts: **2 minutes** without touching the keyboard or mouse
+restart the 25 minutes, and **5 minutes** away (or a locked screen) count as the
+long break. **Mod + ,** pauses the reminders for an hour (a meeting, a deadline);
+press it again to turn them back on. `onehand-breaks status` shows the time to
+the next break.
+
+Settings, in `~/.config/environment.d/onehand.conf` (then log in again):
+
+```
+ONEHAND_BREAK_EVERY=25           # minutes of use between breaks
+ONEHAND_BREAK_SECONDS=20         # micro break length
+ONEHAND_LONG_BREAK_EVERY=3       # every Nth break is long (0 = never)
+ONEHAND_LONG_BREAK_MINUTES=5
+ONEHAND_BREAK_PAUSE_MINUTES=60   # how long Mod + , pauses them
+ONEHAND_BREAKS=off               # no reminders at all
+```
 
 ## Changing it
 

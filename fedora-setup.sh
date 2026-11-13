@@ -70,6 +70,9 @@ DNF_PACKAGES=(
     # Virtual machines: KVM + libvirt + virt-manager (3D in guests via virtio-GPU)
     virt-manager virt-install virt-viewer qemu-kvm
     libvirt-daemon-kvm libvirt-daemon-config-network edk2-ovmf swtpm
+    # Everyday safety
+    swayidle            # idle detection for the break reminders (onehand-breaks)
+    snapper libdnf5-plugin-actions   # Btrfs snapshots before/after every dnf change
 )
 
 # Packages to remove if installed (done after the new browsers are in place).
@@ -157,6 +160,13 @@ SYSTEM_FILES=(
     "wallpapers/onehanded-remix-2560x1440.png|/usr/share/backgrounds/onehand/default.png"
     "bin/onehand-monitors|/usr/local/bin/onehand-monitors"
     "bin/onehand-second-screen|/usr/local/bin/onehand-second-screen"
+    # Mod + . : find any window by typing; Mod + , : pause the break reminders
+    "bin/onehand-windows|/usr/local/bin/onehand-windows"
+    "bin/onehand-breaks|/usr/local/bin/onehand-breaks"
+    # Snapshots before/after every dnf change, hourly for /home (set up on first boot)
+    "bin/onehand-snapshots|/usr/local/bin/onehand-snapshots"
+    "snapshots/onehand-snapshots.actions|/etc/dnf/libdnf5-plugins/actions.d/onehand-snapshots.actions"
+    "snapshots/onehand-snapshots-setup.service|/etc/systemd/system/onehand-snapshots-setup.service"
     # Mod+Enter: Ghostty, or foot when Ghostty can't start (VMs without 3D)
     "bin/onehand-terminal|/usr/local/bin/onehand-terminal"
     # Checks right-handed Dvorak everywhere (console, login, disk unlock, desktop)
@@ -534,7 +544,12 @@ if command -v flatpak >/dev/null 2>&1; then
     flatpak override --system --filesystem=/run/ydotoold --env=YDOTOOL_SOCKET=/run/ydotoold/socket net.mkiol.SpeechNote || true
 fi
 
-command -v restorecon >/dev/null 2>&1 && restorecon -R /etc/onehand /usr/share/applications /etc/xkb /etc/brave /etc/opt/chrome /usr/local/bin /etc/keyd /etc/greetd /usr/libexec/onehand /usr/share/backgrounds/onehand 2>/dev/null || true
+# Btrfs snapshots: set up once, on the first boot of the installed system
+# (or right now on a machine that's already installed).
+systemctl enable onehand-snapshots-setup.service 2>/dev/null || true
+systemctl start onehand-snapshots-setup.service 2>/dev/null || true   # no-op while building the ISO
+
+command -v restorecon >/dev/null 2>&1 && restorecon -R /etc/onehand /etc/dnf/libdnf5-plugins /etc/systemd/system /usr/share/applications /etc/xkb /etc/brave /etc/opt/chrome /usr/local/bin /etc/keyd /etc/greetd /usr/libexec/onehand /usr/share/backgrounds/onehand 2>/dev/null || true
 EOF
 }
 

@@ -29,6 +29,7 @@ The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
 | Multi-monitor | Manual | Screens detected at login; named workspaces pinned per screen; apps open on their screen |
 | Installer | GNOME live session + installer | Live session logs straight into niri; **Welcome window** with a guided install |
 | First login | GNOME Initial Setup | **Welcome checklist** (Wi-Fi, apps, dictation model, browser keys, screens, updates) |
+| Everyday care | None | **Break reminders** for the one working hand; **window finder** (Mod + .); **Btrfs snapshots** before/after every dnf change, hourly for home |
 | Name / logo | Fedora Linux | "One-Handed Fedora Remix" name in `/etc/os-release`, the installer and the boot menu; own logo |
 
 ---
@@ -71,6 +72,8 @@ right hand on right-handed Dvorak:
 | Mod + `o` `r` `s` `u` | move column or window, same directions |
 | Mod + `n` / `w` | workspace up / down |
 | Mod + `'` | app launcher |
+| Mod + `.` | find any open window by typing (last used first) |
+| Mod + `,` | pause the break reminders for an hour |
 | Mod + Enter | terminal |
 | Mod + Backspace | close window |
 | Mod + `l` `m` `f` `p` | width presets, narrower, wider, centre |
@@ -228,6 +231,9 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `/etc/brave/…`, `/etc/opt/chrome/…/onehand-vimium-c.json` | Vimium C install policy |
 | `/usr/local/bin/onehand-monitors` | Screen detection at login |
 | `/usr/local/bin/onehand-welcome` | Welcome window / installer launcher / checklist |
+| `/usr/local/bin/onehand-windows`, `onehand-breaks` | Window finder (Mod + .), break reminders (started at niri login) |
+| `/usr/local/bin/onehand-snapshots`, `onehand-snapshots-setup.service` | Snapshot commands; snapper set up on first boot |
+| `/etc/dnf/libdnf5-plugins/actions.d/onehand-snapshots.actions` | Snapshot before/after every dnf transaction |
 | `/opt/jetbrains-toolbox`, `/usr/local/bin/jetbrains-toolbox` | JetBrains Toolbox App |
 | `/usr/local/bin/fedora-setup` | The setup script, to set up further users or machines |
 | `/usr/share/backgrounds/onehand/default.png` | Default wallpaper |

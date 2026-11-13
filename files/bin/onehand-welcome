@@ -95,6 +95,8 @@ page_keys() {
     say "Mod + Enter    terminal"
     say "Mod + e h t d  move between windows (← ↓ ↑ →)"
     say "Mod + Bksp     close the window"
+    say "Mod + .        find any open window (type, Enter)"
+    say "Mod + ,        pause the break reminders for an hour"
     say "Mod + Insert   ${B}every shortcut${OFF}"
     say "" "The wallpaper is a cheat sheet of all of them."
     pause
@@ -255,6 +257,8 @@ page_screens() {
 page_updates() {
     banner
     say "${B}Updates${OFF}" ""
+    say "A snapshot is taken before and after, so an update can be undone"
+    say "(onehand-snapshots list / undo)." ""
     sudo dnf upgrade --refresh -y && flatpak update -y --noninteractive \
         && { done_mark updates; say "" "${GREEN}✓ Up to date.${OFF}"; } \
         || say "" "${YEL}Some updates didn't finish; try again later.${OFF}"

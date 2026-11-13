@@ -3,6 +3,15 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-13
+- Break reminders (`onehand-breaks`): a 20-second micro break every 25 minutes
+  of use, every third one a 5-minute break with a countdown window; time away
+  from the keyboard counts. Mod + , pauses them for an hour.
+- Window finder (`onehand-windows`, Mod + .): every open window, last used first;
+  type to filter, Enter to jump. Mod + . then Enter flips between the last two.
+- Snapshots (`onehand-snapshots`): snapper takes a Btrfs snapshot before and
+  after every dnf transaction (dnf5 actions plugin) and of /home every hour;
+  VM images get their own subvolume. Set up on first boot. New packages:
+  swayidle, snapper, libdnf5-plugin-actions.
 - One main screen: all workspaces on the main screen. The second screen shows the
   cheat-sheet wallpaper; Mod + End sends the focused window there (focus stays on
   the main screen) or brings it back; Mod + q puts it to sleep / wakes it.

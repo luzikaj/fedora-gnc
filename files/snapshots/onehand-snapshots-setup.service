@@ -1,0 +1,12 @@
+[Unit]
+Description=One-Handed Fedora Remix: set up Btrfs snapshots (once)
+ConditionPathExists=!/var/lib/onehand/snapshots-setup
+ConditionPathExists=/usr/bin/snapper
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/onehand-snapshots setup
+
+[Install]
+WantedBy=multi-user.target

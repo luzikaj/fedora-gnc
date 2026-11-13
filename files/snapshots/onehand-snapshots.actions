@@ -1,0 +1,5 @@
+# One-Handed Fedora Remix: a Btrfs snapshot before and after every dnf transaction.
+# Read by dnf5's actions plugin (libdnf5-plugin-actions); see onehand-snapshots.
+# host-only: not while building the ISO (dnf --installroot).
+pre_transaction:::enabled=host-only:/usr/local/bin/onehand-snapshots dnf-pre ${pid}
+post_transaction:::enabled=host-only:/usr/local/bin/onehand-snapshots dnf-post ${tmp.onehand_pre}
