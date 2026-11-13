@@ -141,6 +141,7 @@ USER_FILES=(
     "zed/settings.json|.config/zed/settings.json|keep"
     "zed/settings.json|.var/app/dev.zed.Zed/config/zed/settings.json|keep"
     "k9s/plugins.yaml|.config/k9s/plugins.yaml"
+    "lfk/config.yaml|.config/lfk/config.yaml"
     "docs/niri-tutorial.pdf|Documents/niri-tutorial.pdf"
     "wallpapers/onehanded-remix-2560x1440.png|Pictures/Wallpapers/onehanded-remix-2560x1440.png"
     "wallpapers/onehanded-remix-1920x1080.png|Pictures/Wallpapers/onehanded-remix-1920x1080.png"
@@ -209,6 +210,10 @@ INSTALL_JETBRAINS_TOOLBOX=true
 
 # k9s (Kubernetes TUI): latest .rpm from its GitHub releases, checksum-verified.
 INSTALL_K9S=true
+
+# lfk (Kubernetes TUI, file-manager style, keys set to e h t d): latest .rpm
+# from its GitHub releases, checksum-verified.
+INSTALL_LFK=true
 
 # Install the Fresh editor from its latest GitHub release RPM, checksum-verified
 # (it has no Fedora or COPR package).
@@ -601,11 +606,12 @@ github_rpm() {
         [[ "$(sha256sum "${out}/${name}" | cut -d' ' -f1)" == "$(cut -d' ' -f1 "${out}/${name}.sha256")" ]]
     else
         local sums
-        sums="$(jq -r '.assets[] | select(.name == "checksums.sha256") | .browser_download_url' <<<"$rel")"
-        curl -fsSL -o "${out}/checksums.sha256" "$sums" || return 1
-        (cd "$out" && grep " ${name}\$" checksums.sha256 | sha256sum -c --status)
+        # mode = the name of the release's checksum file (checksums.sha256, checksums.txt ...)
+        sums="$(jq -r --arg m "$mode" '.assets[] | select(.name == $m) | .browser_download_url' <<<"$rel")"
+        curl -fsSL -o "${out}/${mode}" "$sums" || return 1
+        (cd "$out" && grep " \*\?${name}\$" "$mode" | sha256sum -c --status)
     fi || { error "checksum mismatch for ${name}; not installing"; rm -f "${out}/${name}"; return 1; }
-    rm -f "${out}/${name}.sha256" "${out}/checksums.sha256"
+    rm -f "${out}/${name}.sha256" "${out}/${mode}"
     echo "${out}/${name}"
 }
 
@@ -702,6 +708,19 @@ install_k9s() {
     case "$(uname -m)" in x86_64) arch=amd64 ;; aarch64) arch=arm64 ;; *) error "no k9s build for $(uname -m)"; return 1 ;; esac
     tmp="$(mktemp -d)"
     if rpm="$(github_rpm derailed/k9s "/k9s_linux_${arch}\.rpm$" checksums.sha256 "$tmp")"; then
+        dnf_ install -y "$rpm" || rc=1
+    else
+        rc=1
+    fi
+    rm -rf "$tmp"
+    return $rc
+}
+
+install_lfk() {
+    if $DRY_RUN; then run "download and verify the latest lfk .rpm, then dnf install it"; return 0; fi
+    local tmp rpm rc=0
+    tmp="$(mktemp -d)"
+    if rpm="$(github_rpm janosmiko/lfk "/lfk[-_][0-9][^/]*[-_.]($(uname -m)|$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/'))\.rpm$" checksums.txt "$tmp")"; then
         dnf_ install -y "$rpm" || rc=1
     else
         rc=1
@@ -863,6 +882,7 @@ main() {
     step "Install packages"              install_dnf_packages
     $INSTALL_FRESH_EDITOR && step "Install Fresh editor" install_fresh_editor
     $INSTALL_K9S       && step "Install k9s"             install_k9s
+    $INSTALL_LFK       && step "Install lfk"             install_lfk
     $INSTALL_JETBRAINS_TOOLBOX && step "Install JetBrains Toolbox" install_jetbrains_toolbox
     step "Remove unwanted packages"      remove_packages
     $ENABLE_FLATHUB    && step "Set up Flathub/Flatpaks" setup_flathub

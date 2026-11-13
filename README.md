@@ -164,7 +164,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | Browsers | Brave, Brave Nightly, Chrome; Vimium C with one-handed keys (`f` = bookmarks) |
 | Terminal | Ghostty + fish (autosuggestions, `z`, fzf); copy/paste without Shift; foot as a fallback |
 | Editors | LazyVim (Neovim) and Zed with the same keys; Fresh |
-| Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, AWS CLI, Claude Code |
+| Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, lfk, AWS CLI, Claude Code |
 | Virtual machines | virt-manager on KVM, 3D guests, no password prompts; workspace `vm` |
 | Other apps | Obsidian, Typing Tutor, nnn (Firefox removed) |
 | Everyday care | break reminders for your hand (micro break every 25 min, Mod + , pauses); window finder (Mod + .); Btrfs snapshots before/after every update and hourly for home |
@@ -223,7 +223,7 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | Path | What it is |
 |---|---|
 | `fedora-setup.sh` | Sets up a machine. **All lists live at its top.** |
-| `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `vimium/`, `k9s/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
+| `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `vimium/`, `k9s/`, `lfk/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
 | `build-spin.sh` | Builds the live ISO. |
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
 | `branding.ks` | The spin's name, "One-Handed Fedora Remix", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |

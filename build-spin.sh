@@ -104,7 +104,7 @@ install_tools() {
 # --- repositories --------------------------------------------------------------
 
 # Latest .rpm from a GitHub release, verified against the release's checksum.
-github_rpm() {   # OWNER/REPO ASSET_REGEX per-file|checksums.sha256 OUT_DIR
+github_rpm() {   # OWNER/REPO ASSET_REGEX per-file|CHECKSUM-FILE-NAME OUT_DIR
     local repo="$1" pattern="$2" mode="$3" out="$4" rel url name
     rel="$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest")" || return 1
     url="$(jq -r '.assets[].browser_download_url' <<<"$rel" | grep -E "$pattern" | head -n1)"
@@ -116,11 +116,12 @@ github_rpm() {   # OWNER/REPO ASSET_REGEX per-file|checksums.sha256 OUT_DIR
         [[ "$(sha256sum "${out}/${name}" | cut -d' ' -f1)" == "$(cut -d' ' -f1 "${out}/${name}.sha256")" ]]
     else
         local sums
-        sums="$(jq -r '.assets[] | select(.name == "checksums.sha256") | .browser_download_url' <<<"$rel")"
-        curl -fsSL -o "${out}/checksums.sha256" "$sums" || return 1
-        (cd "$out" && grep " ${name}\$" checksums.sha256 | sha256sum -c --status)
+        # mode = the name of the release's checksum file (checksums.sha256, checksums.txt ...)
+        sums="$(jq -r --arg m "$mode" '.assets[] | select(.name == $m) | .browser_download_url' <<<"$rel")"
+        curl -fsSL -o "${out}/${mode}" "$sums" || return 1
+        (cd "$out" && grep " \*\?${name}\$" "$mode" | sha256sum -c --status)
     fi || { warn "checksum mismatch for ${name}"; rm -f "${out}/${name}"; return 1; }
-    rm -f "${out}/${name}.sha256" "${out}/checksums.sha256"
+    rm -f "${out}/${name}.sha256" "${out}/${mode}"
     echo "${out}/${name}"
 }
 
@@ -223,7 +224,7 @@ enabled_metadata=1
 EOF
     done
 
-    # Fresh and k9s have no repo: put their release RPMs (checksum-verified)
+    # Fresh, k9s and lfk have no Fedora repo: put their release RPMs (checksum-verified)
     # in a small local repo for the build.
     local local_pkgs=()
     if $INSTALL_FRESH_EDITOR; then
@@ -237,6 +238,12 @@ EOF
         github_rpm derailed/k9s "/k9s_linux_amd64\.rpm$" checksums.sha256 "$WORK/localrepo" >/dev/null \
             || die "Couldn't get a verified k9s RPM"
         local_pkgs+=(k9s)
+    fi
+    if $INSTALL_LFK; then
+        info "lfk (latest GitHub release)"
+        github_rpm janosmiko/lfk "/lfk[-_][0-9][^/]*[-_.](x86_64|amd64)\.rpm$" checksums.txt "$WORK/localrepo" >/dev/null \
+            || die "Couldn't get a verified lfk RPM"
+        local_pkgs+=(lfk)
     fi
     if ((${#local_pkgs[@]})); then
         createrepo_c -q "$WORK/localrepo"

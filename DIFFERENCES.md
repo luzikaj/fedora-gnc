@@ -143,7 +143,7 @@ v2, ydotool, pavucontrol, playerctl, wev, NetworkManager TUI, development basics
 | Dux Shell, Quickshell, matugen, newer niri | COPR `duxlabs/dms`, `duxlabs/dux-repo` |
 | keyd | COPR `alternateved/keyd` |
 | lazygit | COPR `atim/lazygit` |
-| k9s, Fresh editor | Latest GitHub release RPMs, checksum-verified |
+| k9s, lfk, Fresh editor | Latest GitHub release RPMs, checksum-verified; lfk's keys set to e h t d |
 | JetBrains Toolbox App | Latest release from JetBrains, checksum-verified, in `/opt/jetbrains-toolbox` |
 | Codecs etc. | RPM Fusion (enabled) |
 
@@ -240,7 +240,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `onehand-ydotoold.service` | Virtual keyboard for dictation |
 | `onehand-branding.service` | Keeps the One-Handed Fedora Remix name in os-release |
 | User units `onehand-wallpaper`, `onehand-welcome` | First-login wallpaper and Welcome window |
-| `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/` | Per-user configs (copied from `/etc/skel`) |
+| `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/`, `lfk/` | Per-user configs (copied from `/etc/skel`) |
 
 ## 13. How it's built and maintained
 

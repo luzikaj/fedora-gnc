@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/janosmiko/lfk/main/docs/config.schema.json
+#
+# lfk (Kubernetes TUI) for One-Handed Fedora Remix: the same keys as niri,
+# LazyVim and Vimium C.
+#
+#   e h t d   = left (parent) / down / up / right (open)      was h j k l
+#   H / T     = scroll the preview pane down / up             was J / K
+#
+# The keys that e h t d took over move to the keys h j k l left free, the same
+# way LazyVim moves them (d -> k, t -> j, e -> l):
+#
+#   k = diff (was d) · j = new tab (was t) · l = Secret/ConfigMap editor (was e)
+#   J = colour theme and tree view (was T) · K = rarely used types (was H)
+#
+# In the log viewer lfk keeps J / K for the preview pane (fixed in lfk), so
+# T stays "log top" there.
+#
+# Everything else keeps lfk's defaults: ? (or F1) shows every key, x the action
+# menu, v describe, D delete (asks first), Ctrl+l logs, / search, f filter.
+# Inside the YAML, describe, log and diff viewers and in pop-up lists lfk's own
+# cursor keys stay fixed: use the arrow keys (or j / k).
+#
+# Only keybindings are set here; add other settings below (see
+# https://github.com/janosmiko/lfk/blob/main/docs/config-reference.md).
+
+keybindings:
+  # The four directions (explorer)
+  left: "e"
+  down: "h"
+  up: "t"
+  right: "d"
+  # Preview pane scroll (explorer, Object Explorer)
+  preview_down: "H"
+  preview_up: "T"
+  # Moved off e / t / d
+  diff: "k"
+  new_tab: "j"
+  secret_editor: "l"
+  # Moved off H / T
+  toggle_rare: "K"
+  theme_selector: "J"
+  tree_view: "J"

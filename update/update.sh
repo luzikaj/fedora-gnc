@@ -53,7 +53,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 2. development
-step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, virt-manager; Helium removed"
+step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, virt-manager; Helium removed"
 run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
@@ -66,6 +66,15 @@ if compgen -G "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:imput:helium.rep
     run sudo dnf copr remove -y imput/helium || warn "couldn't turn off Helium's COPR"
 fi
 ok "python3, uv, pipx, dotnet, jetbrains-toolbox (launcher: JetBrains Toolbox)"
+
+# lfk: Kubernetes TUI with the one-handed keys (e h t d)
+if $DRY; then
+    printf '    [dry-run] download and verify the latest lfk .rpm, dnf install it\n'
+else
+    sudo bash "$F/lfk/install-lfk" || warn "lfk didn't install; run files/lfk/install-lfk with sudo later"
+fi
+put "$F/lfk/config.yaml" "$HOME/.config/lfk/config.yaml"
+ok "lfk: e h t d to move, ? for every key (docs: lfk.md)"
 
 # Virtual machines: KVM + libvirt + virt-manager, no password prompts for admins
 run sudo dnf install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \

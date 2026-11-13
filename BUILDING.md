@@ -107,7 +107,7 @@ The first run takes ≈ 10–15 minutes and later runs are faster.
    time only.
 2. Sets up every third-party repository and checks it has packages for this
    Fedora release.
-3. Downloads the latest k9s, Fresh and JetBrains Toolbox, and checks their checksums.
+3. Downloads the latest k9s, lfk, Fresh and JetBrains Toolbox, and checks their checksums.
 4. Writes the kickstart and validates it.
 5. Checks every package **exists**.
 6. Checks all packages **install together** (dnf's dependency solver, nothing

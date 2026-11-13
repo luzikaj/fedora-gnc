@@ -2,6 +2,13 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-13 (evening)
+- lfk (Kubernetes TUI) from its latest GitHub release RPM, checksum-verified
+  against `checksums.txt`. Keys set to the one-handed scheme: e h t d move,
+  H / T scroll the preview; diff k, new tab j, Secret editor l, theme / tree J,
+  rare types K. Docs: `docs/lfk.md`.
+- `github_rpm` takes any checksum file name (k9s: checksums.sha256, lfk: checksums.txt).
+
 ## 2026-11-13
 - Break reminders (`onehand-breaks`): a 20-second micro break every 25 minutes
   of use, every third one a 5-minute break with a countdown window; time away

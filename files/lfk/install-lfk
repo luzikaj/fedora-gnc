@@ -1,0 +1,17 @@
+#!/bin/bash
+# install-lfk: install or upgrade lfk (Kubernetes TUI) from its latest GitHub
+# release .rpm, verified against the release's checksums.txt. Run with sudo.
+set -euo pipefail
+case "$(uname -m)" in x86_64) a='(x86_64|amd64)' ;; aarch64) a='(aarch64|arm64)' ;; *) echo "no lfk build for $(uname -m)" >&2; exit 1 ;; esac
+tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
+rel="$(curl -fsSL https://api.github.com/repos/janosmiko/lfk/releases/latest)"
+url="$(jq -r '.assets[].browser_download_url' <<<"$rel" | grep -E "/lfk[-_][0-9][^/]*[-_.]${a}\.rpm$" | head -n1)"
+sums="$(jq -r '.assets[] | select(.name == "checksums.txt") | .browser_download_url' <<<"$rel")"
+[[ -n "$url" && -n "$sums" ]] || { echo "no lfk .rpm or checksums.txt in the latest release" >&2; exit 1; }
+name="$(basename "$url")"
+curl -fsSL -o "$tmp/$name" "$url"
+curl -fsSL -o "$tmp/checksums.txt" "$sums"
+(cd "$tmp" && grep " \*\?${name}\$" checksums.txt | sha256sum -c --status) \
+    || { echo "checksum mismatch for $name; not installing" >&2; exit 1; }
+dnf install -y "$tmp/$name"
+echo "lfk $(jq -r .tag_name <<<"$rel") installed"
