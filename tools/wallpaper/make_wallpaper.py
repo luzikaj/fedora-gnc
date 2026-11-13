@@ -142,7 +142,7 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
   <div class="card mon"><h3>Screens</h3>
     <div class="screens">
       <div class="scr main"><b>Main · you work here</b><span class="ws"><i>code</i> Zed, Ghostty</span><span class="ws"><i>web</i> browsers</span><span class="ws"><i>notes</i> Obsidian · <i>vm</i></span></div>
-      <div class="scr side"><b>Second · this sheet</b><span class="ws">plus any window</span><span class="ws">you send there</span></div>
+      <div class="scr side"><b>Second</b><span class="ws">shows this sheet</span><span class="ws">+ windows you send</span></div>
     </div>
     <div class="tip"><kbd class="mod">Mod</kbd><kbd>End</kbd> send window there / back · <kbd>q</kbd> sleep / wake · <kbd>Home</kbd> jump</div></div>
 </div>
