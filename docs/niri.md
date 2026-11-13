@@ -63,7 +63,7 @@ Config: `~/.config/niri/config.kdl` (shortcuts), `onehand-rules.kdl`
 | `]` | clipboard history | [=] |
 | Backspace | close the window | |
 
-## One main screen, a second screen on demand
+## One main screen, a second screen beside it
 
 You work on **one screen**: the main one (the ASUS, in front, or a laptop's
 own). niri's scrolling strip makes one screen enough: windows sit side by
@@ -78,13 +78,14 @@ top to bottom, and apps open on theirs by themselves:
 | `vm` | virt-manager, VM windows, GNOME Boxes |
 | (any) | Speech Note, volume mixer, picture-in-picture, file pickers and JetBrains Toolbox float above everything |
 
-The **second screen** (the BenQ) **sleeps** from login. Wake it only to put
-something beside your work: a meeting, a video, documentation, a dashboard.
+The **second screen** (the BenQ) has no workspaces of its own. It shows the
+**wallpaper, your cheat sheet with every shortcut**, until you send something
+there to keep beside your work: a meeting, a video, documentation, a dashboard.
 
 | Mod + | Action |
 |---|---|
-| End | **send this window to the other screen.** From the main screen: wakes the second screen, moves the window there, and keeps you on the main screen. From the second screen: brings the window back; the second screen sleeps again once it's empty. |
-| `q` [E] | wake the second screen / put it to sleep (its windows come back to the main screen) |
+| End | **send this window to the other screen.** From the main screen: moves the window there (waking the screen if it's asleep) and keeps you on the main screen. From the second screen: brings the window back. |
+| `q` [E] | put the second screen to sleep / wake it (asleep, its windows come back to the main screen) |
 | Home | move the focus to the other screen (to scroll or type there) |
 | `z` [D] | send the whole workspace to the other screen |
 
@@ -93,8 +94,8 @@ The mouse pointer follows the keyboard focus to the other screen.
 **Prefer both screens in use all the time?** Put `ONEHAND_LAYOUT=split` in
 `~/.config/environment.d/onehand.conf` and log in again: the main screen then
 holds `code` and `vm`, the second `web` and `notes`, and it stays awake.
-`ONEHAND_SECOND_AT_LOGIN=on` keeps the one-screen layout but doesn't put the
-second screen to sleep at login. After plugging in a screen, run
+`ONEHAND_SECOND_SCREEN=on-demand` keeps the second screen asleep from login
+and whenever it's empty, waking it only for Mod + End. After plugging in a screen, run
 `onehand-monitors`.
 
 ## Voice (Speech Note)

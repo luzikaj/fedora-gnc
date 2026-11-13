@@ -3,10 +3,11 @@
 #
 # Layout "primary" (the default): you work on the main screen.
 #   main screen  (in front) -> all workspaces: code, web, notes, vm
-#   second screen (beside)  -> nothing pinned; it sleeps (standby) from login
-#                              until you send a window there (Mod + End),
-#                              and sleeps again when the last window leaves.
-#                              Mod + q wakes it / puts it to sleep by hand.
+#   second screen (beside)  -> nothing pinned: it shows the wallpaper (the
+#                              cheat sheet) until you send a window there
+#                              (Mod + End). Mod + q puts it to sleep / wakes it.
+#                              With ONEHAND_SECOND_SCREEN=on-demand it sleeps
+#                              from login and whenever it's empty.
 # Layout "split": both screens in use all the time.
 #   main screen -> code, vm      second screen -> web, notes
 #
@@ -20,10 +21,10 @@ MAIN="${ONEHAND_MAIN_MONITOR:-ASUS}"          # main screen, matched against mak
 SECOND="${ONEHAND_SECOND_MONITOR:-BenQ}"      # second screen
 SIDE="${ONEHAND_SECOND_SIDE:-right}"          # second screen stands right / left of the main one
 LAYOUT="${ONEHAND_LAYOUT:-primary}"           # primary | split
-AT_LOGIN="${ONEHAND_SECOND_AT_LOGIN:-standby}" # standby | on   (primary layout only)
+MODE="${ONEHAND_SECOND_SCREEN:-on}"           # on | on-demand   (primary layout only)
 #
 # Options: --print  only show what would be written
-#          --login  also apply the login state (second screen to standby)
+#          --login  also apply the login state (on-demand: second screen to standby)
 
 set -euo pipefail
 out="${XDG_CONFIG_HOME:-$HOME/.config}/niri/onehand-monitors.kdl"
@@ -118,7 +119,7 @@ mn="" sn=""
 if $print_only; then cat "${out}.new"; rm -f "${out}.new"; exit 0; fi
 
 # Remember which screen is which (for onehand-second-screen).
-printf 'MAIN=%q\nSECOND=%q\nLAYOUT=%q\n' "$mn" "$sn" "$LAYOUT" > "$state"
+printf 'MAIN=%q\nSECOND=%q\nLAYOUT=%q\nMODE=%q\n' "$mn" "$sn" "$LAYOUT" "$MODE" > "$state"
 
 # Compare without the date line, so an unchanged setup doesn't reload niri.
 if [[ -f "$out" ]] && diff -q <(tail -n +2 "$out") <(tail -n +2 "${out}.new") >/dev/null; then
@@ -139,8 +140,8 @@ fi
 
 if [[ -n "$sn" ]]; then
     niri msg action focus-monitor "$mn" >/dev/null 2>&1 || true
-    # Primary layout: the second screen sleeps from login until it's needed.
-    if $login && [[ "$LAYOUT" == primary && "$AT_LOGIN" == standby ]]; then
+    # On-demand: the second screen sleeps from login until it's needed.
+    if $login && [[ "$LAYOUT" == primary && "$MODE" == on-demand ]]; then
         niri msg output "$sn" off >/dev/null 2>&1 || true
     fi
 fi

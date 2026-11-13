@@ -1,13 +1,13 @@
 #!/bin/bash
-# onehand-second-screen: the second screen on demand.
+# onehand-second-screen: send windows to the second screen; wake / sleep it.
 #
 #   onehand-second-screen send     (Mod + End) send the focused window to the
 #                                  other screen. From the main screen: wakes
 #                                  the second screen, moves the window there
 #                                  and keeps you working on the main screen.
 #                                  From the second screen: brings the window
-#                                  back, and the second screen sleeps again
-#                                  once nothing is left on it.
+#                                  back (with ONEHAND_SECOND_SCREEN=on-demand,
+#                                  the second screen then sleeps once empty).
 #   onehand-second-screen toggle   (Mod + q) wake the second screen, or put it
 #                                  to sleep (its windows move to the main one)
 #   onehand-second-screen on | off | status
@@ -52,7 +52,7 @@ case "${1:-toggle}" in
     send)
         if [[ "$(focused_output)" == "$SECOND" ]]; then
             niri msg action move-column-to-monitor "$MAIN" >/dev/null 2>&1
-            if [[ "${LAYOUT:-primary}" == primary ]] && (( $(windows_on_second) == 0 )); then
+            if [[ "${LAYOUT:-primary}" == primary && "${MODE:-on}" == on-demand ]] && (( $(windows_on_second) == 0 )); then
                 sleep_screen
             fi
         else

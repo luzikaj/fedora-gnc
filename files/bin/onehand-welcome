@@ -239,9 +239,9 @@ page_screens() {
     say "${B}Screens${OFF}" ""
     say "You work on the main screen: ${BLUE}code${OFF} · ${BLUE}web${OFF} · ${BLUE}notes${OFF} · ${BLUE}vm${OFF}"
     say "(apps open on their workspace by themselves)."
-    say "A second screen sleeps until you need it:"
+    say "A second screen shows the cheat-sheet wallpaper, and takes windows:"
     say "  Mod + End  send this window there (a meeting, a video) and back"
-    say "  Mod + q    wake it / put it to sleep"
+    say "  Mod + q    put it to sleep / wake it"
     say ""
     if command -v onehand-monitors >/dev/null; then
         onehand-monitors && say "" "${GREEN}✓${OFF} Screens set up." \
@@ -290,7 +290,7 @@ installed_main() {
             "$(t apps 'Apps from Flathub')" \
             "$(t voice 'Dictation: download the Polish model')" \
             "$(t vimium 'Browser keys: import Vimium C settings')" \
-            "$(t screens 'Screens: main + second on demand')" \
+            "$(t screens 'Screens: main + second')" \
             "$(t keys 'The one-handed keys and the niri tutorial')" \
             "$(t kbcheck 'Check right-handed Dvorak everywhere')" \
             "$(t updates 'Check for updates')" \

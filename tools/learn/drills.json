@@ -75,7 +75,7 @@
           {"a": "Previous workspace", "k": ["PageUp"]},
           {"a": "Focus the other screen", "k": ["Home"]},
           {"a": "Send this window to the other screen (and back)", "k": ["End"]},
-          {"a": "Second screen: wake / sleep", "k": ["q"]},
+          {"a": "Second screen: sleep / wake", "k": ["q"]},
           {"a": "Send the workspace to the other screen", "k": ["z"]}
         ]},
         {"name": "Panels and voice", "ctx": "Mod +", "items": [

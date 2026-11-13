@@ -2,7 +2,7 @@
 //
 // Workspaces "code", "web", "notes" and "vm" are declared in
 // onehand-monitors.kdl, which `onehand-monitors` writes at every login,
-// all on the main screen (the second screen is on demand: Mod + End):
+// all on the main screen (the second screen shows the cheat sheet; Mod + End sends windows there):
 //   code   -> Zed, Ghostty, JetBrains IDEs
 //   web    -> Brave, Brave Nightly, Chrome
 //   notes  -> Obsidian

@@ -142,9 +142,9 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
   <div class="card mon"><h3>Screens</h3>
     <div class="screens">
       <div class="scr main"><b>Main · you work here</b><span class="ws"><i>code</i> Zed, Ghostty</span><span class="ws"><i>web</i> browsers</span><span class="ws"><i>notes</i> Obsidian · <i>vm</i></span></div>
-      <div class="scr side"><b>Second · sleeps</b><span class="ws">until you send</span><span class="ws">a window there</span></div>
+      <div class="scr side"><b>Second · this sheet</b><span class="ws">plus any window</span><span class="ws">you send there</span></div>
     </div>
-    <div class="tip"><kbd class="mod">Mod</kbd><kbd>End</kbd> send window there / back · <kbd>q</kbd> wake / sleep · <kbd>Home</kbd> jump</div></div>
+    <div class="tip"><kbd class="mod">Mod</kbd><kbd>End</kbd> send window there / back · <kbd>q</kbd> sleep / wake · <kbd>Home</kbd> jump</div></div>
 </div>
 <footer>
   <div><b>First time</b> Speech Note: download a Polish model<span class="sep">·</span>Vimium C → Options → Import <code>~/Documents/vimium-c-onehand.json</code></div>

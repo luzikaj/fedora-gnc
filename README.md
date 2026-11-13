@@ -52,9 +52,9 @@ keyboard focus.
 ### 7. Places, not searching
 Apps open in **fixed places**: workspace `code` (editors, terminal, IDEs), `web`
 (browsers), `notes` (Obsidian) and `vm` (virtual machines), all on **one main
-screen**: niri's scrolling makes one screen enough. A second screen sleeps
-until you need it beside your work (a meeting, a video): **Mod + End** wakes
-it and sends the window there, and it sleeps again when the window comes back.
+screen**: niri's scrolling makes one screen enough. A second screen shows the
+cheat-sheet wallpaper and takes whatever you want beside your work (a meeting,
+a video): **Mod + End** sends the window there and back.
 You always know where something is.
 
 ### 8. One layout, everywhere
@@ -157,7 +157,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 |---|---|
 | Desktop | **niri** + **Dux Shell** (bar, launcher, notifications, clipboard, lock screen, settings); text login (greetd + tuigreet) |
 | Keyboard | `dvorak_r_pl` layout; keyd: Mod, Polish letters, sticky Ctrl/Shift |
-| Screens | named workspaces `code` · `web` · `notes` · `vm` on the main screen; second screen on demand (Mod + End, Mod + q) |
+| Screens | named workspaces `code` · `web` · `notes` · `vm` on the main screen; second screen shows the cheat sheet and takes windows on request (Mod + End) |
 | Voice | Speech Note dictation and read-aloud |
 | Browsers | Brave, Brave Nightly, Chrome; Vimium C with one-handed keys (`f` = bookmarks) |
 | Terminal | Ghostty + fish (autosuggestions, `z`, fzf); copy/paste without Shift; foot as a fallback |

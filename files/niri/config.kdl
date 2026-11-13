@@ -202,9 +202,9 @@ binds {
     Mod+Page_Up repeat=false hotkey-overlay-title="Previous workspace [PgUp]" { focus-workspace-previous; }
     Mod+Page_Down repeat=false hotkey-overlay-title="Dux settings [PgDn]" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+Home repeat=false hotkey-overlay-title="Other monitor [Home]" { focus-monitor-next; }
-    // Second screen on demand: Mod+End wakes it and sends the window there (you
-    // stay on the main screen); on the second screen it brings the window back,
-    // and the screen sleeps when nothing is left. Mod+q: wake / sleep by hand.
+    // Second screen: Mod+End sends the window there (waking the screen if it's
+    // asleep; you stay on the main screen), or from there brings it back.
+    // Mod+q: put the second screen to sleep / wake it.
     Mod+End  repeat=false hotkey-overlay-title="Send window to the other screen [End]" { spawn "onehand-second-screen" "send"; }
     Mod+q    repeat=false hotkey-overlay-title="Second screen: wake / sleep [q]" { spawn "onehand-second-screen" "toggle"; }
     Mod+z    repeat=false hotkey-overlay-title="Move workspace to other monitor [z]" { move-workspace-to-monitor-next; }
