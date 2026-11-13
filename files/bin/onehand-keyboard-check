@@ -8,7 +8,9 @@
 #   desktop (niri, and every app in it)  layout dvorak_r_pl from /etc/xkb
 #   text console + login screen          /etc/vconsole.conf
 #   disk-unlock prompt at boot           the console keymap inside the initramfs
-#   X11 setting (GDM, other desktops)    localectl X11 layout
+#   X11 setting (GDM, LightDM, …)        localectl X11 layout
+#   login screen                         the login manager in use (SDDM keeps
+#                                        its own file; the others follow X11)
 #   key remapping                        keyd (Right Alt, sticky Ctrl/Shift)
 
 set -uo pipefail
@@ -78,6 +80,29 @@ xv="$(localectl status 2>/dev/null | sed -n 's/^ *X11 Variant: *//p')"
 if [[ "$xl" == "$X_LAYOUT" && "$xv" == "$X_VARIANT" ]]; then ok "X11 layout: $xl ($xv)"
 else bad "X11 layout is '${xl:-unset}${xv:+ ($xv)}', should be $X_LAYOUT ($X_VARIANT)"; fi
 
+# ---------------------------------------------------------------- login screen
+section "Login screen"
+dm="$(basename "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" .service)"
+sddm_home="$(getent passwd sddm 2>/dev/null | cut -d: -f6)"
+sddm_kxkb="${sddm_home:-/var/lib/sddm}/.config/kxkbrc"
+case "$dm" in
+    sddm)
+        # SDDM on Wayland (KDE, Ultramarine Plasma) runs KWin, which ignores the
+        # X11 setting and reads the sddm user's kxkbrc instead.
+        k="$(cat "$sddm_kxkb" 2>/dev/null || sudo -n cat "$sddm_kxkb" 2>/dev/null)"
+        if grep -qx "LayoutList=$X_LAYOUT" <<<"$k" && grep -qx "VariantList=$X_VARIANT" <<<"$k"; then
+            ok "SDDM: $X_LAYOUT ($X_VARIANT) in $sddm_kxkb"
+        else
+            bad "SDDM (the login screen) has no Dvorak setting in $sddm_kxkb"
+        fi ;;
+    gdm|lightdm|lxdm|cosmic-greeter|display-manager|"")
+        note "login manager: ${dm/display-manager/unknown}; it uses the X11 setting above" ;;
+    greetd)
+        note "login manager: greetd; it uses the console / X11 settings above" ;;
+    *)
+        note "login manager: $dm; most use the X11 setting above" ;;
+esac
+
 # ---------------------------------------------------------------- keyd
 section "Key remapping (keyd)"
 if systemctl is-active --quiet keyd 2>/dev/null; then ok "keyd is running"
@@ -102,6 +127,13 @@ echo; echo "Fixing…"
 [[ -n "$want" ]] || { sudo dnf install -y kbd-legacy; want="$(best_console_map)"; }
 [[ -n "$want" ]] && sudo localectl set-keymap --no-convert "$want"
 sudo localectl set-x11-keymap --no-convert "$X_LAYOUT" "" "$X_VARIANT"
+if [[ "$dm" == sddm ]]; then
+    sudo install -d -o sddm -g sddm -m 755 "$(dirname "$sddm_kxkb")"
+    printf '[Layout]\nLayoutList=%s\nVariantList=%s\nUse=true\n' "$X_LAYOUT" "$X_VARIANT" \
+        | sudo install -o sddm -g sddm -m 644 /dev/stdin "$sddm_kxkb"
+    command -v restorecon >/dev/null && sudo restorecon -R "$(dirname "$sddm_kxkb")" 2>/dev/null
+    echo "SDDM uses Dvorak from the next time the login screen starts (log out or restart)."
+fi
 sudo systemctl enable --now keyd 2>/dev/null || true
 if grep -qvE '^\s*(#|$)' /etc/crypttab 2>/dev/null; then
     echo "Rebuilding the boot image so the disk-unlock prompt uses it (a minute or two)…"

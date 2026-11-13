@@ -216,7 +216,10 @@ step "Check: right-handed Dvorak everywhere"
 if $DRY; then
     printf '    [dry-run] onehand-keyboard-check\n'
 else
-    /usr/local/bin/onehand-keyboard-check || warn "fix it with: onehand-keyboard-check --fix"
+    if ! /usr/local/bin/onehand-keyboard-check; then
+        echo; echo "    Fixing it (console, login screen, X11 setting)…"
+        /usr/local/bin/onehand-keyboard-check --fix || warn "not everything could be fixed; see above"
+    fi
 fi
 
 cat <<'DONE'

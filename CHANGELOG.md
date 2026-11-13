@@ -3,6 +3,10 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-13 (evening)
+- Login screen in Dvorak on existing systems: the update package now runs
+  `onehand-keyboard-check --fix` when the check fails (before, it only
+  reported it). The check and the fix know SDDM, which on Wayland ignores the
+  X11 setting and reads `~sddm/.config/kxkbrc` instead; fedora-setup writes it too.
 - lfk (Kubernetes TUI) from its latest GitHub release RPM, checksum-verified
   against `checksums.txt`. Keys set to the one-handed scheme: e h t d move,
   H / T scroll the preview; diff k, new tab j, Secret editor l, theme / tree J,

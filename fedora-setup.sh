@@ -570,6 +570,15 @@ setup_keyboard() {
     fi
     run sudo localectl set-keymap --no-convert "$map"
     run sudo localectl set-x11-keymap --no-convert "$BASE_XKB_LAYOUT" "" "$BASE_XKB_VARIANT"
+    # SDDM on Wayland (KDE-based systems) ignores the X11 setting: give its own user the layout.
+    if [[ "$(basename "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)")" == sddm.service ]]; then
+        local kx; kx="$(getent passwd sddm | cut -d: -f6)/.config/kxkbrc"
+        run sudo install -d -o sddm -g sddm -m 755 "$(dirname "$kx")"
+        if ! $DRY_RUN; then
+            printf '[Layout]\nLayoutList=%s\nVariantList=%s\nUse=true\n' "$BASE_XKB_LAYOUT" "$BASE_XKB_VARIANT" \
+                | sudo install -o sddm -g sddm -m 644 /dev/stdin "$kx"
+        fi
+    fi
     # Encrypted disk: rebuild the boot image so its unlock prompt uses the new keymap.
     if ! $DRY_RUN && grep -qvE '^[[:space:]]*(#|$)' /etc/crypttab 2>/dev/null; then
         info "Rebuilding the boot image for the disk-unlock prompt"
