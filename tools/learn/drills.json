@@ -73,9 +73,10 @@
           {"a": "Send column to workspace up", "k": ["v"]},
           {"a": "Send column to workspace down", "k": ["g"]},
           {"a": "Previous workspace", "k": ["PageUp"]},
-          {"a": "Focus the other monitor", "k": ["Home"]},
-          {"a": "Send column to the other monitor", "k": ["End"]},
-          {"a": "Send workspace to the other monitor", "k": ["z"]}
+          {"a": "Focus the other screen", "k": ["Home"]},
+          {"a": "Send this window to the other screen (and back)", "k": ["End"]},
+          {"a": "Second screen: wake / sleep", "k": ["q"]},
+          {"a": "Send the workspace to the other screen", "k": ["z"]}
         ]},
         {"name": "Panels and voice", "ctx": "Mod +", "items": [
           {"a": "Notifications", "k": ["["]}, {"a": "Clipboard history", "k": ["]"]},

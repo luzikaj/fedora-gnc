@@ -237,9 +237,11 @@ page_vimium() {
 page_screens() {
     banner
     say "${B}Screens${OFF}" ""
-    say "Main screen (ASUS): workspace ${BLUE}code${OFF} → Zed, Ghostty"
-    say "Second screen (BenQ, right): ${BLUE}web${OFF} → browsers, ${BLUE}notes${OFF} → Obsidian"
-    say "Apps open on their screen by themselves. Mod + Home jumps across."
+    say "You work on the main screen: ${BLUE}code${OFF} · ${BLUE}web${OFF} · ${BLUE}notes${OFF} · ${BLUE}vm${OFF}"
+    say "(apps open on their workspace by themselves)."
+    say "A second screen sleeps until you need it:"
+    say "  Mod + End  send this window there (a meeting, a video) and back"
+    say "  Mod + q    wake it / put it to sleep"
     say ""
     if command -v onehand-monitors >/dev/null; then
         onehand-monitors && say "" "${GREEN}✓${OFF} Screens set up." \
@@ -288,7 +290,7 @@ installed_main() {
             "$(t apps 'Apps from Flathub')" \
             "$(t voice 'Dictation: download the Polish model')" \
             "$(t vimium 'Browser keys: import Vimium C settings')" \
-            "$(t screens 'Screens: ASUS + BenQ')" \
+            "$(t screens 'Screens: main + second on demand')" \
             "$(t keys 'The one-handed keys and the niri tutorial')" \
             "$(t kbcheck 'Check right-handed Dvorak everywhere')" \
             "$(t updates 'Check for updates')" \

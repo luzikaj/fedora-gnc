@@ -1,12 +1,12 @@
 // onehand-rules.kdl: where apps open and how (included from config.kdl).
 //
-// Workspaces "code", "web" and "notes" are declared in onehand-monitors.kdl,
-// which `onehand-monitors` writes on every login for the screens it finds:
-//   main screen (ASUS)       code   -> Zed, Ghostty, JetBrains IDEs
-//                            vm     -> virt-manager, VM windows
-//   second screen (BenQ)     web    -> Brave, Brave Nightly, Chrome
-//                            notes  -> Obsidian
-// With one screen, all three are simply on it, in that order.
+// Workspaces "code", "web", "notes" and "vm" are declared in
+// onehand-monitors.kdl, which `onehand-monitors` writes at every login,
+// all on the main screen (the second screen is on demand: Mod + End):
+//   code   -> Zed, Ghostty, JetBrains IDEs
+//   web    -> Brave, Brave Nightly, Chrome
+//   notes  -> Obsidian
+//   vm     -> virt-manager, VM windows
 // To stop an app moving, delete its `open-on-workspace` line.
 
 // ---- your main browsers -> "web", two thirds wide

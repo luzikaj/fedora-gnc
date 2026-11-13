@@ -2,6 +2,12 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-13
+- One main screen, second screen on demand: all workspaces on the main screen;
+  the second sleeps from login. Mod + End wakes it and sends the focused window
+  there (focus stays on the main screen) or brings it back (sleeps when empty);
+  Mod + q wakes / sleeps it. `ONEHAND_LAYOUT=split` keeps the old two-screen layout.
+
 ## 2026-11-12
 - Mod + j: switch focus between floating and tiled windows (a floating window
   could hide a tiled one with no key to reach it).

@@ -96,14 +96,18 @@ and terminal keys.
     isn't remapped.
   - Emergency stop: Backspace + Escape + Enter.
 
-## 4. Two-monitor setup
+## 4. One main screen, a second screen on demand
 
 - `onehand-monitors` (a small script that runs at every login) reads the
   connected screens from niri, finds the main and second screen by name, and writes
   `~/.config/niri/onehand-monitors.kdl` with their positions. The main screen
   sits in front and the second to its right, vertically centred.
-- Named workspaces are pinned to screens: **`code`** on the main screen,
-  **`web`** and **`notes`** on the second.
+- All named workspaces (**`code`**, **`web`**, **`notes`**, **`vm`**) are pinned to
+  the main screen. The second screen is switched off (standby) at login.
+- `onehand-second-screen` (Mod + End) wakes the second screen and sends the
+  focused window there while you stay on the main screen, brings it back, and
+  puts the screen to sleep again when it's empty; Mod + q wakes or sleeps it by
+  hand. `ONEHAND_LAYOUT=split` restores a fixed two-screen layout.
 - **Window rules** (`onehand-rules.kdl`) open apps where they belong:
   - Brave, Brave Nightly, Chrome → `web` (two-thirds width)
   - Zed, Ghostty, JetBrains IDEs → `code`

@@ -86,6 +86,7 @@ ok "tap Right Ctrl or Right Shift, then the key (a tap is forgotten after 1 s)"
 step "4/9  niri: two monitors, window rules, dictation keys"
 nd="$HOME/.config/niri"
 put "$F/bin/onehand-monitors" /usr/local/bin/onehand-monitors sudo 755
+put "$F/bin/onehand-second-screen" /usr/local/bin/onehand-second-screen sudo 755
 put "$F/bin/onehand-keyboard-check" /usr/local/bin/onehand-keyboard-check sudo 755
 put "$F/bin/onehand-terminal" /usr/local/bin/onehand-terminal sudo 755
 put "$F/niri/onehand-rules.kdl" "$nd/onehand-rules.kdl"

@@ -139,12 +139,12 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
   <div class="card web"><h3>Browser <small>Vimium C · Brave, Nightly, Chrome · <kbd>'</kbd> help · <kbd class="ctl">Ctrl</kbd><kbd>[</kbd> = Esc</small></h3>
     <div class="cols2"><div>{rows(vim_rows1)}</div><div>{rows(vim_rows2)}</div></div></div>
   <div class="card term"><h3>Terminal <small>Ghostty + fish</small></h3>{rows(term_rows)}</div>
-  <div class="card mon"><h3>Two monitors</h3>
+  <div class="card mon"><h3>Screens</h3>
     <div class="screens">
-      <div class="scr main"><b>ASUS · main</b><span class="ws"><i>code</i> Zed, Ghostty</span><span class="ws"><i>vm</i> virt-manager</span></div>
-      <div class="scr side"><b>BenQ · right</b><span class="ws"><i>web</i> browsers</span><span class="ws"><i>notes</i> Obsidian</span></div>
+      <div class="scr main"><b>Main · you work here</b><span class="ws"><i>code</i> Zed, Ghostty</span><span class="ws"><i>web</i> browsers</span><span class="ws"><i>notes</i> Obsidian · <i>vm</i></span></div>
+      <div class="scr side"><b>Second · sleeps</b><span class="ws">until you send</span><span class="ws">a window there</span></div>
     </div>
-    <div class="tip">Apps open on their screen by themselves.<br><kbd class="mod">Mod</kbd><kbd>Home</kbd> jump · <kbd>End</kbd> column · <kbd>z</kbd> workspace</div></div>
+    <div class="tip"><kbd class="mod">Mod</kbd><kbd>End</kbd> send window there / back · <kbd>q</kbd> wake / sleep · <kbd>Home</kbd> jump</div></div>
 </div>
 <footer>
   <div><b>First time</b> Speech Note: download a Polish model<span class="sep">·</span>Vimium C → Options → Import <code>~/Documents/vimium-c-onehand.json</code></div>

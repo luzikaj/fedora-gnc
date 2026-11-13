@@ -128,7 +128,7 @@ include "onehand-monitors.kdl"
 include "onehand-rules.kdl"
 
 // Work out the screens (ASUS main, BenQ second) at every login.
-spawn-at-startup "onehand-monitors"
+spawn-at-startup "onehand-monitors" "--login"
 // Speech Note waits in the tray, so dictation starts instantly.
 spawn-sh-at-startup "flatpak info net.mkiol.SpeechNote >/dev/null 2>&1 && flatpak run net.mkiol.SpeechNote --start-in-tray"
 
@@ -202,7 +202,11 @@ binds {
     Mod+Page_Up repeat=false hotkey-overlay-title="Previous workspace [PgUp]" { focus-workspace-previous; }
     Mod+Page_Down repeat=false hotkey-overlay-title="Dux settings [PgDn]" { spawn "dms" "ipc" "call" "settings" "focusOrToggle"; }
     Mod+Home repeat=false hotkey-overlay-title="Other monitor [Home]" { focus-monitor-next; }
-    Mod+End  repeat=false hotkey-overlay-title="Send column to other monitor [End]" { move-column-to-monitor-next; }
+    // Second screen on demand: Mod+End wakes it and sends the window there (you
+    // stay on the main screen); on the second screen it brings the window back,
+    // and the screen sleeps when nothing is left. Mod+q: wake / sleep by hand.
+    Mod+End  repeat=false hotkey-overlay-title="Send window to the other screen [End]" { spawn "onehand-second-screen" "send"; }
+    Mod+q    repeat=false hotkey-overlay-title="Second screen: wake / sleep [q]" { spawn "onehand-second-screen" "toggle"; }
     Mod+z    repeat=false hotkey-overlay-title="Move workspace to other monitor [z]" { move-workspace-to-monitor-next; }
 
     // ------------------------------------------------ voice: Speech Note

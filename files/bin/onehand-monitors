@@ -1,25 +1,37 @@
 #!/bin/bash
-# onehand-monitors: sets up two screens for niri and pins the named workspaces.
+# onehand-monitors: sets up the screens for niri and pins the named workspaces.
 #
-#   main screen  (in front)     -> workspaces "code" (Zed, Ghostty) and "vm" (virtual machines)
-#   second screen (to its side) -> workspaces "web" and "notes"
+# Layout "primary" (the default): you work on the main screen.
+#   main screen  (in front) -> all workspaces: code, web, notes, vm
+#   second screen (beside)  -> nothing pinned; it sleeps (standby) from login
+#                              until you send a window there (Mod + End),
+#                              and sleeps again when the last window leaves.
+#                              Mod + q wakes it / puts it to sleep by hand.
+# Layout "split": both screens in use all the time.
+#   main screen -> code, vm      second screen -> web, notes
 #
-# Runs at every niri login (spawn-at-startup in config.kdl); run it by hand
-# after plugging in a screen. It writes ~/.config/niri/onehand-monitors.kdl,
-# which niri reloads by itself.
+# Runs at every niri login (spawn-at-startup "onehand-monitors" "--login");
+# run it by hand after plugging in a screen. It writes
+# ~/.config/niri/onehand-monitors.kdl, which niri reloads by itself, and
+# remembers which screen is which for onehand-second-screen.
 #
-# Which screen is which, matched against the screen's maker and model
-# (change here, or set these in ~/.config/environment.d/*.conf):
-MAIN="${ONEHAND_MAIN_MONITOR:-ASUS}"      # main screen, in front
-SECOND="${ONEHAND_SECOND_MONITOR:-BenQ}"  # second screen
-SIDE="${ONEHAND_SECOND_SIDE:-right}"      # second screen stands right / left of the main one
+# Settings (change here, or put them in ~/.config/environment.d/onehand.conf):
+MAIN="${ONEHAND_MAIN_MONITOR:-ASUS}"          # main screen, matched against maker/model
+SECOND="${ONEHAND_SECOND_MONITOR:-BenQ}"      # second screen
+SIDE="${ONEHAND_SECOND_SIDE:-right}"          # second screen stands right / left of the main one
+LAYOUT="${ONEHAND_LAYOUT:-primary}"           # primary | split
+AT_LOGIN="${ONEHAND_SECOND_AT_LOGIN:-standby}" # standby | on   (primary layout only)
 #
 # Options: --print  only show what would be written
+#          --login  also apply the login state (second screen to standby)
 
 set -euo pipefail
 out="${XDG_CONFIG_HOME:-$HOME/.config}/niri/onehand-monitors.kdl"
-print_only=false
-[[ "${1:-}" == --print ]] && print_only=true
+state="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/onehand-screens"
+print_only=false login=false
+for a in "$@"; do
+    case "$a" in --print) print_only=true ;; --login) login=true ;; esac
+done
 
 if [[ -f "$out" ]] && grep -qxE '[[:space:]]*//[[:space:]]*KEEP-MINE[[:space:]]*' "$out"; then
     echo "onehand-monitors: $out is marked KEEP-MINE; not changing it."
@@ -34,11 +46,15 @@ for _ in 1 2 3 4 5 6 7 8 9 10; do
 done
 [[ -n "$json" ]] || { echo "onehand-monitors: niri isn't answering" >&2; exit 1; }
 
-# One line per enabled screen: name<TAB>maker model<TAB>width<TAB>height (logical pixels)
+# One line per connected screen, including one that's asleep:
+# name<TAB>maker model<TAB>width<TAB>height<TAB>on|off
+# (A sleeping screen has no logical size; its preferred mode stands in.)
 mapfile -t screens < <(jq -r '
-    to_entries[] | select(.value.logical != null) |
-    [.key, ((.value.make // "") + " " + (.value.model // "")),
-     (.value.logical.width|tostring), (.value.logical.height|tostring)] | @tsv' <<<"$json")
+    to_entries[] | .value as $o |
+    ( if $o.logical != null then [$o.logical.width, $o.logical.height, "on"]
+      else ( ($o.modes // []) | (map(select(.is_preferred)) + .)[0] // {width: 1920, height: 1080}
+             | [.width, .height, "off"] ) end ) as $s |
+    [.key, (($o.make // "") + " " + ($o.model // "")), ($s[0]|tostring), ($s[1]|tostring), $s[2]] | @tsv' <<<"$json")
 
 field() { cut -f"$2" <<<"${screens[$1]}"; }
 find_screen() {   # index of the screen whose maker/model contains $1, or empty
@@ -50,25 +66,25 @@ find_screen() {   # index of the screen whose maker/model contains $1, or empty
     done
 }
 
+mn="" sn=""
 {
     echo "// onehand-monitors.kdl: written by onehand-monitors on $(date '+%Y-%m-%d %H:%M')."
     echo "// To edit this file yourself and stop it being rewritten, add a line:  // KEEP-MINE"
     echo
     if (( ${#screens[@]} < 2 )); then
         echo "// One screen: all workspaces on it."
-        echo 'workspace "code"'
-        echo 'workspace "web"'
-        echo 'workspace "notes"'
-        echo 'workspace "vm"'
+        printf 'workspace "%s"\n' code web notes vm
     else
         m="$(find_screen "$MAIN")"
         s="$(find_screen "$SECOND")"
-        # Not found by name: the main screen is the bigger one.
+        # Not found by name: the main screen is the bigger one (of those that are on).
         if [[ -z "$m" ]]; then
-            m=0
+            m=""
             for i in "${!screens[@]}"; do
-                (( $(field "$i" 3) * $(field "$i" 4) > $(field "$m" 3) * $(field "$m" 4) )) && m=$i
+                [[ "$(field "$i" 5)" == on ]] || continue
+                if [[ -z "$m" ]] || (( $(field "$i" 3) * $(field "$i" 4) > $(field "$m" 3) * $(field "$m" 4) )); then m=$i; fi
             done
+            [[ -n "$m" ]] || m=0
         fi
         if [[ -z "$s" || "$s" == "$m" ]]; then
             for i in "${!screens[@]}"; do [[ "$i" != "$m" ]] && { s=$i; break; }; done
@@ -79,6 +95,7 @@ find_screen() {   # index of the screen whose maker/model contains $1, or empty
         sy=$(( (mh - sh) / 2 ))
         if [[ "$SIDE" == left ]]; then mx=$sw; sx=0; else mx=0; sx=$mw; fi
         echo "// Main: $(field "$m" 2) ($mn). Second, on the $SIDE: $(field "$s" 2) ($sn)."
+        echo "// Layout: $LAYOUT."
         echo "output \"$mn\" {"
         echo "    position x=$mx y=0"
         echo "    focus-at-startup"
@@ -87,27 +104,43 @@ find_screen() {   # index of the screen whose maker/model contains $1, or empty
         echo "    position x=$sx y=$sy"
         echo "}"
         echo
-        echo "workspace \"code\" { open-on-output \"$mn\"; }"
-        echo "workspace \"web\" { open-on-output \"$sn\"; }"
-        echo "workspace \"notes\" { open-on-output \"$sn\"; }"
-        echo "workspace \"vm\" { open-on-output \"$mn\"; }"
+        if [[ "$LAYOUT" == split ]]; then
+            echo "workspace \"code\" { open-on-output \"$mn\"; }"
+            echo "workspace \"web\" { open-on-output \"$sn\"; }"
+            echo "workspace \"notes\" { open-on-output \"$sn\"; }"
+            echo "workspace \"vm\" { open-on-output \"$mn\"; }"
+        else
+            for w in code web notes vm; do echo "workspace \"$w\" { open-on-output \"$mn\"; }"; done
+        fi
     fi
 } > "${out}.new"
 
-# Compare without the date line, so an unchanged setup doesn't reload niri.
 if $print_only; then cat "${out}.new"; rm -f "${out}.new"; exit 0; fi
+
+# Remember which screen is which (for onehand-second-screen).
+printf 'MAIN=%q\nSECOND=%q\nLAYOUT=%q\n' "$mn" "$sn" "$LAYOUT" > "$state"
+
+# Compare without the date line, so an unchanged setup doesn't reload niri.
 if [[ -f "$out" ]] && diff -q <(tail -n +2 "$out") <(tail -n +2 "${out}.new") >/dev/null; then
     rm -f "${out}.new"
-    exit 0
+else
+    mv "${out}.new" "$out"
+    echo "onehand-monitors: wrote $out"
+    # Move already-open named workspaces where they belong (they only follow
+    # open-on-output when created).
+    if [[ -n "$sn" ]]; then
+        if [[ "$LAYOUT" == split ]]; then targets=(code:"$mn" web:"$sn" notes:"$sn" vm:"$mn")
+        else targets=(code:"$mn" web:"$mn" notes:"$mn" vm:"$mn"); fi
+        for ws in "${targets[@]}"; do
+            niri msg action move-workspace-to-monitor --reference "${ws%%:*}" "${ws#*:}" >/dev/null 2>&1 || true
+        done
+    fi
 fi
-mv "${out}.new" "$out"
-echo "onehand-monitors: wrote $out"
 
-# Move already-open named workspaces where they belong (they only follow
-# open-on-output when created).
-if (( ${#screens[@]} >= 2 )); then
-    for ws in code:"$mn" web:"$sn" notes:"$sn" vm:"$mn"; do
-        niri msg action move-workspace-to-monitor --reference "${ws%%:*}" "${ws#*:}" >/dev/null 2>&1 || true
-    done
+if [[ -n "$sn" ]]; then
     niri msg action focus-monitor "$mn" >/dev/null 2>&1 || true
+    # Primary layout: the second screen sleeps from login until it's needed.
+    if $login && [[ "$LAYOUT" == primary && "$AT_LOGIN" == standby ]]; then
+        niri msg output "$sn" off >/dev/null 2>&1 || true
+    fi
 fi

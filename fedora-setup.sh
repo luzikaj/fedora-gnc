@@ -156,6 +156,7 @@ SYSTEM_FILES=(
     "keyd/default.conf|/etc/keyd/default.conf"
     "wallpapers/onehanded-remix-2560x1440.png|/usr/share/backgrounds/onehand/default.png"
     "bin/onehand-monitors|/usr/local/bin/onehand-monitors"
+    "bin/onehand-second-screen|/usr/local/bin/onehand-second-screen"
     # Mod+Enter: Ghostty, or foot when Ghostty can't start (VMs without 3D)
     "bin/onehand-terminal|/usr/local/bin/onehand-terminal"
     # Checks right-handed Dvorak everywhere (console, login, disk unlock, desktop)

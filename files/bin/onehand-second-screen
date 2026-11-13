@@ -1,0 +1,74 @@
+#!/bin/bash
+# onehand-second-screen: the second screen on demand.
+#
+#   onehand-second-screen send     (Mod + End) send the focused window to the
+#                                  other screen. From the main screen: wakes
+#                                  the second screen, moves the window there
+#                                  and keeps you working on the main screen.
+#                                  From the second screen: brings the window
+#                                  back, and the second screen sleeps again
+#                                  once nothing is left on it.
+#   onehand-second-screen toggle   (Mod + q) wake the second screen, or put it
+#                                  to sleep (its windows move to the main one)
+#   onehand-second-screen on | off | status
+#
+# Which screen is which comes from onehand-monitors (run at every login).
+
+set -uo pipefail
+state="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/onehand-screens"
+MAIN="" SECOND=""
+load() { [[ -r "$state" ]] && . "$state"; }
+load
+if [[ -z "$SECOND" ]]; then onehand-monitors >/dev/null 2>&1; load; fi
+
+say() {
+    if command -v notify-send >/dev/null; then notify-send -a Screens -t 2500 "$1" "${2:-}" 2>/dev/null || true
+    else echo "$1${2:+: $2}"; fi
+}
+if [[ -z "$SECOND" ]]; then
+    say "Only one screen connected"
+    exit 0
+fi
+
+is_on() { niri msg --json outputs 2>/dev/null | jq -e --arg n "$SECOND" '.[$n].logical != null' >/dev/null; }
+wake() {
+    is_on && return 0
+    niri msg output "$SECOND" on >/dev/null 2>&1
+    for _ in $(seq 25); do is_on && return 0; sleep 0.2; done
+    say "The second screen didn't wake up" "Is it switched on and connected?"
+    return 1
+}
+sleep_screen() { niri msg output "$SECOND" off >/dev/null 2>&1; }
+focused_output() { niri msg --json focused-output 2>/dev/null | jq -r '.name // empty'; }
+windows_on_second() {
+    jq -n --arg n "$SECOND" \
+        --argjson ws "$(niri msg --json workspaces 2>/dev/null || echo '[]')" \
+        --argjson win "$(niri msg --json windows 2>/dev/null || echo '[]')" \
+        '[$ws[] | select(.output == $n) | .id] as $ids
+         | [$win[] | select(.workspace_id as $w | $ids | index($w))] | length'
+}
+
+case "${1:-toggle}" in
+    send)
+        if [[ "$(focused_output)" == "$SECOND" ]]; then
+            niri msg action move-column-to-monitor "$MAIN" >/dev/null 2>&1
+            if [[ "${LAYOUT:-primary}" == primary ]] && (( $(windows_on_second) == 0 )); then
+                sleep_screen
+            fi
+        else
+            wake || exit 1
+            niri msg action move-column-to-monitor "$SECOND" >/dev/null 2>&1
+            niri msg action focus-monitor "$MAIN" >/dev/null 2>&1
+        fi
+        ;;
+    toggle)
+        if is_on; then sleep_screen; else wake; fi
+        ;;
+    on)  wake ;;
+    off) sleep_screen ;;
+    status)
+        if is_on; then echo "second screen ($SECOND): on, $(windows_on_second) window(s)"
+        else echo "second screen ($SECOND): asleep"; fi
+        ;;
+    *) echo "usage: onehand-second-screen send|toggle|on|off|status" >&2; exit 2 ;;
+esac
