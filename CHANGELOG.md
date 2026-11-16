@@ -2,6 +2,14 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-16
+- yazi (file manager) from the `lihaohong/yazi` COPR, with preview helpers
+  (poppler-utils, ffmpegthumbnailer, 7zip, ImageMagick). Keys prepended in
+  `~/.config/yazi/keymap.toml`: e h t d move, H / T preview, E / D history,
+  k trash / K delete, j new tab / J rename tab; h / t in every list and
+  LazyVim-style moves in text boxes. fish: `y` opens it and keeps its folder.
+  Docs: `docs/yazi.md`.
+
 ## 2026-11-13 (evening)
 - Login screen in Dvorak on existing systems: the update package now runs
   `onehand-keyboard-check --fix` when the check fails (before, it only

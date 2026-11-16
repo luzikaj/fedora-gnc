@@ -17,6 +17,7 @@ that has its own shortcuts follows the same idea:
 | [Zed](zed.md) | Editor keys (Helix mode), matching LazyVim |
 | [Vimium C (browsers)](vimium-c.md) | Keyboard browsing in Brave, Brave Nightly and Chrome |
 | [Ghostty and fish (terminal)](ghostty-fish.md) | Copy/paste, shell shortcuts, autosuggestions |
+| [yazi (files)](yazi.md) | The file manager (`y` in the terminal), moved with e h t d |
 | [lfk (Kubernetes)](lfk.md) | Clusters and resources in columns, moved with e h t d |
 | [k9s (Kubernetes)](k9s.md) | Right-hand replacements for k9s's left-hand actions |
 | [Welcome window](welcome.md) | The installer and first-steps checklist |

@@ -1,0 +1,94 @@
+#:schema https://yazi-rs.github.io/schemas/keymap.json
+#
+# yazi (terminal file manager) for One-Handed Fedora Remix: the same keys as
+# niri, LazyVim, Vimium C and lfk.
+#
+#   e h t d  = parent folder / down / up / open        (yazi: h j k l)
+#   H / T    = scroll the preview down / up            (yazi: J / K)
+#   E / D    = back / forward in folder history        (yazi: H / L)
+#
+# What e h t d pushed out moves to the keys h j k l freed, the LazyVim way
+# (d -> k, t -> j):
+#
+#   k = move to trash (was d) · K = delete for good (was D)
+#   j = new tab (was t t)     · J = rename tab (was t r)
+#
+# Everything else is yazi's own: Space select, y copy, x cut, p paste,
+# a new file (end with / for a folder), r rename, f filter, / find,
+# z jump with fzf, Z jump with zoxide, . hidden files, ~ or F1 all keys.
+#
+# These are *prepended* to yazi's defaults: yazi takes the first binding whose
+# first key matches, so these win and the rest of the defaults stay.
+
+[mgr]
+prepend_keymap = [
+	# Directions
+	{ on = "e", run = "leave",      desc = "Back to the parent folder" },
+	{ on = "h", run = "arrow next", desc = "Next file" },
+	{ on = "t", run = "arrow prev", desc = "Previous file" },
+	{ on = "d", run = "enter",      desc = "Open the folder" },
+
+	# Preview and history
+	{ on = "H", run = "seek 5",  desc = "Scroll the preview down" },
+	{ on = "T", run = "seek -5", desc = "Scroll the preview up" },
+	{ on = "E", run = "back",    desc = "Back to the previous folder" },
+	{ on = "D", run = "forward", desc = "Forward to the next folder" },
+
+	# Moved off d / D / t
+	{ on = "k", run = "remove",                   desc = "Move to trash" },
+	{ on = "K", run = "remove --permanently",     desc = "Delete for good" },
+	{ on = "j", run = "tab_create --current",     desc = "New tab here" },
+	{ on = "J", run = "tab_rename --interactive", desc = "Rename this tab" },
+]
+
+[tasks]
+prepend_keymap = [
+	{ on = "h", run = "arrow next", desc = "Next task" },
+	{ on = "t", run = "arrow prev", desc = "Previous task" },
+]
+
+[spot]
+prepend_keymap = [
+	{ on = "h", run = "arrow next", desc = "Next line" },
+	{ on = "t", run = "arrow prev", desc = "Previous line" },
+	{ on = "e", run = "swipe prev", desc = "Previous file" },
+	{ on = "d", run = "swipe next", desc = "Next file" },
+]
+
+[pick]
+prepend_keymap = [
+	{ on = "h", run = "arrow next", desc = "Next option" },
+	{ on = "t", run = "arrow prev", desc = "Previous option" },
+]
+
+[confirm]
+prepend_keymap = [
+	{ on = "h", run = "arrow next", desc = "Next line" },
+	{ on = "t", run = "arrow prev", desc = "Previous line" },
+]
+
+[help]
+prepend_keymap = [
+	{ on = "h", run = "arrow next", desc = "Next line" },
+	{ on = "t", run = "arrow prev", desc = "Previous line" },
+]
+
+[cmp]
+prepend_keymap = [
+	{ on = "<A-h>", run = "arrow next", desc = "Next item" },
+	{ on = "<A-t>", run = "arrow prev", desc = "Previous item" },
+]
+
+# Text boxes (rename, new file, filter …): after Esc they act like Vim's normal
+# mode; the same moves as in LazyVim.
+[input]
+prepend_keymap = [
+	{ on = "e", run = "move -1",                             desc = "Left a character" },
+	{ on = "d", run = "move 1",                              desc = "Right a character" },
+	{ on = "h", run = "recall 1",                            desc = "Next earlier input" },
+	{ on = "t", run = "recall -1",                           desc = "Previous earlier input" },
+	{ on = "l", run = "forward --end-of-word",               desc = "To the end of the word" },
+	{ on = "L", run = "forward wide --end-of-word",          desc = "To the end of the WORD" },
+	{ on = "k", run = "delete --cut",                        desc = "Cut (then a move)" },
+	{ on = "K", run = [ "delete --cut", "move eol" ],        desc = "Cut to the end of the line" },
+]

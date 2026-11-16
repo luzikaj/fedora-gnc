@@ -95,6 +95,7 @@
         "Read the news with Vimium only: e h t d to scroll, i to open links",
         "Trainer: Week 3, two rounds",
         "Find a page via bookmarks (f) and switch tabs with a / c",
+        "Tidy a folder in yazi (y): e h t d to move, Space to select, k to trash",
         "In the terminal: z to a folder, Ctrl+R for an old command, accept a suggestion with →"
       ],
       "groups": [
@@ -118,10 +119,19 @@
           {"a": "Next match", "k": ["v"]}, {"a": "Previous match", "k": ["g"]},
           {"a": "First text field", "k": [";"]}, {"a": "Show all Vimium keys", "k": ["'"]}
         ]},
+        {"name": "yazi (files)", "ctx": "yazi", "items": [
+          {"a": "Parent folder", "k": ["e"]}, {"a": "Into the folder", "k": ["d"]},
+          {"a": "Next file", "k": ["h"]}, {"a": "Previous file", "k": ["t"]},
+          {"a": "Move to trash", "k": ["k"]}, {"a": "New tab", "k": ["j"]},
+          {"a": "Back to the previous folder", "k": ["E"]},
+          {"a": "Scroll the preview down", "k": ["H"]},
+          {"a": "Select a file", "k": [" "]}, {"a": "Every yazi key", "k": ["~"]}
+        ]},
         {"name": "fish shell", "ctx": "fish", "items": [
           {"a": "Accept the grey suggestion", "k": ["ArrowRight"]},
           {"a": "Short for nvim", "k": ["v"]}, {"a": "Short for git", "k": ["g"]},
           {"a": "Short for lazygit", "k": ["l", "g"]},
+          {"a": "Open the file manager (yazi)", "k": ["y"]},
           {"a": "Jump to a folder you used before", "k": ["z"]},
           {"a": "Pick a folder from a list", "k": ["z", "i"]}
         ]}

@@ -53,7 +53,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 2. development
-step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, virt-manager; Helium removed"
+step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, yazi, virt-manager; Helium removed"
 run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
@@ -75,6 +75,12 @@ else
 fi
 put "$F/lfk/config.yaml" "$HOME/.config/lfk/config.yaml"
 ok "lfk: e h t d to move, ? for every key (docs: lfk.md)"
+
+# yazi: file manager with the one-handed keys (y in the terminal)
+run sudo dnf copr enable -y lihaohong/yazi
+run sudo dnf install -y --skip-unavailable yazi poppler-utils ffmpegthumbnailer 7zip ImageMagick fd-find ripgrep
+put "$F/yazi/keymap.toml" "$HOME/.config/yazi/keymap.toml"
+ok "yazi: type y in the terminal; e h t d to move, ~ for every key (docs: yazi.md)"
 
 # Virtual machines: KVM + libvirt + virt-manager, no password prompts for admins
 run sudo dnf install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \

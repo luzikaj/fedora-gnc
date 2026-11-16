@@ -46,7 +46,9 @@ DNF_PACKAGES=(
     gcc
     make
     python3-pip
-    nnn         # terminal file manager
+    nnn         # terminal file manager (small, always there)
+    # yazi's previews: PDFs, video thumbnails, archives, images
+    poppler-utils ffmpegthumbnailer 7zip ImageMagick
     awscli2     # AWS CLI v2 (command: aws)
     jq          # used by this script and by niri's force-close shortcut
     # LazyVim (Neovim distribution): Neovim plus what its plugins need
@@ -112,6 +114,7 @@ COPR_REPOS=(
     duxlabs/dux-repo    # current niri + quickshell builds
     alternateved/keyd   # keyd (not in Fedora's own repositories)
     atim/lazygit        # lazygit, LazyVim's git screen (Space g g)
+    lihaohong/yazi      # yazi, the file manager (the COPR yazi's install docs name)
 )
 
 # ---- Your one-handed setup: files in the files/ folder next to this script ----
@@ -129,6 +132,7 @@ USER_FILES=(
     "ghostty/config|.config/ghostty/config"
     "foot/foot.ini|.config/foot/foot.ini"
     "fish/onehand.fish|.config/fish/conf.d/onehand.fish"
+    "yazi/keymap.toml|.config/yazi/keymap.toml"
     "vimium/vimium-c-onehand.json|Documents/vimium-c-onehand.json"
     "nvim/init.lua|.config/nvim/init.lua"
     "nvim/lua/config/lazy.lua|.config/nvim/lua/config/lazy.lua"
@@ -237,6 +241,7 @@ EXTRA_REPO_PACKAGES=(
     dms quickshell matugen   # Dux Shell: bar, launcher, notifications, lock, wallpaper
     keyd                     # Right Alt: hold = Mod, tap = Polish letter
     lazygit                  # from the COPR above
+    yazi                     # file manager, keys e h t d (from the COPR above)
     # code
 )
 

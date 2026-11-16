@@ -128,7 +128,7 @@ current long-term-support release); gcc, make, git; the X11/GTK libraries the
 JetBrains IDEs need.
 
 **From Fedora's repositories:** Neovim (with tree-sitter, ripgrep, fd, fzf,
-lazygit's dependencies), fish, zoxide, foot, nnn, htop, tmux, bat, jq, AWS CLI
+lazygit's dependencies), fish, zoxide, foot, yazi (keys e h t d; `y` in fish), nnn, htop, tmux, bat, jq, AWS CLI
 v2, ydotool, pavucontrol, playerctl, wev, NetworkManager TUI, development basics
 (gcc, make, git, python3-pip).
 
@@ -240,7 +240,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `onehand-ydotoold.service` | Virtual keyboard for dictation |
 | `onehand-branding.service` | Keeps the One-Handed Fedora Remix name in os-release |
 | User units `onehand-wallpaper`, `onehand-welcome` | First-login wallpaper and Welcome window |
-| `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/`, `lfk/` | Per-user configs (copied from `/etc/skel`) |
+| `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/`, `lfk/`, `yazi/` | Per-user configs (copied from `/etc/skel`) |
 
 ## 13. How it's built and maintained
 
