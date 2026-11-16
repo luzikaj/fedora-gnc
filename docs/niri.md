@@ -120,10 +120,10 @@ Details: [Speech Note](speech-note.md).
 | Mod + ↑ / ↓ | volume up / down (also on the lock screen) |
 | Mod + ← | mute on/off |
 | Mod + → | play / pause |
-| Mod + F9 | audio devices (speakers, headphones, microphone) |
-| Print | screenshot of a selected area |
-| Ctrl + Print | screenshot of the whole screen |
-| Mod + Print | screenshot of the focused window |
+| Mod + F9 | **screenshot of the focused window** (also Mod + Print) |
+| Mod + F10 | **screenshot of a selected area** (also Print) |
+| Mod + F12 | **screenshot of the whole screen** (also Ctrl + Print) |
+| Mod + F11 | audio devices (speakers, headphones, microphone) |
 | Mod + `,` | pause the break reminders for an hour; again: back on (see below) [V] |
 | Mod + Pause | force-close an app that won't close (far away on purpose) |
 | Mod + Scroll Lock | pass all keys to the app (for remote desktops, VMs); press again to get them back |

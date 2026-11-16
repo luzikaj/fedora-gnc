@@ -3,6 +3,8 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-16
+- Screenshots on the F-keys: Mod + F9 window, Mod + F10 selection, Mod + F12
+  whole screen (Print keys still work). Audio devices moved to Mod + F11.
 - Rune (rune.build) in /opt/rune from its latest GitHub release, checked
   against GitHub's SHA-256 for the file (setup, ISO build, update package).
   `~/.rune/config.yaml`: exo mode with your Helix (`hx`) as the editor, so the

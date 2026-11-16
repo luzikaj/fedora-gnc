@@ -84,6 +84,8 @@
           {"a": "Dux settings", "k": ["PageDown"]},
           {"a": "Dictate into the window", "k": ["c"]}, {"a": "Stop dictating", "k": ["i"]},
           {"a": "Read clipboard aloud", "k": ["a"]}, {"a": "Stop reading", "k": ["x"]},
+          {"a": "Screenshot of the window", "k": ["F9"]}, {"a": "Screenshot of an area", "k": ["F10"]},
+          {"a": "Screenshot of the screen", "k": ["F12"]}, {"a": "Audio devices", "k": ["F11"]},
           {"a": "Pass all keys to the app (VMs)", "k": ["ScrollLock"]}
         ]}
       ]
