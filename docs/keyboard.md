@@ -112,3 +112,14 @@ The time is `oneshot_timeout` in `/etc/keyd/default.conf`.
 - Letters: edit `/etc/xkb/symbols/dvorak_r_pl`, then log out and in.
 - In the kit, change `files/keyd/default.conf` or `files/xkb/dvorak_r_pl`
   so the next install or ISO build gets it too.
+
+## The keyboard this was set up on
+
+A **Logitech G413 TKL** (tenkeyless). Everything here works on any keyboard,
+but the choices lean on what a TKL has near the right hand: the F-row
+(screenshots on Mod + F9 / F10 / F12, audio on Mod + F11), the nav cluster
+(Insert … PgDn, Print, Scroll Lock, Pause) and the arrows. Logitech's G HUB
+software doesn't exist for Linux and isn't needed: the keyboard works as a
+standard one, and its lighting stays as last set (OpenRGB can change it, if
+wanted).
+

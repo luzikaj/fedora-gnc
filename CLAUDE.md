@@ -1,0 +1,24 @@
+# Context for Claude (and other helpers) working on this repo
+
+- **User:** one-handed, **right hand only**, types **right-handed Dvorak**
+  (`us(dvorak-r)`, kit layout `dvorak_r_pl` with Polish letters via a tap of
+  Right Alt). Every shortcut must be reachable with the right hand; the
+  directions are **e h t d** (left / down / up / right) everywhere; displaced
+  commands follow LazyVim (d -> k, t -> j, e -> l).
+- **Keyboard:** **Logitech G413 TKL** (tenkeyless: F-row, nav cluster with
+  Print / Scroll Lock / Pause, Insert … PgDn, arrows; no numpad). Right-hand
+  modifiers are what keyd turns into the one-handed layer: Right Alt = hold
+  Mod (Super) / tap Polish, Right Ctrl and Right Shift = sticky. Keys on the
+  far left (digits, Esc, Tab, left modifiers) are hard to reach: prefer
+  F-keys, the nav cluster, and Mod + one key.
+- **Screens:** ASUS = main (in front), BenQ = second (right of it), shows the
+  cheat-sheet wallpaper.
+- **Machines:** this kit on a Fedora-based system (one machine is Ultramarine
+  44 updated with `update/`), a Lenovo laptop (Ryzen 7 PRO 4750U, 16 GB) and an
+  ISO built in a VirtualBox VM (`build-spin.sh`).
+- **Personal use only**: the ISO is not redistributed.
+- **Conventions:** every user-facing change updates the docs (`docs/`, README,
+  DIFFERENCES, CHANGELOG), the wallpaper (`tools/wallpaper/build.sh`) and the
+  trainer (`tools/learn/build.py`) when shortcuts change; new files go into
+  `fedora-setup.sh` (setup + ISO), `update/update.sh` and
+  `tools/make-update-package.sh`. Run the checks in `.github/workflows/check.yml`.
