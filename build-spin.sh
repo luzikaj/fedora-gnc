@@ -283,7 +283,7 @@ make_payload() {
         [[ "$dest" == */bin/* ]] && mode=755
         install -D -m "$mode" "${HERE}/files/${f}" "$stage/root${dest}"
     done
-    # Big files (JetBrains Toolbox, ~100 MB) don't go into the kickstart as
+    # Big files (JetBrains Toolbox, Rune; ~100 MB each) don't go into the kickstart as
     # text: they're copied straight from this folder into the image during the
     # build (see the "--nochroot" step in generate_ks).
     rm -rf "$WORK/bigfiles"; mkdir -p "$WORK/bigfiles"
@@ -291,6 +291,12 @@ make_payload() {
         info "JetBrains Toolbox (latest release from JetBrains)"
         bash "${HERE}/files/jetbrains/install-jetbrains-toolbox" "$WORK/bigfiles" \
             || warn "Couldn't get a verified JetBrains Toolbox; building without it (fedora-setup can add it later)"
+        chmod -R u=rwX,go=rX "$WORK/bigfiles"
+    fi
+    if $INSTALL_RUNE; then
+        info "Rune (latest GitHub release)"
+        bash "${HERE}/files/rune/install-rune" "$WORK/bigfiles" \
+            || warn "Couldn't get a verified Rune; building without it (fedora-setup can add it later)"
         chmod -R u=rwX,go=rX "$WORK/bigfiles"
     fi
     local kit="$stage/root/usr/local/share/fedora-onehand-setup"

@@ -1,0 +1,55 @@
+#!/bin/bash
+# install-rune [ROOT]
+#
+# Installs or updates Rune (rune.build, GPL-3.0) from its latest GitHub release
+# into ROOT/opt/rune, with a `rune` command and a launcher entry. ROOT defaults
+# to / (run with sudo); build-spin.sh passes the ISO's staging folder.
+#
+# Rune publishes no checksum file; the download is checked against the
+# SHA-256 that GitHub records for the release file (and fetched over HTTPS).
+# Installed here, Rune doesn't update itself: the kit's update package runs
+# this again.
+
+set -euo pipefail
+root="${1:-}"
+case "$(uname -m)" in
+    x86_64) arch=amd64 ;; aarch64) arch=arm64 ;;
+    *) echo "Rune has no Linux build for $(uname -m)" >&2; exit 1 ;;
+esac
+tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
+
+rel="$(curl -fsSL https://api.github.com/repos/unstablebuild/rune/releases/latest)"
+tag="$(jq -r .tag_name <<<"$rel")"
+asset="$(jq -c --arg a "$arch" '[.assets[] | select(.name | test("^rune-.*-linux-" + $a + "\\.tar\\.gz$"))][0] // empty' <<<"$rel")"
+[[ -n "$asset" ]] || { echo "No Linux $arch archive in Rune's latest release ($tag)" >&2; exit 1; }
+url="$(jq -r .browser_download_url <<<"$asset")"
+want="$(jq -r '.digest // empty' <<<"$asset" | sed 's/^sha256://')"
+
+curl -fsSL -o "$tmp/rune.tar.gz" "$url"
+if [[ -n "$want" ]]; then
+    [[ "$(sha256sum "$tmp/rune.tar.gz" | cut -d' ' -f1)" == "$want" ]] \
+        || { echo "Rune download doesn't match GitHub's checksum; not installing" >&2; exit 1; }
+else
+    echo "Note: GitHub gave no checksum for $(basename "$url"); installing on HTTPS alone." >&2
+fi
+tar -xzf "$tmp/rune.tar.gz" -C "$tmp"
+[[ -x "$tmp/rune.app/bin/rune" ]] || { echo "Unexpected archive layout (no rune.app/bin/rune)" >&2; exit 1; }
+
+# The same steps as Rune's own deploy/rune-linux/install.sh, into /opt.
+opt="$root/opt/rune"
+mkdir -p "$opt" "$root/usr/local/bin" "$root/usr/local/share/applications"
+rm -rf "$opt/rune.app.new"; mv "$tmp/rune.app" "$opt/rune.app.new"
+rm -rf "$opt/rune.app"; mv "$opt/rune.app.new" "$opt/rune.app"
+chmod -R a+rX "$opt"
+ln -sfn /opt/rune/rune.app/bin/rune "$root/usr/local/bin/rune"
+sed 's|^Exec=.*|Exec=/opt/rune/rune.app/bin/rune %F|' \
+    "$opt/rune.app/share/applications/rune.desktop" > "$root/usr/local/share/applications/rune.desktop"
+for size in 512x512 1024x1024; do
+    src="$opt/rune.app/share/icons/hicolor/$size/apps/rune.png"
+    [[ -f "$src" ]] && install -D -m 644 "$src" "$root/usr/local/share/icons/hicolor/$size/apps/rune.png"
+done
+if [[ -z "$root" ]]; then
+    command -v update-desktop-database >/dev/null && update-desktop-database /usr/local/share/applications 2>/dev/null || true
+    command -v restorecon >/dev/null && restorecon -R /opt/rune /usr/local/share/applications /usr/local/share/icons 2>/dev/null || true
+fi
+echo "Rune $tag installed in /opt/rune"

@@ -29,6 +29,13 @@ window-rule {
     default-column-width { proportion 0.5; }
 }
 
+// Rune (an X11 window, through xwayland-satellite) -> "code"
+window-rule {
+    match app-id=r#"^rune$"#
+    open-on-workspace "code"
+    default-column-width { proportion 0.66667; }
+}
+
 // JetBrains IDEs (IntelliJ IDEA, PyCharm, Rider ...) -> "code"; their
 // Toolbox launcher floats wherever you open it.
 window-rule {

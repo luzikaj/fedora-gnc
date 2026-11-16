@@ -135,6 +135,7 @@ USER_FILES=(
     "fish/onehand.fish|.config/fish/conf.d/onehand.fish"
     "yazi/keymap.toml|.config/yazi/keymap.toml"
     "helix/config.toml|.config/helix/config.toml"
+    "rune/config.yaml|.rune/config.yaml"
     "vimium/vimium-c-onehand.json|Documents/vimium-c-onehand.json"
     "nvim/init.lua|.config/nvim/init.lua"
     "nvim/lua/config/lazy.lua|.config/nvim/lua/config/lazy.lua"
@@ -213,6 +214,10 @@ SETUP_LOGIN=true
 # JetBrains Toolbox App (installs and updates IntelliJ IDEA, PyCharm, Rider ...):
 # latest release from JetBrains, checksum-verified, into /opt/jetbrains-toolbox.
 INSTALL_JETBRAINS_TOOLBOX=true
+
+# Rune (rune.build): keyboard-driven IDE around your Helix; latest GitHub
+# release into /opt/rune (checked against GitHub's SHA-256 for the file).
+INSTALL_RUNE=true
 
 # k9s (Kubernetes TUI): latest .rpm from its GitHub releases, checksum-verified.
 INSTALL_K9S=true
@@ -718,6 +723,12 @@ install_jetbrains_toolbox() {
     return "${PIPESTATUS[0]}"
 }
 
+install_rune() {
+    if $DRY_RUN; then run "download and verify the latest Rune, install it in /opt/rune"; return 0; fi
+    sudo bash "${FILES_DIR}/rune/install-rune" 2>&1 | tee -a "$LOG_FILE"
+    return "${PIPESTATUS[0]}"
+}
+
 install_k9s() {
     if $DRY_RUN; then run "download and verify the latest k9s .rpm, then dnf install it"; return 0; fi
     local arch tmp rpm rc=0
@@ -900,6 +911,7 @@ main() {
     $INSTALL_K9S       && step "Install k9s"             install_k9s
     $INSTALL_LFK       && step "Install lfk"             install_lfk
     $INSTALL_JETBRAINS_TOOLBOX && step "Install JetBrains Toolbox" install_jetbrains_toolbox
+    $INSTALL_RUNE      && step "Install Rune"            install_rune
     step "Remove unwanted packages"      remove_packages
     $ENABLE_FLATHUB    && step "Set up Flathub/Flatpaks" setup_flathub
     $SET_KEYBOARD      && step "Set console keyboard"    setup_keyboard

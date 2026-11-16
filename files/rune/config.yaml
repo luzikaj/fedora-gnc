@@ -1,0 +1,83 @@
+# Rune (rune.build) for One-Handed Fedora Remix. Lives in ~/.rune/config.yaml.
+#
+# EDITING: Rune runs your real Helix (hx) inside its tabs ("exo" mode), so the
+# editor has exactly your Helix keys (~/.config/helix/config.toml): e h t d,
+# k delete, Ctrl+t leaves insert, z / Space menus. Rune adds search, language
+# intelligence, the debugger, terminals and AI around it.
+#
+# RUNE'S OWN COMMANDS: one leader key, then a letter, the same letters as niri:
+#
+#   Leader = the Menu key (right of Right Alt) or Scroll Lock
+#
+#   e h t d   go to the window left / below / above / right
+#   E H T D   move the window that way          (tap Right Shift first)
+#   n         new split                Enter   new terminal
+#   Backspace close the window         y       maximize the window / back
+#   [ ]       previous / next tab      k       close the tab
+#   '         command prompt           b       find an open tab
+#   f         find a file              /       search the text of all files
+#   x         file explorer            o       workspaces (projects)
+#   g         go to definition         r       references
+#   s         show the type / docs (hover)
+#   , .       previous / next problem (diagnostic)
+#   c         every key (cheat sheet)
+#
+# Why a leader: niri takes the Super key and Right Alt (Mod), and Rune lets a
+# terminal or Helix keep every Ctrl and Shift key, so Rune's usual Super / Alt
+# shortcuts aren't reachable one-handed. After the leader, the next key always
+# goes to Rune.
+#
+# Rune reads this file at start: restart Rune (or run `workspacereload`) after
+# editing. Reference: https://docs.rune.build/config
+
+gui:
+  # The leader: both keys send one chord that nothing else uses.
+  key_mapping:
+    "<menu>": "<alt-meta-space>"
+    "<scrolllock>": "<alt-meta-space>"
+
+editor:
+  mode: exo
+  exo:
+    command: "hx {file}:{line}:{col}"
+    goto: "<esc>:goto<space>{line}<enter>"
+    quit: "<esc>:q!<enter>"
+    # Rune's own lists (the file explorer) use the plain editor: arrow keys.
+    fallback: standard
+
+command:
+  # In exo mode ':' belongs to Helix; the prompt is Leader then '.
+  key: "<alt-meta-;>"
+  key_bindings:
+    # Windows
+    "<alt-meta-space>e": "windowfocus left"
+    "<alt-meta-space>h": "windowfocus down"
+    "<alt-meta-space>t": "windowfocus up"
+    "<alt-meta-space>d": "windowfocus right"
+    "<alt-meta-space>E": "windowmove left"
+    "<alt-meta-space>H": "windowmove down"
+    "<alt-meta-space>T": "windowmove up"
+    "<alt-meta-space>D": "windowmove right"
+    "<alt-meta-space>n": "windownew"
+    "<alt-meta-space><enter>": "terminalneworsplit"
+    "<alt-meta-space><backspace>": "windowclose"
+    "<alt-meta-space>y": "windowtogglemaximize"
+    # Tabs
+    "<alt-meta-space>[": "tabprevious"
+    "<alt-meta-space>]": "tabnext"
+    "<alt-meta-space>k": "tabclose"
+    "<alt-meta-space>b": "tabsearch"
+    # Finding things
+    "<alt-meta-space>'": "echo {prompt}"
+    "<alt-meta-space>f": "searchfile"
+    "<alt-meta-space>/": "searchtext"
+    "<alt-meta-space>x": "fexplorer"
+    "<alt-meta-space>o": "workspacesearch"
+    # Code (Rune's language intelligence, also inside Helix)
+    "<alt-meta-space>g": "lsp definition"
+    "<alt-meta-space>r": "lsp references"
+    "<alt-meta-space>s": "lsp hover"
+    "<alt-meta-space>,": "lspprevdiagnostic"
+    "<alt-meta-space>.": "lspnextdiagnostic"
+    # Help
+    "<alt-meta-space>c": "cheatsheet"

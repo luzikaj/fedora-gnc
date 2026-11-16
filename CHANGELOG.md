@@ -3,6 +3,13 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-16
+- Rune (rune.build) in /opt/rune from its latest GitHub release, checked
+  against GitHub's SHA-256 for the file (setup, ISO build, update package).
+  `~/.rune/config.yaml`: exo mode with your Helix (`hx`) as the editor, so the
+  editing keys are yours; Rune's commands behind a leader (Menu or Scroll Lock,
+  via `gui.key_mapping`) + niri's letters (e h t d windows, Enter terminal,
+  Backspace close, ' prompt, f / / search, g / r / s code). niri rule: `code`.
+  `docs/rune.md`.
 - Helix back (Fedora's `helix` package, command `hx`) with the one-handed
   config from before the kit was in Git: e h t d move, k delete, D delete
   without copying, j till, l / L word end, Ctrl+t leaves insert, z h / t / H / T

@@ -53,7 +53,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 2. development
-step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, yazi, Helix, virt-manager; Helium removed"
+step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, yazi, Helix, Rune, virt-manager; Helium removed"
 run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
@@ -86,6 +86,15 @@ ok "yazi: type y in the terminal; e h t d to move, ~ for every key (docs: yazi.m
 run sudo dnf install -y --skip-unavailable helix
 put "$F/helix/config.toml" "$HOME/.config/helix/config.toml"
 ok "Helix: hx; e h t d to move, k delete, Ctrl+t leaves insert (docs: helix.md)"
+
+# Rune: IDE around your Helix; Rune's own commands behind the Menu / Scroll Lock key
+if $DRY; then
+    printf '    [dry-run] download and verify the latest Rune, install it in /opt/rune\n'
+else
+    sudo bash "$F/rune/install-rune" || warn "Rune didn't install; run files/rune/install-rune with sudo later"
+fi
+put "$F/rune/config.yaml" "$HOME/.rune/config.yaml"
+ok "Rune: launcher 'Rune'; Menu or Scroll Lock, then e h t d … (docs: rune.md)"
 
 # Virtual machines: KVM + libvirt + virt-manager, no password prompts for admins
 run sudo dnf install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \
