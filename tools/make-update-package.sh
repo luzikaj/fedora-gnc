@@ -16,7 +16,7 @@ mkdir -p "$F/wallpapers" "$F/docs"
 
 cp "$ROOT/update/update.sh" "$ROOT/update/README.txt" "$P/"
 chmod 755 "$P/update.sh"
-for d in keyd niri ghostty fish foot vimium bin branding jetbrains virt snapshots lfk yazi; do
+for d in keyd niri ghostty fish foot vimium bin branding jetbrains virt snapshots lfk yazi helix; do
     cp -r "$ROOT/files/$d" "$F/"
 done
 cp "$ROOT"/files/wallpapers/onehanded-remix-*.png "$F/wallpapers/"

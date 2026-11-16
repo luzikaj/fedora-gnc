@@ -17,7 +17,7 @@ Nothing needs the left hand, and nothing needs two hands at once.
 ### 2. The same four directions everywhere
 **`e h t d` = left, down, up, right** (keycaps G H J K, where the right hand
 rests). The row above, **`o r s u`**, *moves* things in the same directions.
-This holds in the window manager, both editors, the browser and the menus.
+This holds in the window manager, the editors, the browser and the menus.
 Learn it once, use it everywhere.
 
 ### 3. One modifier, one key
@@ -163,7 +163,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | Voice | Speech Note dictation and read-aloud |
 | Browsers | Brave, Brave Nightly, Chrome; Vimium C with one-handed keys (`f` = bookmarks) |
 | Terminal | Ghostty + fish (autosuggestions, `z`, fzf); copy/paste without Shift; foot as a fallback |
-| Editors | LazyVim (Neovim) and Zed with the same keys; Fresh |
+| Editors | LazyVim (Neovim), Zed and Helix with the same keys; Fresh |
 | Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, lfk, AWS CLI, Claude Code |
 | Virtual machines | virt-manager on KVM, 3D guests, no password prompts; workspace `vm` |
 | Other apps | Obsidian, Typing Tutor, yazi (file manager, `y`), nnn (Firefox removed) |
@@ -190,7 +190,7 @@ back/forward · i open link · n link in new tab · w copy link · a c tab ← �
 k j close/reopen tab · l address bar · m find tab · / v g find · ; focus input ·
 ' help · Ctrl + [ = Esc.
 
-### Editor keys (Zed and LazyVim share them)
+### Editor keys (LazyVim, Zed and Helix share them)
 
 | Keys | Action |
 |---|---|
@@ -223,7 +223,7 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | Path | What it is |
 |---|---|
 | `fedora-setup.sh` | Sets up a machine. **All lists live at its top.** |
-| `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `vimium/`, `k9s/`, `lfk/`, `yazi/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
+| `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `vimium/`, `k9s/`, `lfk/`, `yazi/`, `helix/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
 | `build-spin.sh` | Builds the live ISO. |
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
 | `branding.ks` | The spin's name, "One-Handed Fedora Remix", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |

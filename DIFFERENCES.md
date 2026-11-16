@@ -157,6 +157,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
   `Ctrl+t` leaves insert mode, `z h`/`z t` scroll, `Space w` + `e h t d`
   for windows. Plugins are downloaded at setup, so `nvim` opens ready.
 - **Zed** in Helix mode with the same moves and edits.
+- **Helix** (`hx`) with exactly the same keys as Zed.
 - **Fresh** (terminal editor), installed as-is.
 - **JetBrains Toolbox App** in `/opt/jetbrains-toolbox` (command
   `jetbrains-toolbox`, launcher entry "JetBrains Toolbox"). On first start it
@@ -240,7 +241,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `onehand-ydotoold.service` | Virtual keyboard for dictation |
 | `onehand-branding.service` | Keeps the One-Handed Fedora Remix name in os-release |
 | User units `onehand-wallpaper`, `onehand-welcome` | First-login wallpaper and Welcome window |
-| `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/`, `lfk/`, `yazi/` | Per-user configs (copied from `/etc/skel`) |
+| `~/.config/niri/`, `nvim/`, `zed/`, `ghostty/`, `fish/conf.d/`, `k9s/`, `lfk/`, `yazi/`, `helix/` | Per-user configs (copied from `/etc/skel`) |
 
 ## 13. How it's built and maintained
 

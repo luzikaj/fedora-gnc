@@ -3,6 +3,10 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-16
+- Helix back (Fedora's `helix` package, command `hx`) with the one-handed
+  config from before the kit was in Git: e h t d move, k delete, D delete
+  without copying, j till, l / L word end, Ctrl+t leaves insert, z h / t / H / T
+  / u view, Space w + e h t d splits. Same keys as Zed's Helix mode. `docs/helix.md`.
 - yazi (file manager) from the `lihaohong/yazi` COPR, with preview helpers
   (poppler-utils, ffmpegthumbnailer, 7zip, ImageMagick). Keys prepended in
   `~/.config/yazi/keymap.toml`: e h t d move, H / T preview, E / D history,

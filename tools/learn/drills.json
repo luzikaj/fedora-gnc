@@ -139,7 +139,7 @@
     },
     {
       "id": "w4", "week": 4, "title": "The editor",
-      "goal": "Move and edit in LazyVim (and Zed) with the same keys.",
+      "goal": "Move and edit in LazyVim (and Zed, Helix) with the same keys.",
       "drill": [
         "Edit one real file only with the keyboard",
         "Trainer: Week 4, two rounds",

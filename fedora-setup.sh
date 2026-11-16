@@ -53,6 +53,7 @@ DNF_PACKAGES=(
     jq          # used by this script and by niri's force-close shortcut
     # LazyVim (Neovim distribution): Neovim plus what its plugins need
     neovim tree-sitter-cli wl-clipboard unzip nodejs-npm
+    helix       # Helix editor (command: hx), keys e h t d like LazyVim and Zed
     # niri desktop
     niri                # compositor (25.11+ comes from duxlabs/dux-repo)
     xwayland-satellite  # lets X11-only apps run under niri
@@ -133,6 +134,7 @@ USER_FILES=(
     "foot/foot.ini|.config/foot/foot.ini"
     "fish/onehand.fish|.config/fish/conf.d/onehand.fish"
     "yazi/keymap.toml|.config/yazi/keymap.toml"
+    "helix/config.toml|.config/helix/config.toml"
     "vimium/vimium-c-onehand.json|Documents/vimium-c-onehand.json"
     "nvim/init.lua|.config/nvim/init.lua"
     "nvim/lua/config/lazy.lua|.config/nvim/lua/config/lazy.lua"

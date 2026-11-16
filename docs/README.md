@@ -15,6 +15,7 @@ that has its own shortcuts follows the same idea:
 | [Speech Note (voice)](speech-note.md) | Dictation into any window, reading text aloud |
 | [LazyVim (Neovim)](lazyvim.md) | Editor keys |
 | [Zed](zed.md) | Editor keys (Helix mode), matching LazyVim |
+| [Helix](helix.md) | The Helix editor (`hx`), the same keys as Zed |
 | [Vimium C (browsers)](vimium-c.md) | Keyboard browsing in Brave, Brave Nightly and Chrome |
 | [Ghostty and fish (terminal)](ghostty-fish.md) | Copy/paste, shell shortcuts, autosuggestions |
 | [yazi (files)](yazi.md) | The file manager (`y` in the terminal), moved with e h t d |
