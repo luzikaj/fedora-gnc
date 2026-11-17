@@ -2,6 +2,14 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-17
+- Fresh installs: the installer wrote its own keyboard choice (Polish QWERTY)
+  to the new system, so the greetd / tuigreet login was not Dvorak.
+  `onehand-keyboard-firstboot.service` (`onehand-keyboard-check --firstboot`)
+  now puts right-handed Dvorak back on the console and login screen on the
+  first boot, before the login screen starts, and rebuilds the boot image for
+  an encrypted disk.
+
 ## 2026-11-16
 - Screenshots on the F-keys: Mod + F9 window, Mod + F10 selection, Mod + F12
   whole screen (Print keys still work). Audio devices moved to Mod + F11.

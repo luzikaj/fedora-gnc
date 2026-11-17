@@ -232,6 +232,10 @@ else
     warn "snapshots aren't set up; see: sudo onehand-snapshots setup"
 fi
 
+put "$F/keyboard/onehand-keyboard-firstboot.service" /etc/systemd/system/onehand-keyboard-firstboot.service sudo
+run sudo systemctl daemon-reload
+run sudo systemctl enable onehand-keyboard-firstboot.service
+
 step "Check: right-handed Dvorak everywhere"
 if $DRY; then
     printf '    [dry-run] onehand-keyboard-check\n'

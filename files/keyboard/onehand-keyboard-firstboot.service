@@ -1,0 +1,16 @@
+[Unit]
+Description=One-Handed Fedora Remix: right-handed Dvorak on the console and login screen (once, after installing)
+# The installer writes its own keyboard choice to the new system; this puts
+# right-handed Dvorak back before the login screen (greetd / tuigreet) starts.
+ConditionPathExists=!/var/lib/onehand/keyboard-set
+After=local-fs.target dbus.socket systemd-vconsole-setup.service
+Wants=dbus.socket
+Before=greetd.service display-manager.service getty@tty1.service systemd-user-sessions.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/onehand-keyboard-check --firstboot
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target

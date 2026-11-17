@@ -58,6 +58,16 @@ It's also in the Welcome window's checklist. The ISO build checks the same
 when it builds the image, and stops if no right-handed Dvorak console keymap
 is available.
 
+## After installing
+
+The installer writes the keyboard you picked in it (for example Polish, which
+is QWERTY) to the new system. On the **first boot**,
+`onehand-keyboard-firstboot.service` puts right-handed Dvorak back on the text
+console and the login screen before it appears (once; with an encrypted disk
+it also rebuilds the boot image, so the unlock prompt is Dvorak from the next
+boot). To check or fix it by hand any time: `onehand-keyboard-check`
+(`--fix` to repair).
+
 ## Mod: hold Right Alt
 
 | Do this | Result |

@@ -3,6 +3,7 @@
 #
 #   onehand-keyboard-check         check every place the layout is set
 #   onehand-keyboard-check --fix   set it again where it's wrong (asks for sudo)
+#   onehand-keyboard-check --firstboot   (root, once after installing; see the service)
 #
 # Layers checked:
 #   desktop (niri, and every app in it)  layout dvorak_r_pl from /etc/xkb
@@ -30,6 +31,30 @@ keymap_exists() {
 best_console_map() {
     local m; for m in "${CONSOLE_MAPS[@]}"; do keymap_exists "$m" && { echo "$m"; return; }; done
 }
+
+# --firstboot (root, from onehand-keyboard-firstboot.service, once): the
+# installer writes its own keyboard choice (e.g. Polish QWERTY) to the
+# installed system; put right-handed Dvorak back before the login screen starts.
+if [[ "${1:-}" == --firstboot ]]; then
+    (( EUID == 0 )) || { echo "--firstboot runs as root" >&2; exit 1; }
+    want="$(best_console_map)"
+    if [[ -n "$want" ]]; then
+        localectl set-keymap --no-convert "$want" 2>/dev/null || {
+            grep -q '^KEYMAP=' /etc/vconsole.conf 2>/dev/null \
+                && sed -i "s/^KEYMAP=.*/KEYMAP=\"$want\"/" /etc/vconsole.conf \
+                || echo "KEYMAP=\"$want\"" >> /etc/vconsole.conf; }
+    fi
+    localectl set-x11-keymap --no-convert "$X_LAYOUT" "" "$X_VARIANT" 2>/dev/null || true
+    systemctl restart systemd-vconsole-setup.service 2>/dev/null || true
+    # Encrypted disk: rebuild the boot image in the background, so the unlock
+    # prompt is Dvorak from the next boot on.
+    if grep -qvE '^\s*(#|$)' /etc/crypttab 2>/dev/null; then
+        systemd-run --no-block --unit=onehand-dracut --description="Rebuild the boot image (Dvorak unlock prompt)" dracut -f >/dev/null 2>&1 || true
+    fi
+    mkdir -p /var/lib/onehand && touch /var/lib/onehand/keyboard-set
+    echo "Console and login keyboard: ${want:-?} / $X_LAYOUT($X_VARIANT)"
+    exit 0
+fi
 
 # ---------------------------------------------------------------- desktop
 section "Desktop (niri and all apps in it)"

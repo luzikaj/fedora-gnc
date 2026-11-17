@@ -175,6 +175,9 @@ SYSTEM_FILES=(
     "bin/onehand-snapshots|/usr/local/bin/onehand-snapshots"
     "snapshots/onehand-snapshots.actions|/etc/dnf/libdnf5-plugins/actions.d/onehand-snapshots.actions"
     "snapshots/onehand-snapshots-setup.service|/etc/systemd/system/onehand-snapshots-setup.service"
+    # First boot after installing: put Dvorak back on the console / login screen
+    # (the installer writes its own keyboard choice)
+    "keyboard/onehand-keyboard-firstboot.service|/etc/systemd/system/onehand-keyboard-firstboot.service"
     # Mod+Enter: Ghostty, or foot when Ghostty can't start (VMs without 3D)
     "bin/onehand-terminal|/usr/local/bin/onehand-terminal"
     # Checks right-handed Dvorak everywhere (console, login, disk unlock, desktop)
@@ -564,6 +567,8 @@ fi
 # Btrfs snapshots: set up once, on the first boot of the installed system
 # (or right now on a machine that's already installed).
 systemctl enable onehand-snapshots-setup.service 2>/dev/null || true
+# Keyboard: once, on the first boot after installing (no-op where it's already set).
+systemctl enable onehand-keyboard-firstboot.service 2>/dev/null || true
 systemctl start onehand-snapshots-setup.service 2>/dev/null || true   # no-op while building the ISO
 
 command -v restorecon >/dev/null 2>&1 && restorecon -R /etc/onehand /etc/dnf/libdnf5-plugins /etc/systemd/system /usr/share/applications /etc/xkb /etc/brave /etc/opt/chrome /usr/local/bin /etc/keyd /etc/greetd /usr/libexec/onehand /usr/share/backgrounds/onehand 2>/dev/null || true
