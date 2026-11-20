@@ -2,6 +2,11 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-20
+- `update/update.sh` runs from a Git copy of the repo too: it builds the update
+  package from the repo first, then runs that (before, it stopped with
+  "files/ is missing").
+
 ## 2026-11-17
 - Fresh installs: the installer wrote its own keyboard choice (Polish QWERTY)
   to the new system, so the greetd / tuigreet login was not Dvorak.

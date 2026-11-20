@@ -10,6 +10,9 @@
 #   ./update.sh --dry-run    # show what it would do
 #   ./update.sh
 #
+# Or from a Git copy of the repo: git pull && update/update.sh (it builds the
+# package from the repo first).
+#
 # Safe to re-run. Every file it replaces is kept as <file>.bak.<date>.
 # If the new niri config doesn't validate, your old one is put back.
 
@@ -38,7 +41,16 @@ put() {
 }
 
 [[ $EUID -ne 0 ]] || { echo "Run as your normal user (not with sudo)." >&2; exit 1; }
-[[ -d "$F/niri" ]] || { echo "Run this from the unpacked folder (files/ is missing)." >&2; exit 1; }
+# Run from a Git copy of the repo (update/update.sh)? Build the update package
+# from it first, then run that: the package has a few generated pieces.
+if [[ ! -d "$F/niri" && -x "$HERE/../tools/make-update-package.sh" && -d "$HERE/../files/niri" ]]; then
+    echo "Running from the repo: building the update package first…"
+    "$HERE/../tools/make-update-package.sh" >/dev/null || { echo "Couldn't build the update package." >&2; exit 1; }
+    unpack="$(mktemp -d)"
+    tar -xzf "$HERE/../dist/onehand-update.tar.gz" -C "$unpack"
+    exec "$unpack/onehand-update/update.sh" "$@"
+fi
+[[ -d "$F/niri" ]] || { echo "Run this from the unpacked update package or the repo's update/ folder (files/ is missing)." >&2; exit 1; }
 $DRY || sudo -v
 
 # ------------------------------------------------------------------ 1. packages
