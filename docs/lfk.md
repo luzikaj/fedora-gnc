@@ -5,7 +5,7 @@ clusters, laid out like a file manager: clusters → resource types → resource
 → containers, in columns, with a preview on the right. Start it with `lfk`.
 
 One-Handed Fedora Remix sets its keys to the same scheme as niri, LazyVim and
-Vimium C. Config: `~/.config/lfk/config.yaml` (only the keys are set there).
+Helix. Config: `~/.config/lfk/config.yaml` (only the keys are set there).
 
 ## Moving around
 

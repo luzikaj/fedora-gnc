@@ -3,7 +3,7 @@
 # update.sh — bring your current one-handed Fedora + niri system up to
 # One-Handed Fedora Remix: terminal fallback (foot), sticky-key timeout, keyboard check,
 # shortcut guides, development tools (Python, .NET, JetBrains Toolbox), sticky keys, two monitors, window rules, dictation (Speech Note),
-# Vimium C, Ghostty with fish, the new wallpaper and the One-Handed Fedora Remix name/logo.
+# Ghostty with fish, the new wallpaper and the One-Handed Fedora Remix name/logo.
 #
 # Usage (as your normal user, not with sudo; it asks for sudo itself):
 #   tar xzf onehand-update.tar.gz && cd onehand-update
@@ -197,11 +197,9 @@ UNIT
 fi
 
 # ------------------------------------------------------------------ 6. browsers
-step "7/10  Vimium C for Brave, Brave Nightly and Chrome"
-put "$F/vimium/chromium-policy.json" /etc/brave/policies/managed/onehand-vimium-c.json sudo
-put "$F/vimium/chromium-policy.json" /etc/opt/chrome/policies/managed/onehand-vimium-c.json sudo
-put "$F/vimium/vimium-c-onehand.json" "$HOME/Documents/vimium-c-onehand.json"
-ok "restart the browsers; then Vimium C Options -> Import ~/Documents/vimium-c-onehand.json"
+step "7/10  Browsers: Vimium C removed from the kit"
+run sudo rm -f /etc/brave/policies/managed/onehand-vimium-c.json /etc/opt/chrome/policies/managed/onehand-vimium-c.json
+ok "the browsers no longer install Vimium C; remove a copy already there: puzzle icon -> Vimium C -> Remove"
 
 # ------------------------------------------------------------------ 7. name and logo
 step "8/10  One-Handed Fedora Remix name and logo"
@@ -263,8 +261,8 @@ cat <<'DONE'
     Done. Log out and back in (or reboot) once, so the monitors, Speech Note
     in the tray and fish in Ghostty all start fresh.
 
-    Two things to do by hand, once:
-      1. Speech Note: open it, download a Polish speech model (and a voice).
-      2. Vimium C (Brave, Brave Nightly, Chrome): Options -> Import settings
-         -> ~/Documents/vimium-c-onehand.json
+    One thing to do by hand, once:
+      Speech Note: open it, download a Polish speech model (and a voice).
+    Vimium C is no longer part of the kit: if it's still in Brave, Brave
+    Nightly or Chrome, remove it there (puzzle icon -> Vimium C -> Remove).
 DONE

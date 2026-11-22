@@ -21,7 +21,7 @@ The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
 | Login screen | GDM | **greetd + tuigreet** (text login that starts niri) |
 | Keyboard layout | US QWERTY (or locale) | **Right-handed Dvorak** with **Polish letters** on AltGr |
 | Modifier keys | Standard | **keyd**: Right Alt = Mod when held, AltGr (Polish letters) when tapped; **sticky** Right Ctrl / Right Shift |
-| Browser | Firefox | **Brave, Brave Nightly, Chrome**; Firefox removed; **Vimium C** keyboard navigation |
+| Browser | Firefox | **Brave, Brave Nightly, Chrome**; Firefox removed |
 | Terminal / shell | Ptyxis + bash | **Ghostty + fish** (autosuggestions, zoxide, fzf), copy/paste without Shift |
 | Editors / IDEs | GNOME Text Editor | **LazyVim** (Neovim) and **Zed**, both with one-handed keymaps; Fresh; **JetBrains Toolbox** for IntelliJ IDEA, PyCharm, Rider |
 | Development | Python 3 | Python 3 with headers, **pipx** and **uv**; **.NET 10 SDK** |
@@ -167,14 +167,9 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 
 ## 7. Browser
 
-- **Vimium C** is force-installed through Chromium enterprise policy in Brave,
-  Brave Nightly and Chrome (`/etc/brave/policies/managed`,
-  `/etc/opt/chrome/policies/managed`).
-- One-handed key map shipped as an import file
-  (`~/Documents/vimium-c-onehand.json`): `e h t d` scroll, `r s` page,
-  `i` open link, `n` link in new tab, `a c` previous/next tab, `k j`
-  close/reopen tab, `l` address bar, `'` help. Link hints use only right-hand
-  keys.
+- **Brave, Brave Nightly and Chrome** are the browsers; Firefox is removed.
+  No browser extension is installed by the kit (Vimium C was, until
+  2026-11-22).
 
 ## 8. Terminal
 
@@ -211,7 +206,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
   spin's name and uses the lightweight installer browser (as Fedora's own spins do).
 - On the installed system, the Welcome window opens at each login as a
   **checklist** until dismissed: network, Flathub apps (shows what's missing and
-  can install it), dictation model, Vimium C settings, screens, keys and the
+  can install it), dictation model, screens, keys and the
   niri tutorial, system updates.
 
 ## 11. Branding
@@ -230,7 +225,6 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `/etc/xkb/symbols/dvorak_r_pl` | Keyboard layout |
 | `/etc/keyd/default.conf` | Right Alt / sticky Ctrl and Shift |
 | `/etc/greetd/config.toml` | Text login that starts niri |
-| `/etc/brave/…`, `/etc/opt/chrome/…/onehand-vimium-c.json` | Vimium C install policy |
 | `/usr/local/bin/onehand-monitors` | Screen detection at login |
 | `/usr/local/bin/onehand-welcome` | Welcome window / installer launcher / checklist |
 | `/usr/local/bin/onehand-windows`, `onehand-breaks` | Window finder (Mod + .), break reminders (started at niri login) |

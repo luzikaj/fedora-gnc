@@ -136,7 +136,6 @@ USER_FILES=(
     "yazi/keymap.toml|.config/yazi/keymap.toml"
     "helix/config.toml|.config/helix/config.toml"
     "rune/config.yaml|.rune/config.yaml"
-    "vimium/vimium-c-onehand.json|Documents/vimium-c-onehand.json"
     "nvim/init.lua|.config/nvim/init.lua"
     "nvim/lua/config/lazy.lua|.config/nvim/lua/config/lazy.lua"
     "nvim/lua/config/options.lua|.config/nvim/lua/config/options.lua"
@@ -187,10 +186,6 @@ SYSTEM_FILES=(
     # Welcome window: install from the live USB, then a first-login checklist
     "bin/onehand-welcome|/usr/local/bin/onehand-welcome"
     "welcome/onehanded-welcome.desktop|/usr/share/applications/onehanded-welcome.desktop"
-    # Vimium C (keyboard browsing) is installed in your main browsers: Brave and
-    # Brave Nightly (both read /etc/brave) and Chrome. Your keys: ~/Documents/vimium-c-onehand.json
-    "vimium/chromium-policy.json|/etc/brave/policies/managed/onehand-vimium-c.json"
-    "vimium/chromium-policy.json|/etc/opt/chrome/policies/managed/onehand-vimium-c.json"
     # One-Handed Fedora Remix logo (os-release LOGO=onehanded-remix-logo)
     "branding/onehanded-remix-logo.svg|/usr/share/icons/hicolor/scalable/apps/onehanded-remix-logo.svg"
     "branding/onehanded-remix-logo-256.png|/usr/share/icons/hicolor/256x256/apps/onehanded-remix-logo.png"
@@ -567,6 +562,9 @@ fi
 # Btrfs snapshots: set up once, on the first boot of the installed system
 # (or right now on a machine that's already installed).
 systemctl enable onehand-snapshots-setup.service 2>/dev/null || true
+# Vimium C is no longer part of the kit: drop its install policy (older setups).
+rm -f /etc/brave/policies/managed/onehand-vimium-c.json /etc/opt/chrome/policies/managed/onehand-vimium-c.json
+
 # Keyboard: once, on the first boot after installing (no-op where it's already set).
 systemctl enable onehand-keyboard-firstboot.service 2>/dev/null || true
 systemctl start onehand-snapshots-setup.service 2>/dev/null || true   # no-op while building the ISO

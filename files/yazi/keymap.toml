@@ -1,7 +1,7 @@
 #:schema https://yazi-rs.github.io/schemas/keymap.json
 #
 # yazi (terminal file manager) for One-Handed Fedora Remix: the same keys as
-# niri, LazyVim, Vimium C and lfk.
+# niri, LazyVim, Helix and lfk.
 #
 #   e h t d  = parent folder / down / up / open        (yazi: h j k l)
 #   H / T    = scroll the preview down / up            (yazi: J / K)

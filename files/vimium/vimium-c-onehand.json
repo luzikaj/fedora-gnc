@@ -1,7 +1,0 @@
-{
-  "name": "Vimium C",
-  "time": 1762732800000,
-  "keyMappings": "# One-handed, right-hand Dvorak (One-Handed Fedora Remix). e h t d = left down up right.\nunmapAll\nmap ' showHelp\nmap e scrollLeft\nmap h scrollDown\nmap t scrollUp\nmap d scrollRight\nmap o goBack\nmap u goForward\nmap r scrollPageDown\nmap s scrollPageUp\nmap y scrollToTop\nmap b scrollToBottom\nmap a previousTab\nmap c nextTab\nmap k removeTab\nmap j restoreTab\nmap l Vomnibar.activate\nmap m Vomnibar.activateTabs\nmap f Vomnibar.activateBookmarks\nmap i LinkHints.activate\nmap n LinkHints.activateOpenInNewTab\nmap w LinkHints.activateCopyLinkUrl\nmap / enterFindMode\nmap v performFind\nmap g performBackwardsFind\nmap ; focusInput\nmap = reload\n",
-  "linkHintCharacters": "ehtdcorsu",
-  "filterLinkHints": false
-}

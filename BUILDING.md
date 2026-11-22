@@ -221,7 +221,6 @@ Remove the test VM afterwards with `virsh undefine remix-test --nvram --remove-a
    - Wi-Fi
    - Flathub apps
    - the Polish dictation model
-   - Vimium C settings
    - screens
    - the keyboard check
    - updates

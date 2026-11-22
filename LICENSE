@@ -10,7 +10,7 @@ from LazyVim.
      tools/**, update/**, .github/**, docs/learn/trainer.html
    - kickstarts: niri-spin-base.ks, branding.ks
    - configs: everything else under files/ (keymaps, niri, keyd, xkb, fish,
-     ghostty, foot, vimium, zed, k9s, virt, welcome, nvim except below)
+     ghostty, foot, zed, k9s, virt, welcome, nvim except below)
 
 2. Documentation and artwork: Creative Commons Attribution-ShareAlike 4.0
    International (LICENSES/CC-BY-SA-4.0.txt)

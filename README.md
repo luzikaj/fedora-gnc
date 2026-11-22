@@ -33,12 +33,12 @@ Every desktop shortcut is **Mod + one key**, never two modifiers.
 ### 5. Keys keep their meaning across tools
 The same key does the same kind of thing everywhere:
 
-| Key | niri | LazyVim / Zed | Browser (Vimium C) |
+| Key | niri | LazyVim / Zed | Files (yazi) |
 |---|---|---|---|
-| `e h t d` | focus ← ↓ ↑ → | move ← ↓ ↑ → | scroll ← ↓ ↑ → |
-| `o r s u` | move column / window | Vim's own (open, replace, …) | back · page ↓ · page ↑ · forward |
-| `k` | floating | delete | close tab |
-| `'` | launcher | | help |
+| `e h t d` | focus ← ↓ ↑ → | move ← ↓ ↑ → | parent · down · up · open |
+| `H T` | | | scroll the preview ↓ ↑ |
+| `k` | floating | delete | move to trash |
+| `j` | floating ↔ tiled focus | till | new tab |
 
 Where a tool's own key had to move to make room, it moved to a fixed,
 documented place (`docs/`).
@@ -161,7 +161,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | Keyboard | `dvorak_r_pl` layout; keyd: Mod, Polish letters, sticky Ctrl/Shift |
 | Screens | named workspaces `code` · `web` · `notes` · `vm` on the main screen; second screen shows the cheat sheet and takes windows on request (Mod + End) |
 | Voice | Speech Note dictation and read-aloud |
-| Browsers | Brave, Brave Nightly, Chrome; Vimium C with one-handed keys (`f` = bookmarks) |
+| Browsers | Brave, Brave Nightly, Chrome |
 | Terminal | Ghostty + fish (autosuggestions, `z`, fzf); copy/paste without Shift; foot as a fallback |
 | Editors | LazyVim (Neovim), Zed and Helix with the same keys; Rune (IDE around Helix); Fresh |
 | Development | Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox, lazygit, k9s, lfk, AWS CLI, Claude Code |
@@ -185,10 +185,9 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | tap Right Ctrl, then key | Ctrl + key (same for Right Shift) |
 | Ctrl + C / Ctrl + V (Ghostty) | copy (when text is selected) / paste |
 
-**Browser (Vimium C):** e h t d scroll · r s page · y b top/bottom · o u
-back/forward · i open link · n link in new tab · w copy link · a c tab ← → ·
-k j close/reopen tab · l address bar · m find tab · / v g find · ; focus input ·
-' help · Ctrl + [ = Esc.
+**Files (yazi, `y` in the terminal):** e h t d parent/down/up/open · H T
+preview · E D back/forward · Space select · y x p copy/cut/paste · k trash ·
+r rename · a new · j new tab · f filter · / find · z Z jump · ~ every key.
 
 ### Editor keys (LazyVim, Zed and Helix share them)
 
@@ -212,9 +211,7 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 1. **Speech Note:** open it from the launcher and download a Polish speech
    model (and a voice for reading aloud). Setting "Listening mode" to *One
    sentence* makes dictation stop by itself after a pause.
-2. **Vimium C:** it installs itself in Brave, Brave Nightly and Chrome. In its
-   Options, use *Import settings* with `~/Documents/vimium-c-onehand.json`.
-3. **Monitors:** nothing to do. If you plug in a screen later, run
+2. **Monitors:** nothing to do. If you plug in a screen later, run
    `onehand-monitors`. If the names don't match (it looks for "ASUS" and
    "BenQ"), the bigger screen is taken as the main one.
 
@@ -223,7 +220,7 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | Path | What it is |
 |---|---|
 | `fedora-setup.sh` | Sets up a machine. **All lists live at its top.** |
-| `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `vimium/`, `k9s/`, `lfk/`, `yazi/`, `helix/`, `rune/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
+| `files/` | Your configs: `niri/` (config, window rules, monitors), `xkb/`, `keyd/`, `zed/`, `nvim/` (LazyVim), `ghostty/`, `fish/`, `k9s/`, `lfk/`, `yazi/`, `helix/`, `rune/`, `bin/onehand-monitors`, `branding/` (logo), wallpapers, tutorial. |
 | `build-spin.sh` | Builds the live ISO. |
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
 | `branding.ks` | The spin's name, "One-Handed Fedora Remix", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |
@@ -264,7 +261,7 @@ arrows, Enter to choose). It's also in the launcher as "Install One-Handed Fedor
 
 After installing, the Welcome window opens at each login until you choose
 "All done". It's a checklist: Wi-Fi, apps from Flathub, the Polish dictation
-model, Vimium C settings, screens, the keys, updates. Open it again any time
+model, screens, the keys, updates. Open it again any time
 from the launcher (Mod + ') as "Welcome". On installed machines,
 `fedora-setup` is available as a command too, for setting up another user.
 

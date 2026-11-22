@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/janosmiko/lfk/main/docs/config.schema.json
 #
 # lfk (Kubernetes TUI) for One-Handed Fedora Remix: the same keys as niri,
-# LazyVim and Vimium C.
+# LazyVim and Helix.
 #
 #   e h t d   = left (parent) / down / up / right (open)      was h j k l
 #   H / T     = scroll the preview pane down / up             was J / K

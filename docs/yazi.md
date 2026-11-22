@@ -5,7 +5,7 @@ columns, a preview on the right (text, code, images, PDFs, video thumbnails,
 archives). Start it with **`y`** in the terminal. When you quit with `q`, the
 terminal stays in the folder you were in; `Q` quits back to where you started.
 
-Its keys follow the same scheme as niri, LazyVim, Vimium C and lfk. Config:
+Its keys follow the same scheme as niri, LazyVim, Helix and lfk. Config:
 `~/.config/yazi/keymap.toml` (only the changed keys; the rest is yazi's own).
 
 ## Moving around

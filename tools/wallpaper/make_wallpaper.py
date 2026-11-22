@@ -43,10 +43,10 @@ nvim_cards = [
 C = lambda *x: k("Ctrl","ctl") + "".join(k(y) for y in x)
 voice_rows = [(niri("c"), "Dictate into window"), (niri("i"), "Stop dictating"), (niri("a"), "Read clipboard aloud"),
               (niri("x"), "Stop reading / cancel"), ('<span class="note">Polish model: download once in Speech Note</span>', "")]
-vim_rows1 = [(keys("e","h","t","d"), "Scroll ← ↓ ↑ →"), (keys("r","s"), "Page ↓ ↑"), (keys("y","b"), "Top / bottom"),
-             (keys("o","u"), "Back / forward"), (keys("/","v","g"), "Find / next / prev"), (keys(";"), "Focus input")]
-vim_rows2 = [(keys("i"), "Open link"), (keys("n"), "Link in new tab"), (keys("w"), "Copy link"),
-             (keys("a","c"), "Tab ← →"), (keys("k","j"), "Close / reopen tab"), (keys("l","m","f"), "Address / tab / bookmark")]
+vim_rows1 = [(keys("e","h","t","d"), "Parent ↓ ↑ open"), (keys("H","T"), "Preview ↓ ↑"), (keys("E","D"), "Back / forward"),
+             (keys("␣"), "Select"), (keys("y","x","p"), "Copy / cut / paste"), (keys("a"), "New (end / = folder)")]
+vim_rows2 = [(keys("k","K"), "Trash / delete"), (keys("r"), "Rename"), (keys("j","[","]"), "New tab / ← →"),
+             (keys("f","/"), "Filter / find"), (keys("z","Z"), "Jump: fzf / zoxide"), (keys("."), "Hidden files")]
 term_rows = [(C("c"), "Copy (if selected)"), (C("v"), "Paste"), (keys("→")+'<span class="or">or</span>'+C("f"), "Take suggestion"),
              (keys("z","name"), "Jump to folder"), (C("r"), "History search"), (C("t"), "Pick a file")]
 def rows(rs):
@@ -105,6 +105,7 @@ kbd.ctl {{ color:#ffd479; border-color:#6b5626; background:#2a2414; }}
 .bottom h3 small {{ font-size:17px; font-weight:400; color:var(--muted); margin-left:8px; }}
 .card.voice h3 {{ color:var(--voice); }} .card.web h3 {{ color:var(--web); }} .card.term h3 {{ color:var(--term); }} .card.mon h3 {{ color:var(--niri); }}
 .card.web kbd {{ border-color:#6b5230; background:#2a2116; }}
+.card h3 code {{ font-family:'DejaVu Sans Mono',monospace; font-size:16px; color:#cfe3ff; background:#152033; border-radius:5px; padding:1px 6px; }}
 .cols2 {{ display:grid; grid-template-columns:1fr 1fr; gap:0 26px; }}
 .screens {{ display:flex; align-items:flex-end; gap:14px; margin:10px 0 12px; }}
 .scr {{ border:2px solid #2f5a86; border-radius:10px; background:#0e1828; padding:10px 12px; font-size:18px; color:var(--muted); }}
@@ -137,7 +138,7 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
 </div>
 <div class="bottom">
   <div class="card voice"><h3>Voice <small>Speech Note</small></h3>{rows(voice_rows)}</div>
-  <div class="card web"><h3>Browser <small>Vimium C · Brave, Nightly, Chrome · <kbd>'</kbd> help · <kbd class="ctl">Ctrl</kbd><kbd>[</kbd> = Esc</small></h3>
+  <div class="card web"><h3>Files <small>yazi · <code>y</code> in the terminal · <kbd>~</kbd> all keys · <kbd>q</kbd> quit here</small></h3>
     <div class="cols2"><div>{rows(vim_rows1)}</div><div>{rows(vim_rows2)}</div></div></div>
   <div class="card term"><h3>Terminal <small>Ghostty + fish</small></h3>{rows(term_rows)}</div>
   <div class="card mon"><h3>Screens</h3>
@@ -148,7 +149,7 @@ footer .sep {{ color:#4b5d78; margin:0 8px; }}
     <div class="tip"><kbd class="mod">Mod</kbd><kbd>End</kbd> send window there / back · <kbd>q</kbd> sleep / wake · <kbd>Home</kbd> jump</div></div>
 </div>
 <footer>
-  <div><b>First time</b> Speech Note: download a Polish model<span class="sep">·</span>Vimium C → Options → Import <code>~/Documents/vimium-c-onehand.json</code></div>
+  <div><b>First time</b> Speech Note: download a Polish model<span class="sep">·</span>Welcome window: Mod + ' → <code>Welcome</code></div>
   <div><b>If stuck</b> <kbd>Bksp</kbd><kbd>Esc</kbd><kbd>Enter</kbd> together stops keyd<span class="sep">·</span>new screen? run <code>onehand-monitors</code></div>
   <div><b>fish</b> <code>v</code> nvim <code>g</code> git <code>lg</code> lazygit<span class="sep">·</span><code>zi</code> pick a folder<span class="sep">·</span><kbd>Alt</kbd><kbd>c</kbd> cd</div>
 </footer>

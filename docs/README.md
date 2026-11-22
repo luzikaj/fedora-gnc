@@ -17,7 +17,6 @@ that has its own shortcuts follows the same idea:
 | [Zed](zed.md) | Editor keys (Helix mode), matching LazyVim |
 | [Helix](helix.md) | The Helix editor (`hx`), the same keys as Zed |
 | [Rune](rune.md) | IDE around your Helix; Rune's commands behind the Menu / Scroll Lock key |
-| [Vimium C (browsers)](vimium-c.md) | Keyboard browsing in Brave, Brave Nightly and Chrome |
 | [Ghostty and fish (terminal)](ghostty-fish.md) | Copy/paste, shell shortcuts, autosuggestions |
 | [yazi (files)](yazi.md) | The file manager (`y` in the terminal), moved with e h t d |
 | [lfk (Kubernetes)](lfk.md) | Clusters and resources in columns, moved with e h t d |

@@ -7,7 +7,6 @@ Adds to your running one-handed Fedora + niri setup:
     apps open on their screen by themselves; Mod + z moves a whole workspace
   - dictation with Speech Note: Mod + c dictate, Mod + i stop,
     Mod + a read clipboard aloud, Mod + x stop reading
-  - Vimium C in Brave, Brave Nightly and Chrome
   - Ghostty runs fish; Ctrl+C / Ctrl+V copy and paste without Shift
   - the One-Handed Fedora Remix name, logo and cheat-sheet wallpaper
   - development: Python 3 (pipx, uv), .NET 10 SDK, JetBrains Toolbox
@@ -28,5 +27,6 @@ Every replaced file is kept as <file>.bak.<date>. If niri rejects the new
 config, your previous config.kdl is put back automatically.
 
 By hand, once:
-  1. Speech Note: download a Polish speech model (and a voice).
-  2. Vimium C: Options -> Import settings -> ~/Documents/vimium-c-onehand.json
+  Speech Note: download a Polish speech model (and a voice).
+Vimium C is no longer part of the kit: the update removes its install policy;
+remove a copy still in a browser there (puzzle icon -> Vimium C -> Remove).

@@ -38,7 +38,6 @@ Each step gets a ✓ when done:
 | Network and Wi-Fi | `nmtui` |
 | Apps from Flathub | shows which apps are installed and installs the missing ones |
 | Dictation | opens Speech Note with the steps to download the Polish model |
-| Browser keys | Enter opens Vimium C's options in Brave; `c` opens them in Chrome |
 | Screens | sets up the two monitors now (`onehand-monitors`) |
 | The one-handed keys | the key summary, and opens the niri tutorial PDF |
 | Check right-handed Dvorak everywhere | runs `onehand-keyboard-check`; Enter fixes what's wrong |

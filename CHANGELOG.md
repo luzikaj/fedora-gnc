@@ -2,6 +2,13 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-22
+- Vimium C removed: no browser policy, no import file, no Welcome step, no
+  docs page. The update and fedora-setup delete the old policy files
+  (`/etc/brave/…` and `/etc/opt/chrome/…/onehand-vimium-c.json`); a copy the
+  browsers already installed is removed by hand. The wallpaper's Browser card
+  is now a yazi (Files) card; trainer week 3 is "Files and terminal".
+
 ## 2026-11-20
 - `update/update.sh` runs from a Git copy of the repo too: it builds the update
   package from the repo first, then runs that (before, it stopped with

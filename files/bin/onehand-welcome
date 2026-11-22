@@ -215,27 +215,6 @@ page_voice() {
     pause
 }
 
-page_vimium() {
-    local opts="chrome-extension://hfjbmagddngcpeloejdejnfgbamkjaeg/pages/options.html"
-    banner
-    say "${B}Browser keys (Vimium C)${OFF}" ""
-    say "Vimium C is installed in Brave, Brave Nightly and Chrome automatically."
-    say "Load your one-handed keys once per browser:"
-    say ""
-    say " 1. Open Vimium C's options (puzzle-piece icon → Vimium C → Options)."
-    say " 2. At the bottom: ${B}Import settings${OFF}."
-    say " 3. Pick ${B}Documents/vimium-c-onehand.json${OFF}."
-    say ""
-    say "Keys: e h t d scroll · i open a link · a c switch tab · ' help"
-    say ""
-    printf '  %sEnter: open the options in Brave · c: in Chrome · Esc: back%s ' "$DIM" "$OFF"
-    local k; IFS= read -rsn1 k
-    case "$k" in
-        "") spawn brave-browser "$opts"; done_mark vimium ;;
-        c)  spawn google-chrome "$opts"; done_mark vimium ;;
-    esac
-}
-
 page_screens() {
     banner
     say "${B}Screens${OFF}" ""
@@ -293,7 +272,6 @@ installed_main() {
             "$(t network 'Network and Wi-Fi')" \
             "$(t apps 'Apps from Flathub')" \
             "$(t voice 'Dictation: download the Polish model')" \
-            "$(t vimium 'Browser keys: import Vimium C settings')" \
             "$(t screens 'Screens: main + second')" \
             "$(t keys 'The one-handed keys and the niri tutorial')" \
             "$(t kbcheck 'Check right-handed Dvorak everywhere')" \
@@ -303,12 +281,11 @@ installed_main() {
             0) page_wifi; done_mark network ;;
             1) page_apps ;;
             2) page_voice ;;
-            3) page_vimium ;;
-            4) page_screens ;;
-            5) page_help ;;
-            6) page_kbcheck ;;
-            7) page_updates ;;
-            8) mkdir -p "$STATE"; touch "$STATE/welcome-done"
+            3) page_screens ;;
+            4) page_help ;;
+            5) page_kbcheck ;;
+            6) page_updates ;;
+            7) mkdir -p "$STATE"; touch "$STATE/welcome-done"
                banner; say "It won't open at login any more." \
                    "Find it again in the launcher (Mod + ') as ${B}Welcome${OFF}."
                sleep 2; exit 0 ;;
