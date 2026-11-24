@@ -1,0 +1,277 @@
+#!/usr/bin/env bash
+# =============================================================================
+# onehand-dojo: hands-on niri practice with YOUR one-handed shortcuts
+# (One-Handed Fedora Remix; launcher: "niri Dojo")
+#
+# Run it in a terminal inside niri:   onehand-dojo
+# With one screen it runs the one-screen course (onehand-dojo-solo) instead.
+#
+# It opens practice windows A, B and C, gives you one task at a time, and
+# watches niri (through `niri msg`) to see when you've done it, then moves on.
+# You never type anything into this terminal: just use the shortcuts.
+#
+# Keys are the letters on your right-handed Dvorak keycaps.
+# Mod = hold Right Alt (or the left Win key).
+#
+#   onehand-dojo            full course (about 5 minutes)
+#   onehand-dojo --from 4   start at lesson 4
+#   onehand-dojo --solo     the one-screen course, even with two screens
+#   Ctrl+C in this window   stop at any time (practice windows are closed)
+#
+# Needs: niri, jq, and a terminal (ghostty, foot, alacritty or konsole).
+# =============================================================================
+set -uo pipefail
+
+FROM=1
+[[ "${1:-}" == "--from" && -n "${2:-}" ]] && FROM="$2"
+
+command -v niri >/dev/null || { echo "niri not found." >&2; exit 1; }
+command -v jq   >/dev/null || { echo "Needs jq:  sudo dnf install jq" >&2; exit 1; }
+[[ -n "${NIRI_SOCKET:-}" ]] || { echo "Run this inside a niri session (not from a text console)." >&2; exit 1; }
+
+# One screen (laptop), or asked for: the one-screen course.
+if [[ "${1:-}" == "--solo" ]] || (( $(niri msg --json outputs 2>/dev/null | jq 'length') < 2 )); then
+  [[ "${1:-}" == "--solo" ]] && shift
+  exec onehand-dojo-solo "$@"
+fi
+
+# ------------------------------------------------------------------ look ----
+B=$'\e[1m'; D=$'\e[2m'; G=$'\e[32m'; Y=$'\e[33m'; C=$'\e[36m'; M=$'\e[35m'; R=$'\e[0m'
+key()  { printf '%s' "${M}${B}$*${R}"; }          # highlighted key name
+mod()  { key "Mod + $*"; }
+
+# ------------------------------------------------------------- niri state ---
+wins()       { niri msg --json windows 2>/dev/null; }
+wss()        { niri msg --json workspaces 2>/dev/null; }
+focused_id() { niri msg --json focused-window 2>/dev/null | jq -r '.id // empty'; }
+win_field()  { wins | jq -r --argjson id "$1" ".[] | select(.id == \$id) | $2"; }
+col_of()     { win_field "$1" '.layout.pos_in_scrolling_layout[0] // empty'; }
+ws_of()      { win_field "$1" '.workspace_id // empty'; }
+width_of()   { win_field "$1" '.layout.tile_size[0] | floor'; }
+floating()   { win_field "$1" '.is_floating'; }
+exists()     { [[ -n "$(win_field "$1" '.id')" ]]; }
+focused_ws() { wss | jq -r '.[] | select(.is_focused) | .id'; }
+ws_output()  { wss | jq -r --argjson id "$1" '.[] | select(.id == $id) | .output'; }
+focused_output() { ws_output "$(focused_ws)"; }
+windows_on_ws()  { wins | jq --argjson ws "$1" '[.[] | select(.workspace_id == $ws)] | length'; }
+outputs_count()  { niri msg --json outputs 2>/dev/null | jq 'length'; }
+overview_open()  { niri msg --json overview-state 2>/dev/null | jq -r '.is_open // false'; }
+
+# ---------------------------------------------------------- task runner -----
+STEP=0; T0=$(date +%s); FAILS=()
+# task "instruction" "hint" 'predicate (bash code returning 0 when done)'
+task() {
+  local text="$1" hint="$2" check="$3" waited=0 hinted=0 t=$(date +%s)
+  STEP=$((STEP + 1))
+  printf '\n  %s%2d.%s %s\n' "$C$B" "$STEP" "$R" "$text"
+  until eval "$check" 2>/dev/null; do
+    sleep 0.25; waited=$((waited + 1))
+    if [[ $hinted -eq 0 && $waited -ge 60 && -n "$hint" ]]; then
+      printf '      %sHint:%s %s\n' "$Y" "$R" "$hint"; hinted=1
+    fi
+  done
+  printf '      %s✓ done%s %s(%ss)%s\n' "$G" "$R" "$D" "$(( $(date +%s) - t ))" "$R"
+  sleep 0.4
+}
+lesson() { printf '\n%s━━ Lesson %s: %s ━━%s\n%s\n' "$B$C" "$1" "$2" "$R" "$3"; }
+
+# --------------------------------------------------- practice windows -------
+TERM_CMD=()
+# foot first: it opens fast and works in VMs without 3D (Ghostty may not).
+if   command -v foot      >/dev/null; then TERM_CMD=(foot --title=)
+elif command -v ghostty   >/dev/null; then TERM_CMD=(ghostty --gtk-single-instance=false --title=)
+elif command -v alacritty >/dev/null; then TERM_CMD=(alacritty --title)
+elif command -v konsole   >/dev/null; then TERM_CMD=(konsole --title)  # title may be ignored
+else echo "No terminal found (ghostty, foot, alacritty or konsole)." >&2; exit 1; fi
+
+declare -A WID
+spawn_letter() {   # spawn_letter A  -> opens a practice window, stores its id in WID[A]
+  local L="$1" title="niri-dojo-$1" before after new
+  before=$(wins | jq '[.[].id]')
+  local body="printf '\\n\\n\\n        ██   PRACTICE WINDOW  $L   ██\\n\\n        (the dojo closes me at the end)\\n'; exec sleep infinity"
+  if [[ "${TERM_CMD[-1]}" == "--title=" ]]; then
+    niri msg action spawn -- "${TERM_CMD[@]:0:${#TERM_CMD[@]}-1}" "--title=$title" -e sh -c "$body" >/dev/null
+  else
+    niri msg action spawn -- "${TERM_CMD[@]}" "$title" -e sh -c "$body" >/dev/null
+  fi
+  for _ in $(seq 1 60); do      # wait up to 15 s for the new window
+    sleep 0.25
+    after=$(wins | jq --argjson b "$before" '[.[].id] - $b')
+    new=$(jq -r '.[0] // empty' <<<"$after")
+    [[ -n "$new" ]] && { WID[$L]=$new; return 0; }
+  done
+  echo "Practice window $L didn't appear." >&2; return 1
+}
+
+cleanup() {
+  for L in "${!WID[@]}"; do
+    exists "${WID[$L]}" && niri msg action close-window --id "${WID[$L]}" >/dev/null 2>&1
+  done
+}
+trap 'cleanup; printf "\n%sDojo stopped. Practice windows closed.%s\n" "$Y" "$R"; exit 0' INT
+
+# =============================================================== start ======
+GUIDE=$(focused_id)
+printf '\e]2;niri dojo\a'
+clear
+cat <<EOF
+${B}niri dojo${R}: learn niri with your own shortcuts
+${D}Mod = hold Right Alt (or left Win).  Keys = your Dvorak keycap letters.${R}
+
+Three ideas to keep in mind:
+  ${B}1.${R} Windows never shrink. Each new one opens as a new ${B}column${R} to the
+     right, on an endless strip. The screen slides along it.
+  ${B}2.${R} ${B}e d${R} = left/right between columns,  ${B}h t${R} = down/up.
+     Same keys move things when you use ${B}o u${R} / ${B}r s${R} (the row above).
+  ${B}3.${R} Workspaces sit ${B}on top of each other${R}, like floors. ${B}n w${R} = up/down.
+
+Watch this window: each task ticks off by itself when niri sees you did it.
+EOF
+
+# ---------------------------------------------- lesson 1: two monitors ------
+# Always runs: it puts this guide where you can read it during the lessons.
+EX_WS=""; SINGLE=0
+if [[ "$(outputs_count)" -ge 2 ]]; then
+  lesson 1 "Two monitors" "This guide moves to your other screen, so it stays readable."
+  START_OUT=$(focused_output)
+  task "Send this guide window to your other monitor: $(mod End)" \
+       "Hold Right Alt, press End (nav keys above the arrows). You stay on the main screen." \
+       '[[ "$(ws_output "$(ws_of "$GUIDE")")" != "$START_OUT" ]]'
+  task "Jump over to the guide's screen: $(mod Home)" \
+       "Mod + Home switches between monitors without moving anything." \
+       '[[ "$(focused_output)" == "$(ws_output "$(ws_of "$GUIDE")")" ]]'
+  task "And back to your main monitor: $(mod Home) again" "" \
+       '[[ "$(focused_output)" != "$(ws_output "$(ws_of "$GUIDE")")" ]]'
+else
+  SINGLE=1
+  lesson 1 "Setup" "One monitor found, so this guide floats on top of the practice windows."
+  niri msg action toggle-window-floating --id "$GUIDE" >/dev/null 2>&1
+fi
+
+# ------------------------------------------- lesson 2: workspaces (floors) --
+lesson 2 "Workspaces are floors" "There is always an empty workspace at the bottom."
+if [[ $SINGLE -eq 0 ]]; then
+  task "Go down to an empty workspace: press $(mod w) until the screen is empty" \
+       "Mod + w goes one workspace down. Keep going until no windows are visible." \
+       '[[ "$(windows_on_ws "$(focused_ws)")" == 0 ]]'
+else
+  task "Leave only this guide here: send other windows down with $(mod g) or close them" \
+       "Focus a window with Mod + e / d, then Mod + g sends it one workspace down." \
+       '[[ "$(windows_on_ws "$(focused_ws)")" == 1 && "$(ws_of "$GUIDE")" == "$(focused_ws)" ]]'
+fi
+EX_WS=$(focused_ws)
+
+printf '\n  %sOpening practice windows A, B and C...%s\n' "$D" "$R"
+for L in A B C; do spawn_letter "$L" || exit 1; done
+sleep 0.5
+
+# --------------------------------------------- lesson 3: focus sideways ----
+if [[ $FROM -le 3 ]]; then
+lesson 3 "Moving focus between columns" "A, B and C are three columns, left to right. The blue frame shows focus."
+task "Focus window A (far left): $(mod e) twice" \
+     "e = left. The screen slides when the column isn't visible." \
+     '[[ "$(focused_id)" == "${WID[A]}" ]]'
+task "Focus window C (far right): $(mod d) twice" "d = right." \
+     '[[ "$(focused_id)" == "${WID[C]}" ]]'
+task "Focus window B (middle): $(mod e) once" "" \
+     '[[ "$(focused_id)" == "${WID[B]}" ]]'
+fi
+
+# --------------------------------------------- lesson 4: move columns ------
+if [[ $FROM -le 4 ]]; then
+lesson 4 "Moving windows" "o u sit right above e d: same directions, but they carry the window along."
+task "Focus C ($(mod d)), then move C to the far left: $(mod o) twice" \
+     "Order should become C A B. The screen follows C, so watch the letters." \
+     '[[ "$(col_of "${WID[C]}")" == 1 ]]'
+task "Move C back to the far right: $(mod u) twice" "" \
+     '[[ "$(col_of "${WID[C]}")" == 3 ]]'
+fi
+
+# --------------------------------------------- lesson 5: stacking ----------
+if [[ $FROM -le 5 ]]; then
+lesson 5 "Stacking two windows in one column" "A column can hold several windows on top of each other."
+task "Focus B ($(mod e)), then pull it into A's column: $(mod \;)" \
+     "Mod + ; pulls the focused window into the column on its left." \
+     '[[ "$(col_of "${WID[B]}")" == "$(col_of "${WID[A]}")" ]]'
+task "Move up to A, inside the column: $(mod t)" "t = up." \
+     '[[ "$(focused_id)" == "${WID[A]}" ]]'
+task "And back down to B: $(mod h)" "h = down." \
+     '[[ "$(focused_id)" == "${WID[B]}" ]]'
+task "Push B back out into its own column: $(mod =)" \
+     "Mod + = pushes the window out to the right." \
+     '[[ "$(col_of "${WID[B]}")" != "$(col_of "${WID[A]}")" ]]'
+fi
+
+# --------------------------------------------- lesson 6: sizes -------------
+if [[ $FROM -le 6 ]]; then
+lesson 6 "Window sizes" "Columns have preset widths: a third, half, two thirds and full."
+W0=$(width_of "${WID[C]}")
+task "Focus C ($(mod d)) and change its width: $(mod l)" \
+     "Press it a few times and watch the width cycle." \
+     '[[ "$(focused_id)" == "${WID[C]}" && "$(width_of "${WID[C]}")" != "$W0" ]]'
+W1=$(width_of "${WID[C]}")
+task "Make C narrower or wider: $(mod m) / $(mod f)" "m = narrower, f = wider (10% each)." \
+     '[[ "$(width_of "${WID[C]}")" != "$W1" ]]'
+fi
+
+# --------------------------------------------- lesson 7: floors again ------
+if [[ $FROM -le 7 ]]; then
+lesson 7 "Moving between floors" "v g carry the focused column up / down; n w just move you."
+task "Send C to the workspace below: $(mod g)" \
+     "Focus C first (Mod + d). You travel down with it." \
+     '[[ "$(ws_of "${WID[C]}")" != "$EX_WS" && -n "$(ws_of "${WID[C]}")" ]]'
+task "Bring C back up: $(mod v)" "v = send up. You travel along again." \
+     '[[ "$(ws_of "${WID[C]}")" == "$EX_WS" ]]'
+task "Now just look one floor down, without taking anything: $(mod w)" "" \
+     '[[ "$(focused_ws)" != "$EX_WS" ]]'
+task "And come back up: $(mod n)" "" \
+     '[[ "$(focused_ws)" == "$EX_WS" ]]'
+fi
+
+# --------------------------------------------- lesson 8: overview ----------
+if [[ $FROM -le 8 ]]; then
+lesson 8 "The overview: when you're lost" "It zooms out to show every workspace and window."
+if [[ "$(overview_open)" == "false" ]] && niri msg --json overview-state >/dev/null 2>&1; then
+  task "Open the overview: $(mod -)" "" '[[ "$(overview_open)" == "true" ]]'
+  task "Look around, then close it: $(mod -) again" "" '[[ "$(overview_open)" == "false" ]]'
+else
+  printf '  Press %s to open and close it (this niri version can'"'"'t be checked).\n' "$(mod -)"
+fi
+fi
+
+# --------------------------------------------- lesson 9: floating ----------
+if [[ $FROM -le 9 ]]; then
+lesson 9 "Floating windows" "A floating window sits on top, outside the strip."
+task "Make the focused window float: $(mod k)" "" \
+     'f=$(focused_id); [[ -n "$f" && "$(floating "$f")" == "true" ]]'
+task "Put it back into the strip: $(mod k) again" "" \
+     'f=$(focused_id); [[ -n "$f" && "$(floating "$f")" == "false" ]]'
+fi
+
+# --------------------------------------------- lesson 10: closing ----------
+lesson 10 "Closing windows" "Finish by closing the three practice windows."
+task "Close A, B and C: focus each and press $(mod Backspace)" \
+     "Mod + e / d to reach each one, then Mod + Backspace." \
+     '! exists "${WID[A]}" && ! exists "${WID[B]}" && ! exists "${WID[C]}"'
+WID=()
+
+# ================================================================ end =======
+TOTAL=$(( $(date +%s) - T0 ))
+BEST_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/niri-dojo-best"
+mkdir -p "$(dirname "$BEST_FILE")"
+BEST=$(cat "$BEST_FILE" 2>/dev/null || echo "")
+printf '\n%s━━ Done! %d tasks in %d:%02d ━━%s\n' "$G$B" "$STEP" $((TOTAL/60)) $((TOTAL%60)) "$R"
+if [[ $FROM -eq 1 ]]; then
+  if [[ -z "$BEST" || $TOTAL -lt $BEST ]]; then
+    echo "$TOTAL" > "$BEST_FILE"; echo "  New personal best!"
+  else
+    printf '  Personal best: %d:%02d\n' $((BEST/60)) $((BEST%60))
+  fi
+fi
+cat <<EOF
+
+  Run it once a day for a few days; it gets fast quickly.
+  Next: your workspaces code, web, notes and vm each have one job; move
+  between them with ${B}Mod + n / w${R}. That's where niri shines.
+  The guide is still on your other screen: ${B}Mod + End${R} there brings it back.
+EOF

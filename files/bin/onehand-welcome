@@ -99,7 +99,7 @@ page_keys() {
     say "Mod + ,        pause the break reminders for an hour"
     say "Mod + Insert   ${B}every shortcut${OFF}"
     say "" "The wallpaper is a cheat sheet of all of them."
-    pause
+    [[ "${1:-}" == nopause ]] || pause
 }
 
 page_wifi() {
@@ -259,8 +259,15 @@ page_kbcheck() {
 }
 
 page_help() {
-    page_keys
-    [[ -f "$HOME/Documents/niri-tutorial.pdf" ]] && spawn xdg-open "$HOME/Documents/niri-tutorial.pdf"
+    page_keys nopause
+    say "" "${B}Practise them:${OFF} press ${B}d${OFF} for the niri Dojo (live lessons, ~5 min),"
+    say "Enter: the niri tutorial (PDF) · Esc: back."
+    local k; read -rsn1 k || true
+    case "$k" in
+        d|D) spawn foot --title="niri dojo" onehand-dojo ;;
+        $'\e') ;;
+        *)   [[ -f "$HOME/Documents/niri-tutorial.pdf" ]] && spawn xdg-open "$HOME/Documents/niri-tutorial.pdf" ;;
+    esac
     done_mark keys
 }
 
@@ -273,7 +280,7 @@ installed_main() {
             "$(t apps 'Apps from Flathub')" \
             "$(t voice 'Dictation: download the Polish model')" \
             "$(t screens 'Screens: main + second')" \
-            "$(t keys 'The one-handed keys and the niri tutorial')" \
+            "$(t keys 'The one-handed keys, the niri tutorial and Dojo')" \
             "$(t kbcheck 'Check right-handed Dvorak everywhere')" \
             "$(t updates 'Check for updates')" \
             "All done: don't show this at login again"

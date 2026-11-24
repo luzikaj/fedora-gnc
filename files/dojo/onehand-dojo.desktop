@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=niri Dojo
+GenericName=niri practice
+Comment=Hands-on niri lessons with your one-handed shortcuts (checks each step live)
+Exec=foot --title="niri dojo" onehand-dojo
+Icon=onehanded-remix-logo
+Terminal=false
+Categories=Education;Utility;
+Keywords=niri;dojo;tutorial;practice;learn;shortcuts;keys;

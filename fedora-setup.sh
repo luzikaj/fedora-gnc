@@ -169,6 +169,10 @@ SYSTEM_FILES=(
     "bin/onehand-second-screen|/usr/local/bin/onehand-second-screen"
     # Mod + . : find any window by typing; Mod + , : pause the break reminders
     "bin/onehand-windows|/usr/local/bin/onehand-windows"
+    # niri Dojo: live-checked niri lessons (two screens / one screen)
+    "bin/onehand-dojo|/usr/local/bin/onehand-dojo"
+    "bin/onehand-dojo-solo|/usr/local/bin/onehand-dojo-solo"
+    "dojo/onehand-dojo.desktop|/usr/share/applications/onehand-dojo.desktop"
     "bin/onehand-breaks|/usr/local/bin/onehand-breaks"
     # Snapshots before/after every dnf change, hourly for /home (set up on first boot)
     "bin/onehand-snapshots|/usr/local/bin/onehand-snapshots"

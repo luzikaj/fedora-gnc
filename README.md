@@ -171,7 +171,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 
 **Shortcut guides, one per tool:** [`docs/`](docs/README.md).
 **Building the ISO, testing, installing and updating, step by step:** [BUILDING.md](BUILDING.md).
-**Learning it:** [weekly cheat sheets (PDF)](docs/learn/cheat-sheets.pdf) and an [interactive key trainer](docs/learn/trainer.html); regenerate both from `tools/learn/drills.json` with `tools/learn/build.py`.
+**Learning it:** the **niri Dojo** (launcher: *niri Dojo*, or `onehand-dojo`: live lessons that watch niri and tick off each step; one-screen course on a laptop), [weekly cheat sheets (PDF)](docs/learn/cheat-sheets.pdf) and an [interactive key trainer](docs/learn/trainer.html); regenerate both from `tools/learn/drills.json` with `tools/learn/build.py`.
 
 ### Key summary
 

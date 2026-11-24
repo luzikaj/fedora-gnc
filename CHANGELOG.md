@@ -2,6 +2,14 @@
 
 Newest first. Note what changed and why; the ISO name carries the build date.
 
+## 2026-11-24
+- niri Dojo in the kit: `onehand-dojo` (two screens; hands over to the
+  one-screen course when there's only one) and `onehand-dojo-solo` (laptop),
+  from the scripts made on 2026-11-17. Launcher entry *niri Dojo*; Welcome →
+  The one-handed keys → `d`. Lesson 1 (two screens) follows today's Mod + End
+  (you stay on the main screen); practice windows open in foot first (VMs).
+  `docs/dojo.md`.
+
 ## 2026-11-22
 - Vimium C removed: no browser policy, no import file, no Welcome step, no
   docs page. The update and fedora-setup delete the old policy files

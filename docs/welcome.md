@@ -39,7 +39,7 @@ Each step gets a ✓ when done:
 | Apps from Flathub | shows which apps are installed and installs the missing ones |
 | Dictation | opens Speech Note with the steps to download the Polish model |
 | Screens | sets up the two monitors now (`onehand-monitors`) |
-| The one-handed keys | the key summary, and opens the niri tutorial PDF |
+| The one-handed keys, the niri tutorial and Dojo | the key summary; then `d` starts the niri Dojo ([dojo.md](dojo.md)), Enter opens the niri tutorial PDF |
 | Check right-handed Dvorak everywhere | runs `onehand-keyboard-check`; Enter fixes what's wrong |
 | Check for updates | `dnf upgrade` and `flatpak update` |
 | All done | stops it opening at login |

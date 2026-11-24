@@ -131,6 +131,9 @@ put "$F/bin/onehand-second-screen" /usr/local/bin/onehand-second-screen sudo 755
 put "$F/bin/onehand-keyboard-check" /usr/local/bin/onehand-keyboard-check sudo 755
 put "$F/bin/onehand-terminal" /usr/local/bin/onehand-terminal sudo 755
 put "$F/bin/onehand-windows" /usr/local/bin/onehand-windows sudo 755
+put "$F/bin/onehand-dojo" /usr/local/bin/onehand-dojo sudo 755
+put "$F/bin/onehand-dojo-solo" /usr/local/bin/onehand-dojo-solo sudo 755
+put "$F/dojo/onehand-dojo.desktop" /usr/share/applications/onehand-dojo.desktop sudo
 put "$F/bin/onehand-breaks" /usr/local/bin/onehand-breaks sudo 755
 put "$F/niri/onehand-rules.kdl" "$nd/onehand-rules.kdl"
 if [[ -e "$nd/onehand-monitors.kdl" ]]; then ok "keeping your onehand-monitors.kdl"
