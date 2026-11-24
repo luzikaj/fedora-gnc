@@ -227,15 +227,31 @@ Remove the test VM afterwards with `virsh undefine remix-test --nvram --remove-a
 
 ## 8. Update machines that are already set up
 
-No reinstall needed. From the repository, on the machine to update:
+No reinstall needed. First see whether it's needed:
+
+```
+onehand-version          # installed kit version, and what's new since
+```
+
+It prints the installed version (commit date + hash, e.g. `2026.11.24+719d097`)
+and checks for a newer kit, in your clone of the repo (`git fetch`) or on
+GitHub through `gh` if you're logged in. Once a day after login a notification
+also says when a newer kit exists. `onehand-version --check` exits 0 (up to
+date), 10 (newer kit) or 2 (can't tell), for scripts.
+
+Then, from the repository, on the machine to update:
 
 ```
 git pull
-tools/make-update-package.sh
-tar xzf dist/onehand-update.tar.gz -C /tmp
-/tmp/onehand-update/update.sh --dry-run    # what it would do
-/tmp/onehand-update/update.sh
+update/update.sh --dry-run    # what it would do
+update/update.sh
 ```
+
+(`update/update.sh` builds the update package from the clone and runs it; the
+package on its own works too: `tar xzf onehand-update-*.tar.gz` and
+`onehand-update/update.sh`.) It shows "old -> new" version at the start and
+records the new one in `/etc/onehand/version`, with the clone's path, so the
+next `onehand-version` knows where to look.
 
 Then log out and in. Replaced files are kept as `.bak.<date>`, and a niri
 config that doesn't validate is rolled back. It also renames the system to

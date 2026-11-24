@@ -227,6 +227,7 @@ into the ISO): Zed, Obsidian, Speech Note, Typing Tutor.
 | `/etc/greetd/config.toml` | Text login that starts niri |
 | `/usr/local/bin/onehand-monitors` | Screen detection at login |
 | `/usr/local/bin/onehand-welcome` | Welcome window / installer launcher / checklist |
+| `/usr/local/bin/onehand-version`, `/etc/onehand/version` | Installed kit version (ISO, setup or update), and whether a newer one exists |
 | `/usr/local/bin/onehand-dojo`, `onehand-dojo-solo`, `onehand-dojo.desktop` | niri Dojo: live-checked lessons (two screens / one screen) |
 | `/usr/local/bin/onehand-windows`, `onehand-breaks` | Window finder (Mod + .), break reminders (started at niri login) |
 | `onehand-keyboard-firstboot.service` | First boot after installing: right-handed Dvorak back on the console / login screen (the installer writes its own choice) |

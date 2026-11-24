@@ -48,12 +48,20 @@ if [[ ! -d "$F/niri" && -x "$HERE/../tools/make-update-package.sh" && -d "$HERE/
     "$HERE/../tools/make-update-package.sh" >/dev/null || { echo "Couldn't build the update package." >&2; exit 1; }
     unpack="$(mktemp -d)"
     tar -xzf "$HERE/../dist/onehand-update.tar.gz" -C "$unpack"
+    # Remember the clone, so onehand-version can check it for newer kits.
+    export ONEHAND_REPO_DIR="$(cd "$HERE/.." && pwd)"
     exec "$unpack/onehand-update/update.sh" "$@"
 fi
 [[ -d "$F/niri" ]] || { echo "Run this from the unpacked update package or the repo's update/ folder (files/ is missing)." >&2; exit 1; }
 $DRY || sudo -v
 
 # ------------------------------------------------------------------ 1. packages
+# ------------------------------------------------------------------ version
+NEW_VERSION="$(sed -n 's/^VERSION=//p' "$HERE/VERSION" 2>/dev/null)"
+OLD_VERSION="$(sed -n 's/^VERSION=//p' /etc/onehand/version 2>/dev/null)"
+echo
+echo "    One-Handed Fedora Remix kit: ${OLD_VERSION:-(no version recorded)} -> ${NEW_VERSION:-unknown}"
+
 step "1/10  Packages: fish, zoxide, ydotool, Speech Note"
 run sudo dnf install -y --skip-unavailable fish zoxide fzf ydotool jq kbd-legacy foot swayidle
 if command -v flatpak >/dev/null; then
@@ -257,6 +265,19 @@ else
         echo; echo "    Fixing it (console, login screen, X11 setting)…"
         /usr/local/bin/onehand-keyboard-check --fix || warn "not everything could be fixed; see above"
     fi
+fi
+
+# Record the kit version (onehand-version reads it).
+put "$F/bin/onehand-version" /usr/local/bin/onehand-version sudo 755
+if $DRY; then
+    printf '    [dry-run] record kit version %s in /etc/onehand/version\n' "${NEW_VERSION:-unknown}"
+else
+    { cat "$HERE/VERSION" 2>/dev/null || echo VERSION=unknown
+      echo "SOURCE=update"
+      echo "INSTALLED=$(date '+%Y-%m-%d %H:%M')"
+      [[ -n "${ONEHAND_REPO_DIR:-}" ]] && echo "REPO=$ONEHAND_REPO_DIR"
+    } | sudo install -D -m 644 /dev/stdin /etc/onehand/version
+    ok "kit version ${NEW_VERSION:-unknown} recorded (check for newer: onehand-version)"
 fi
 
 cat <<'DONE'

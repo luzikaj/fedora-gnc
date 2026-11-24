@@ -169,6 +169,8 @@ SYSTEM_FILES=(
     "bin/onehand-second-screen|/usr/local/bin/onehand-second-screen"
     # Mod + . : find any window by typing; Mod + , : pause the break reminders
     "bin/onehand-windows|/usr/local/bin/onehand-windows"
+    # Which kit version is installed, and is there a newer one?
+    "bin/onehand-version|/usr/local/bin/onehand-version"
     # niri Dojo: live-checked niri lessons (two screens / one screen)
     "bin/onehand-dojo|/usr/local/bin/onehand-dojo"
     "bin/onehand-dojo-solo|/usr/local/bin/onehand-dojo-solo"
@@ -380,6 +382,9 @@ preflight() {
 # Folder holding files/ (works through a symlink, as in the spin's fedora-setup).
 KIT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 FILES_DIR="${KIT_DIR}/files"
+# The kit version, written to /etc/onehand/version (see onehand-version).
+KIT_VERSION_LINES="$(bash "${FILES_DIR}/bin/onehand-version" --of "$KIT_DIR" 2>/dev/null || echo VERSION=unknown)"
+KIT_SOURCE="${KIT_SOURCE:-setup}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
 # Copy a file into place, backing up a different file that was there before.
@@ -522,6 +527,13 @@ systemctl --global enable onehand-wallpaper.service
 # Welcome window: opens at login until you tick "All done" (and on the live USB).
 mkdir -p /etc/onehand
 printf '%s\n' ${FLATPAKS[*]} > /etc/onehand/flatpaks
+# The kit version (onehand-version shows it and checks for a newer one).
+cat > /etc/onehand/version <<'ONEHAND_VERSION'
+${KIT_VERSION_LINES:-VERSION=unknown}
+SOURCE=${KIT_SOURCE:-setup}
+INSTALLED=$(date '+%Y-%m-%d %H:%M')
+ONEHAND_VERSION
+chmod 644 /etc/onehand/version
 cat > /etc/systemd/user/onehand-welcome.service <<'UNIT'
 [Unit]
 Description=One-Handed Fedora Remix welcome window (live USB and first logins)

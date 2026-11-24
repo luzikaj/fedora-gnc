@@ -90,6 +90,10 @@ load_config() {
     eval "$(sed -n '/^user_setup_commands() {/,/^}$/p;/^system_setup_commands() {/,/^}$/p' "$SETUP")"
     declare -F user_setup_commands >/dev/null && declare -F system_setup_commands >/dev/null \
         || die "fedora-setup.sh is older than this build script; use the matching version."
+    # The kit version baked into the ISO (/etc/onehand/version); no clone path.
+    KIT_VERSION_LINES="$(bash "${HERE}/files/bin/onehand-version" --of "$HERE" | grep -v '^REPO=')"
+    KIT_SOURCE=iso
+    info "Kit version: $(sed -n 's/^VERSION=//p' <<<"$KIT_VERSION_LINES")"
     local entry
     for entry in "${USER_FILES[@]}" "${SYSTEM_FILES[@]}"; do
         [[ -f "${HERE}/files/${entry%%|*}" ]] || die "Missing files/${entry%%|*}"

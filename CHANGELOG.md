@@ -3,6 +3,13 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-24
+- Kit versions: `onehand-version` shows the installed kit version
+  (commit date + hash, e.g. `2026.11.24+719d097`) and whether a newer one
+  exists (via your clone of the repo, or `gh`), with what's new. The ISO,
+  fedora-setup.sh and the update package write `/etc/onehand/version`; the
+  update shows "old -> new"; `VERSION` in the repo is filled in by
+  `git archive`. Once a day after login a notification says when a newer kit
+  exists. The Welcome window shows the version (and the check on its Updates page).
 - Mod + F8: Dux's power menu (`dms ipc call powermenu toggle`): L lock, S
   suspend, X log out, R reboot, P power off (hold to confirm).
 - niri Dojo in the kit: `onehand-dojo` (two screens; hands over to the

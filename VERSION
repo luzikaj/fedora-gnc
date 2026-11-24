@@ -1,0 +1,4 @@
+# One-Handed Fedora Remix: the version of this copy of the kit.
+# In a Git clone the version comes from Git; `git archive` fills these in.
+COMMIT=$Format:%H$
+DATE=$Format:%cs$

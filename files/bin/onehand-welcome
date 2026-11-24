@@ -42,7 +42,8 @@ YEL=$'\e[38;5;221m'; SEL=$'\e[1;38;5;16;48;5;75m'
 
 banner() {
     clear
-    printf '\n  %s%sOne-Handed%s %sFedora Remix%s   %sright hand only%s\n' "$B" "$BLUE" "$OFF" "$B" "$OFF" "$DIM" "$OFF"
+    printf '\n  %s%sOne-Handed%s %sFedora Remix%s   %sright hand only · %s%s\n' "$B" "$BLUE" "$OFF" "$B" "$OFF" "$DIM" \
+        "$(onehand-version --short 2>/dev/null || echo '?')" "$OFF"
     printf '  %s──────────────────────────────────────────────────────────%s\n\n' "$DIM" "$OFF"
 }
 pause() { printf '\n  %sPress Enter to go back%s ' "$DIM" "$OFF"; read -rs _; }
@@ -236,6 +237,9 @@ page_screens() {
 page_updates() {
     banner
     say "${B}Updates${OFF}" ""
+    say "${B}The kit${OFF} (keys, niri setup, tools):"
+    onehand-version 2>/dev/null | sed 's/^/  /' || say "  (onehand-version isn't installed yet)"
+    say "" "${B}The system${OFF} (Fedora packages and apps):"
     say "A snapshot is taken before and after, so an update can be undone"
     say "(onehand-snapshots list / undo)." ""
     sudo dnf upgrade --refresh -y && flatpak update -y --noninteractive \

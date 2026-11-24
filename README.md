@@ -302,8 +302,8 @@ git add -A && git commit -m "keyd: forget sticky taps after 1 s"
 git push
 
 # on your PC (already set up):
-tools/make-update-package.sh && tar xzf dist/onehand-update.tar.gz -C /tmp \
-    && /tmp/onehand-update/update.sh
+onehand-version                        # installed kit version; is there a newer one?
+git pull && update/update.sh
 # new ISO, on a Fedora machine of the release you want:
 ./build-spin.sh --generate-only && ./build-spin.sh
 ```

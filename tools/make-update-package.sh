@@ -15,6 +15,8 @@ P="$STAGE/$NAME"; F="$P/files"
 mkdir -p "$F/wallpapers" "$F/docs"
 
 cp "$ROOT/update/update.sh" "$ROOT/update/README.txt" "$P/"
+# The kit version this package installs (onehand-version reads it back).
+bash "$ROOT/files/bin/onehand-version" --of "$ROOT" | grep -v "^REPO=" > "$P/VERSION"
 chmod 755 "$P/update.sh"
 for d in keyd niri ghostty fish foot bin branding jetbrains virt snapshots lfk yazi helix rune keyboard dojo; do
     cp -r "$ROOT/files/$d" "$F/"

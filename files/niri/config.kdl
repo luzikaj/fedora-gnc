@@ -133,6 +133,8 @@ include "onehand-rules.kdl"
 spawn-at-startup "onehand-monitors" "--login"
 // Break reminders: a micro break every 25 min of use, every third one long (Mod + , pauses).
 spawn-at-startup "onehand-breaks" "daemon"
+// Once a day after login: a notification if a newer kit exists (onehand-version).
+spawn-at-startup "onehand-version" "--notify"
 // Speech Note waits in the tray, so dictation starts instantly.
 spawn-sh-at-startup "flatpak info net.mkiol.SpeechNote >/dev/null 2>&1 && flatpak run net.mkiol.SpeechNote --start-in-tray"
 

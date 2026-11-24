@@ -1,0 +1,147 @@
+#!/bin/bash
+# onehand-version: which version of the One-Handed Fedora Remix kit this
+# system has, and whether a newer one exists.
+#
+#   onehand-version            installed version, and what's new since (if it can check)
+#   onehand-version --short    just the installed version
+#   onehand-version --check    quiet: exit 0 up to date, 10 newer kit available, 2 can't tell
+#   onehand-version --notify   (at login) a notification when a newer kit exists; once a day
+#   onehand-version --of DIR   the version of a kit folder (used by the build scripts)
+#
+# The version is the date and short hash of the kit's Git commit, for example
+# 2026.11.24+719d097 ("-modified" when built from a copy with local changes).
+# Every way of installing writes it to /etc/onehand/version: the ISO, a run of
+# fedora-setup.sh and the update package.
+#
+# Checking for a newer kit, in this order:
+#   1. your clone of the repo (REPO in /etc/onehand/version, written when you
+#      update from a clone, or ONEHAND_REPO=~/path/to/fedora-gnc): git fetch
+#   2. the GitHub CLI, if you're logged in (gh auth login): the repo's main branch
+
+set -uo pipefail
+VFILE="${ONEHAND_VERSION_FILE:-/etc/onehand/version}"
+SLUG="${ONEHAND_REPO_SLUG:-luzikaj/fedora-gnc}"
+BRANCH="${ONEHAND_REPO_BRANCH:-main}"
+
+# ------------------------------------------------------------ --of DIR
+version_of() {   # prints VERSION= COMMIT= DATE= [REPO=] for a kit folder
+    local dir="$1" commit="" date="" dirty="" repo=""
+    if git -C "$dir" rev-parse --verify -q HEAD >/dev/null 2>&1; then
+        commit="$(git -C "$dir" rev-parse HEAD)"
+        date="$(git -C "$dir" log -1 --format=%cs HEAD)"
+        [[ -n "$(git -C "$dir" status --porcelain --untracked-files=no 2>/dev/null)" ]] && dirty="-modified"
+        repo="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)"
+    elif [[ -f "$dir/VERSION" ]]; then
+        # A `git archive` copy: VERSION was filled in when the archive was made.
+        commit="$(sed -n 's/^COMMIT=//p' "$dir/VERSION")"
+        date="$(sed -n 's/^DATE=//p' "$dir/VERSION")"
+        [[ "$commit" == *'$Format'* ]] && commit="" date=""
+    fi
+    if [[ -z "$commit" ]]; then
+        echo "VERSION=unknown"; return
+    fi
+    echo "VERSION=${date//-/.}+${commit:0:7}${dirty}"
+    echo "COMMIT=$commit"
+    echo "DATE=$date"
+    [[ -n "$repo" ]] && echo "REPO=$repo"
+}
+if [[ "${1:-}" == "--of" ]]; then version_of "${2:-.}"; exit 0; fi
+
+# ------------------------------------------------------------ installed
+VERSION="" COMMIT="" DATE="" SOURCE="" INSTALLED="" REPO=""
+if [[ -r "$VFILE" ]]; then
+    while IFS='=' read -r k v; do
+        case "$k" in VERSION|COMMIT|DATE|SOURCE|INSTALLED|REPO) printf -v "$k" '%s' "$v" ;; esac
+    done < "$VFILE"
+fi
+REPO="${ONEHAND_REPO:-$REPO}"
+
+if [[ "${1:-}" == "--short" ]]; then echo "${VERSION:-unknown}"; exit 0; fi
+
+# ------------------------------------------------------------ newer kit?
+# Sets: NEW (count of newer commits, or empty), LATEST (short hash), LOG (lines),
+#       HOW (where it looked), WHY (why it couldn't tell)
+NEW="" LATEST="" LOG="" HOW="" WHY=""
+check() {
+    [[ -n "$COMMIT" ]] || { WHY="this system has no version recorded yet (it was set up before versions existed; the next update records it)"; return 1; }
+    # 1. a clone of the repo
+    if [[ -n "$REPO" ]] && git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
+        if timeout 30 git -C "$REPO" fetch -q origin "$BRANCH" 2>/dev/null; then
+            local tip="origin/$BRANCH"
+            LATEST="$(git -C "$REPO" rev-parse --short "$tip")"
+            if git -C "$REPO" cat-file -e "${COMMIT}^{commit}" 2>/dev/null; then
+                NEW="$(git -C "$REPO" rev-list --count "$COMMIT..$tip")"
+                LOG="$(git -C "$REPO" log --format='%cs  %s' "$COMMIT..$tip" | head -15)"
+                HOW="your clone ($REPO)"
+                return 0
+            fi
+        fi
+    fi
+    # 2. GitHub, through the GitHub CLI
+    if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
+        local out
+        if out="$(timeout 30 gh api "repos/$SLUG/compare/$COMMIT...$BRANCH" \
+                --jq '"\(.ahead_by)\n\(.commits[-1].sha // "")\n" + ([.commits[] | "\(.commit.committer.date[0:10])  \(.commit.message | split("\n")[0])"] | reverse | .[0:15] | join("\n"))' 2>/dev/null)"; then
+            NEW="$(sed -n 1p <<<"$out")"
+            LATEST="$(sed -n 2p <<<"$out" | cut -c1-7)"
+            LOG="$(sed -n '3,$p' <<<"$out")"
+            HOW="GitHub ($SLUG)"
+            [[ -z "$LATEST" ]] && LATEST="${COMMIT:0:7}"
+            return 0
+        fi
+        WHY="GitHub didn't answer (offline?)"
+        return 1
+    fi
+    WHY="no clone of the repo found and the GitHub CLI isn't logged in (gh auth login)"
+    return 1
+}
+
+case "${1:-}" in
+    --check)
+        check || exit 2
+        (( NEW > 0 )) && exit 10 || exit 0 ;;
+    --notify)
+        state="${XDG_STATE_HOME:-$HOME/.local/state}/onehand/version-checked"
+        [[ "$(cat "$state" 2>/dev/null)" == "$(date +%F)" ]] && exit 0
+        sleep "${ONEHAND_VERSION_DELAY:-90}"      # let the network come up after login
+        check || exit 0
+        mkdir -p "$(dirname "$state")"; date +%F > "$state"
+        if (( NEW > 0 )); then
+            notify-send -a "One-Handed Fedora Remix" -i system-software-update \
+                "Kit update available: $NEW change(s)" \
+                "$(head -3 <<<"$LOG")
+Run: onehand-version   (then git pull && update/update.sh)" 2>/dev/null || true
+        fi
+        exit 0 ;;
+    ""|--status) ;;
+    *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+esac
+
+# ------------------------------------------------------------ report
+B=$'\e[1m' G=$'\e[32m' Y=$'\e[33m' D=$'\e[2m' R=$'\e[0m'
+[[ -t 1 ]] || B="" G="" Y="" D="" R=""
+case "$SOURCE" in
+    iso) src="installed from the ISO" ;; setup) src="set up with fedora-setup.sh" ;;
+    update) src="updated with the update package" ;; *) src="" ;;
+esac
+echo "${B}One-Handed Fedora Remix${R} ${VERSION:-(version unknown)}"
+[[ -n "$src$INSTALLED" ]] && echo "${D}  ${src}${INSTALLED:+ on $INSTALLED}${R}"
+if check; then
+    if (( NEW == 0 )); then
+        echo "${G}✓ Up to date${R} ${D}(checked: $HOW)${R}"
+    else
+        echo "${Y}↑ A newer kit is available: $NEW change(s), up to ${LATEST}${R} ${D}(checked: $HOW)${R}"
+        sed 's/^/    /' <<<"$LOG"
+        (( NEW > 15 )) && echo "    …"
+        echo
+        if [[ -n "$REPO" ]]; then
+            echo "  Update:  cd $REPO && git pull && update/update.sh"
+        else
+            echo "  Update:  git pull in your clone of the repo, then update/update.sh"
+            echo "           (or run the newest onehand-update package)"
+        fi
+    fi
+else
+    echo "${D}  Can't check for a newer kit: $WHY.${R}"
+    exit 2
+fi
