@@ -57,8 +57,8 @@ $DRY || sudo -v
 
 # ------------------------------------------------------------------ 1. packages
 # ------------------------------------------------------------------ version
-NEW_VERSION="$(sed -n 's/^VERSION=//p' "$HERE/VERSION" 2>/dev/null)"
-OLD_VERSION="$(sed -n 's/^VERSION=//p' /etc/onehand/version 2>/dev/null)"
+NEW_VERSION="$(sed -n 's/^VERSION=//p' "$HERE/VERSION" 2>/dev/null || true)"
+OLD_VERSION="$(sed -n 's/^VERSION=//p' /etc/onehand/version 2>/dev/null || true)"
 echo
 echo "    One-Handed Fedora Remix kit: ${OLD_VERSION:-(no version recorded)} -> ${NEW_VERSION:-unknown}"
 
