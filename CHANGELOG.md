@@ -3,6 +3,8 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-24
+- Mod + F8: Dux's power menu (`dms ipc call powermenu toggle`): L lock, S
+  suspend, X log out, R reboot, P power off (hold to confirm).
 - niri Dojo in the kit: `onehand-dojo` (two screens; hands over to the
   one-screen course when there's only one) and `onehand-dojo-solo` (laptop),
   from the scripts made on 2026-11-17. Launcher entry *niri Dojo*; Welcome →

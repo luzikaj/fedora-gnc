@@ -182,6 +182,7 @@ See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedo
 | Mod + Home / End / z | other monitor / send column there / send whole workspace there |
 | Mod + . | find any window by typing (Enter right away: back to the previous window) |
 | Mod + , | pause the break reminders for an hour / back on |
+| Mod + F8 | power menu (lock, suspend, log out, reboot, power off) |
 | tap Right Ctrl, then key | Ctrl + key (same for Right Shift) |
 | Ctrl + C / Ctrl + V (Ghostty) | copy (when text is selected) / paste |
 

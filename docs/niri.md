@@ -116,6 +116,7 @@ Details: [Speech Note](speech-note.md).
 |---|---|
 | Mod + Insert | show every shortcut |
 | Mod + Delete | lock the screen |
+| Mod + F8 | **power menu**: `L` lock, `S` suspend, `X` log out, `R` reboot, `P` power off (hold the letter a moment to confirm); Esc closes |
 | Mod + PgDn | Dux settings (wallpaper, display, theme…) |
 | Mod + ↑ / ↓ | volume up / down (also on the lock screen) |
 | Mod + ← | mute on/off |

@@ -22,7 +22,7 @@ niri_cards = [
  ("Sound · Dux", [(niri("↑","↓"), "Volume"), (niri("←"), "Mute"), (niri("→"), "Play / pause"),
              (niri("F11"), "Audio devices"), (niri("[","]"), "Notifs / clipboard"), (niri("PgDn"), "Settings")]),
  ("Emergency · Misc", [(niri("Pause"), "Force close app"), (niri("ScrLk"), "Unblock shortcuts"), (niri("F9","F10"), "Shot: window / area"),
-             (niri("F12"), "Shot: screen"), (niri("Wheel"), "Workspace ↑ ↓"), (niri(","), "Pause breaks")]),
+             (niri("F12"), "Shot: screen"), (niri("F8"), "Power menu"), (niri(","), "Pause breaks")]),
 ]
 nvim_cards = [
  ("Move", [(keys("e","h","t","d"), "← ↓ ↑ →"+D), (keys("w","b"), "Next word / back"),

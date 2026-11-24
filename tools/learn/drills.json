@@ -290,6 +290,12 @@
               ]
             },
             {
+              "a": "Power menu (log out, reboot, power off)",
+              "k": [
+                "F8"
+              ]
+            },
+            {
               "a": "Overview",
               "k": [
                 "-"

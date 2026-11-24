@@ -37,6 +37,7 @@
 //   Arrows       volume up / down, Left mute, Right play/pause
 //   F9 F10 F12   screenshot: window / selection / whole screen
 //   F11          audio devices (pavucontrol)
+//   F8           power menu: lock, suspend, log out, reboot, power off
 //
 // Two monitors: workspaces "code" (main screen), "web" and "notes" (second
 // screen) come from onehand-monitors.kdl; app placement from onehand-rules.kdl.
@@ -169,6 +170,9 @@ binds {
     Mod+Right allow-when-locked=true repeat=false hotkey-overlay-title="Play/pause [Right]" { spawn-sh "playerctl play-pause"; }
     // Choose speakers / headphones / microphone in a window.
     Mod+F11 repeat=false hotkey-overlay-title="Audio devices [F11]" { spawn "pavucontrol"; }
+    // Dux's power menu. In it: L lock, S suspend, X log out, R reboot,
+    // P power off (hold the letter a moment to confirm), h / t or arrows + Enter.
+    Mod+F8 repeat=false hotkey-overlay-title="Power menu [F8]" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
 
     // ------------------------------------------------ top row: move windows
     // o r s u sit right above e h t d: same directions, but MOVE instead of focus.
