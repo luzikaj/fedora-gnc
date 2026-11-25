@@ -3,6 +3,11 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-25
+- The update no longer stops when a repository can't be reached (it hit
+  Terra's mirror service, `tetsudou.fyralabs.com`, being down on Ultramarine):
+  every dnf call in `update.sh`, `install-lfk` and the Welcome window's update
+  skips unreachable repositories, as `fedora-setup.sh` already did; Mango
+  says so if it couldn't be installed.
 - Mango (MangoWM) as a second session next to niri: login screen F3 -> Mango
   (tuigreet now lists every session and remembers the last). Scroller layout
   like niri, plus tile / monocle / dwindle on Mod + /; the same one-handed keys

@@ -149,7 +149,7 @@ if ! $FIX; then
 fi
 
 echo; echo "Fixing…"
-[[ -n "$want" ]] || { sudo dnf install -y kbd-legacy; want="$(best_console_map)"; }
+[[ -n "$want" ]] || { sudo dnf --setopt=skip_if_unavailable=True install -y kbd-legacy; want="$(best_console_map)"; }
 [[ -n "$want" ]] && sudo localectl set-keymap --no-convert "$want"
 sudo localectl set-x11-keymap --no-convert "$X_LAYOUT" "" "$X_VARIANT"
 if [[ "$dm" == sddm ]]; then

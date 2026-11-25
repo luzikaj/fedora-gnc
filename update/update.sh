@@ -56,6 +56,10 @@ fi
 $DRY || sudo -v
 
 # ------------------------------------------------------------------ 1. packages
+# A repository that can't be reached right now (a mirror service down, an
+# offline network) is skipped instead of stopping the whole update.
+DNF_SKIP="--setopt=skip_if_unavailable=True"
+
 # ------------------------------------------------------------------ version
 NEW_VERSION="$(sed -n 's/^VERSION=//p' "$HERE/VERSION" 2>/dev/null || true)"
 OLD_VERSION="$(sed -n 's/^VERSION=//p' /etc/onehand/version 2>/dev/null || true)"
@@ -63,7 +67,7 @@ echo
 echo "    One-Handed Fedora Remix kit: ${OLD_VERSION:-(no version recorded)} -> ${NEW_VERSION:-unknown}"
 
 step "1/10  Packages: fish, zoxide, ydotool, Speech Note"
-run sudo dnf install -y --skip-unavailable fish zoxide fzf ydotool jq kbd-legacy foot swayidle
+run sudo dnf $DNF_SKIP install -y --skip-unavailable fish zoxide fzf ydotool jq kbd-legacy foot swayidle
 if command -v flatpak >/dev/null; then
     run sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
     run sudo flatpak install -y --noninteractive flathub net.mkiol.SpeechNote \
@@ -74,16 +78,16 @@ fi
 
 # ------------------------------------------------------------------ 2. development
 step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, yazi, Helix, Rune, Mango, virt-manager; Helium removed"
-run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
+run sudo dnf $DNF_SKIP install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
     printf '    [dry-run] download and verify the latest JetBrains Toolbox into /opt/jetbrains-toolbox\n'
 else
     sudo bash "$F/jetbrains/install-jetbrains-toolbox" || warn "JetBrains Toolbox didn't install; run files/jetbrains/install-jetbrains-toolbox with sudo later"
 fi
-if rpm -q helium-bin >/dev/null 2>&1; then run sudo dnf remove -y helium-bin; fi
+if rpm -q helium-bin >/dev/null 2>&1; then run sudo dnf $DNF_SKIP remove -y helium-bin; fi
 if compgen -G "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:imput:helium.repo" >/dev/null; then
-    run sudo dnf copr remove -y imput/helium || warn "couldn't turn off Helium's COPR"
+    run sudo dnf $DNF_SKIP copr remove -y imput/helium || warn "couldn't turn off Helium's COPR"
 fi
 ok "python3, uv, pipx, dotnet, jetbrains-toolbox (launcher: JetBrains Toolbox)"
 
@@ -97,13 +101,13 @@ put "$F/lfk/config.yaml" "$HOME/.config/lfk/config.yaml"
 ok "lfk: e h t d to move, ? for every key (docs: lfk.md)"
 
 # yazi: file manager with the one-handed keys (y in the terminal)
-run sudo dnf copr enable -y lihaohong/yazi
-run sudo dnf install -y --skip-unavailable yazi poppler-utils ffmpegthumbnailer 7zip ImageMagick fd-find ripgrep
+run sudo dnf $DNF_SKIP copr enable -y lihaohong/yazi
+run sudo dnf $DNF_SKIP install -y --skip-unavailable yazi poppler-utils ffmpegthumbnailer 7zip ImageMagick fd-find ripgrep
 put "$F/yazi/keymap.toml" "$HOME/.config/yazi/keymap.toml"
 ok "yazi: type y in the terminal; e h t d to move, ~ for every key (docs: yazi.md)"
 
 # Helix: the same keys as LazyVim and Zed (command: hx)
-run sudo dnf install -y --skip-unavailable helix
+run sudo dnf $DNF_SKIP install -y --skip-unavailable helix
 put "$F/helix/config.toml" "$HOME/.config/helix/config.toml"
 ok "Helix: hx; e h t d to move, k delete, Ctrl+t leaves insert (docs: helix.md)"
 
@@ -137,17 +141,21 @@ includepkgs=mangowm
 TERRA
     fi
 fi
-run sudo dnf install -y --skip-unavailable mangowm xdg-desktop-portal-wlr slurp
+run sudo dnf $DNF_SKIP install -y --skip-unavailable mangowm xdg-desktop-portal-wlr slurp
 put "$F/mango/config.conf" "$HOME/.config/mango/config.conf"
 # The login screen lists every session and remembers the last one.
 if [[ -f /etc/greetd/config.toml ]] && grep -q 'tuigreet' /etc/greetd/config.toml \
         && ! grep -q -- '--remember-session' /etc/greetd/config.toml; then
     run sudo sed -i 's|tuigreet --time --remember |tuigreet --time --remember --remember-session --sessions /usr/share/wayland-sessions |' /etc/greetd/config.toml
 fi
-ok "Mango: at the login screen press F3 and pick Mango (docs: mango.md)"
+if $DRY || rpm -q mangowm >/dev/null 2>&1; then
+    ok "Mango: at the login screen press F3 and pick Mango (docs: mango.md)"
+else
+    warn "Mango isn't installed (Terra unreachable?); run the update again later"
+fi
 
 # Virtual machines: KVM + libvirt + virt-manager, no password prompts for admins
-run sudo dnf install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \
+run sudo dnf $DNF_SKIP install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \
     libvirt-daemon-kvm libvirt-daemon-config-network edk2-ovmf swtpm
 put "$F/virt/50-onehand-libvirt.rules" /etc/polkit-1/rules.d/50-onehand-libvirt.rules sudo
 for s in virtqemud virtnetworkd virtstoraged virtnodedevd virtsecretd virtinterfaced virtnwfilterd; do
@@ -268,7 +276,7 @@ fi
 
 # ------------------------------------------------------------------ 9. snapshots
 step "10/10  Snapshots before updates (Btrfs + snapper)"
-run sudo dnf install -y --skip-unavailable snapper libdnf5-plugin-actions
+run sudo dnf $DNF_SKIP install -y --skip-unavailable snapper libdnf5-plugin-actions
 put "$F/bin/onehand-snapshots" /usr/local/bin/onehand-snapshots sudo 755
 put "$F/snapshots/onehand-snapshots.actions" /etc/dnf/libdnf5-plugins/actions.d/onehand-snapshots.actions sudo
 put "$F/snapshots/onehand-snapshots-setup.service" /etc/systemd/system/onehand-snapshots-setup.service sudo

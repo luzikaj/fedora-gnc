@@ -13,5 +13,5 @@ curl -fsSL -o "$tmp/$name" "$url"
 curl -fsSL -o "$tmp/checksums.txt" "$sums"
 (cd "$tmp" && grep " \*\?${name}\$" checksums.txt | sha256sum -c --status) \
     || { echo "checksum mismatch for $name; not installing" >&2; exit 1; }
-dnf install -y "$tmp/$name"
+dnf --setopt=skip_if_unavailable=True install -y "$tmp/$name"
 echo "lfk $(jq -r .tag_name <<<"$rel") installed"

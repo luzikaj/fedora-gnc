@@ -242,7 +242,7 @@ page_updates() {
     say "" "${B}The system${OFF} (Fedora packages and apps):"
     say "A snapshot is taken before and after, so an update can be undone"
     say "(onehand-snapshots list / undo)." ""
-    sudo dnf upgrade --refresh -y && flatpak update -y --noninteractive \
+    sudo dnf --setopt=skip_if_unavailable=True upgrade --refresh -y && flatpak update -y --noninteractive \
         && { done_mark updates; say "" "${GREEN}✓ Up to date.${OFF}"; } \
         || say "" "${YEL}Some updates didn't finish; try again later.${OFF}"
     pause
