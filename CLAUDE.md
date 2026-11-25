@@ -21,4 +21,6 @@
   DIFFERENCES, CHANGELOG), the wallpaper (`tools/wallpaper/build.sh`) and the
   trainer (`tools/learn/build.py`) when shortcuts change; new files go into
   `fedora-setup.sh` (setup + ISO), `update/update.sh` and
-  `tools/make-update-package.sh`. Run the checks in `.github/workflows/check.yml`.
+  `tools/make-update-package.sh`; after changing a package list in
+  `fedora-setup.sh` or `niri-spin-base.ks`, run `tools/list-packages.py`
+  (writes `docs/packages.md`). Run the checks in `.github/workflows/check.yml`.

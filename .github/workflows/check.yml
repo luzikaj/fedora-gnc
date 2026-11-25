@@ -45,5 +45,7 @@ jobs:
           PY
       - name: Update package builds
         run: tools/make-update-package.sh
+      - name: Package list page is current (docs/packages.md)
+        run: python3 tools/list-packages.py --check
       - name: ShellCheck (advice only)
         run: shellcheck -S warning fedora-setup.sh build-spin.sh update/update.sh files/bin/* || true

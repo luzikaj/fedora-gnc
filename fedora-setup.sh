@@ -32,6 +32,7 @@ ENABLE_FLATHUB=true
 
 # Packages from the Fedora (and RPM Fusion, if enabled) repositories.
 DNF_PACKAGES=(
+    # Basics: command-line tools
     git
     curl
     wget
@@ -49,10 +50,12 @@ DNF_PACKAGES=(
     nnn         # terminal file manager (small, always there)
     # yazi's previews: PDFs, video thumbnails, archives, images
     poppler-utils ffmpegthumbnailer 7zip ImageMagick
+    # Cloud and scripting
     awscli2     # AWS CLI v2 (command: aws)
     jq          # used by this script and by niri's force-close shortcut
     # LazyVim (Neovim distribution): Neovim plus what its plugins need
     neovim tree-sitter-cli wl-clipboard unzip nodejs-npm
+    # Helix
     helix       # Helix editor (command: hx), keys e h t d like LazyVim and Zed
     # niri desktop
     niri                # compositor (25.11+ comes from duxlabs/dux-repo)

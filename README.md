@@ -149,7 +149,8 @@ packaged for Fedora.
 **The ISO is for personal use.** The repository is open (see [License](#license)),
 but the ISO it builds includes proprietary apps (Chrome, Claude Code, Obsidian),
 so built ISOs aren't for redistribution.
-See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedora.
+See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedora,
+and [docs/packages.md](docs/packages.md) for every package it adds or removes.
 
 ---
 
