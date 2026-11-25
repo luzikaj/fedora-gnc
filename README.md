@@ -158,7 +158,7 @@ and [docs/packages.md](docs/packages.md) for every package it adds or removes.
 
 | Area | What it includes |
 |---|---|
-| Desktop | **niri** + **Dux Shell** (bar, launcher, notifications, clipboard, lock screen, settings); text login (greetd + tuigreet) |
+| Desktop | **niri** + **Dux Shell** (bar, launcher, notifications, clipboard, lock screen, settings); text login (greetd + tuigreet). Second session: **Mango** (scrolling + tiling, same keys and Dux Shell; login screen F3) |
 | Keyboard | `dvorak_r_pl` layout; keyd: Mod, Polish letters, sticky Ctrl/Shift |
 | Screens | named workspaces `code` · `web` · `notes` · `vm` on the main screen; second screen shows the cheat sheet and takes windows on request (Mod + End) |
 | Voice | Speech Note dictation and read-aloud |

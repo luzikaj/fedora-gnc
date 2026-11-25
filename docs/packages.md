@@ -12,8 +12,8 @@ On a running system: `rpm -q <package>` shows the installed version,
 
 | What | How many |
 |---|---|
-| Fedora packages | 65 |
-| From other repositories (COPR, vendors) | 11 |
+| Fedora packages | 67 |
+| From other repositories (COPR, vendors) | 12 |
 | Downloaded releases (GitHub, JetBrains) | 5 |
 | Flatpaks (Flathub) | 4 |
 | Removed | 3 |
@@ -131,6 +131,15 @@ KVM + libvirt + virt-manager (3D in guests via virtio-GPU).
 | `snapper` | Btrfs snapshots before/after every dnf change |
 | `libdnf5-plugin-actions` | Btrfs snapshots before/after every dnf change |
 
+### Mango (second session)
+
+Screen sharing for wlroots compositors + its picker.
+
+| Package | What it's for |
+|---|---|
+| `xdg-desktop-portal-wlr` | Mango: screen sharing |
+| `slurp` | Mango: picks the screen or area to share |
+
 ## From other repositories
 
 Repositories the kit enables, then these packages from them:
@@ -148,6 +157,7 @@ Repositories the kit enables, then these packages from them:
 | `keyd` | Right Alt: hold = Mod, tap = Polish letter | COPR alternateved/keyd |
 | `lazygit` | git screen (Space g g in LazyVim, lg in fish) | COPR atim/lazygit |
 | `yazi` | file manager, keys e h t d (y in fish) | COPR lihaohong/yazi |
+| `mangowm` | MangoWM, the second session (login screen: F3 -> Mango) | Terra (Fyra Labs), limited to this package |
 
 ## Downloaded releases
 
@@ -180,6 +190,7 @@ release and checks it before installing.
 | brave-browser | https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo |
 | brave-browser-nightly | https://brave-browser-rpm-nightly.s3.brave.com/brave-browser-nightly.repo |
 | google-chrome | Google Chrome |
+| Terra | MangoWM only (`includepkgs=mangowm`); left as is where Terra is already set up (Ultramarine) |
 | Claude Code | Anthropic's dnf repository (channel: stable) |
 | COPR `scottames/ghostty` | Ghostty (the COPR Ghostty's own install docs name) |
 | COPR `duxlabs/dms` | Dux Shell (package dms) and companions (matugen ...) |

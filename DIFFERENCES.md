@@ -17,7 +17,7 @@ The shortcuts of each tool are described in detail in [`docs/`](docs/README.md).
 
 | Area | Fedora (default) | One-Handed Fedora Remix |
 |---|---|---|
-| Desktop | GNOME (Workstation) | **niri** (scrollable tiling Wayland compositor) + **Dux Shell** (bar, launcher, notifications, lock screen) |
+| Desktop | GNOME (Workstation) | **niri** (scrollable tiling Wayland compositor) + **Dux Shell** (bar, launcher, notifications, lock screen); **Mango** as a second session (scroller + tiling layouts, same keys) |
 | Login screen | GDM | **greetd + tuigreet** (text login that starts niri) |
 | Keyboard layout | US QWERTY (or locale) | **Right-handed Dvorak** with **Polish letters** on AltGr |
 | Modifier keys | Standard | **keyd**: Right Alt = Mod when held, AltGr (Polish letters) when tapped; **sticky** Right Ctrl / Right Shift |

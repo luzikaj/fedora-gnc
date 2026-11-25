@@ -17,6 +17,9 @@
   44 updated with `update/`), a Lenovo laptop (Ryzen 7 PRO 4750U, 16 GB) and an
   ISO built in a VirtualBox VM (`build-spin.sh`).
 - **Personal use only**: the ISO is not redistributed.
+- **Sessions:** niri (main) and Mango (second, `files/mango/config.conf`,
+  login screen F3). Their keys mirror each other: when a niri key changes,
+  change Mango's too (and `docs/mango.md`).
 - **Conventions:** every user-facing change updates the docs (`docs/`, README,
   DIFFERENCES, CHANGELOG), the wallpaper (`tools/wallpaper/build.sh`) and the
   trainer (`tools/learn/build.py`) when shortcuts change; new files go into

@@ -12,6 +12,7 @@ that has its own shortcuts follows the same idea:
 |---|---|
 | [Keyboard](keyboard.md) | The layout, Mod key, Polish letters, sticky Ctrl/Shift, the key map |
 | [niri (desktop)](niri.md) | Windows, workspaces, monitors, launcher, panels, screenshots, audio |
+| [Mango](mango.md) | The second session (login screen F3): scrolling + tiling, the same keys |
 | [Speech Note (voice)](speech-note.md) | Dictation into any window, reading text aloud |
 | [LazyVim (Neovim)](lazyvim.md) | Editor keys |
 | [Zed](zed.md) | Editor keys (Helix mode), matching LazyVim |

@@ -79,6 +79,8 @@ DNF_PACKAGES=(
     # Everyday safety
     swayidle            # idle detection for the break reminders (onehand-breaks)
     snapper libdnf5-plugin-actions   # Btrfs snapshots before/after every dnf change
+    # Mango (second session): screen sharing for wlroots compositors + its picker
+    xdg-desktop-portal-wlr slurp
 )
 
 # Packages to remove if installed (done after the new browsers are in place).
@@ -138,6 +140,7 @@ USER_FILES=(
     "fish/onehand.fish|.config/fish/conf.d/onehand.fish"
     "yazi/keymap.toml|.config/yazi/keymap.toml"
     "helix/config.toml|.config/helix/config.toml"
+    "mango/config.conf|.config/mango/config.conf"
     "rune/config.yaml|.rune/config.yaml"
     "nvim/init.lua|.config/nvim/init.lua"
     "nvim/lua/config/lazy.lua|.config/nvim/lua/config/lazy.lua"
@@ -225,6 +228,12 @@ INSTALL_JETBRAINS_TOOLBOX=true
 # Rune (rune.build): keyboard-driven IDE around your Helix; latest GitHub
 # release into /opt/rune (checked against GitHub's SHA-256 for the file).
 INSTALL_RUNE=true
+
+# MangoWM: a second session next to niri (scrolling like niri, plus tiling),
+# picked at the login screen (F3). From Terra (Fyra Labs, Ultramarine's
+# repository), limited to the mangowm package; left as is where Terra is
+# already set up (Ultramarine).
+INSTALL_MANGO=true
 
 # k9s (Kubernetes TUI): latest .rpm from its GitHub releases, checksum-verified.
 INSTALL_K9S=true
@@ -485,7 +494,7 @@ if [ "\$login" != none ] && command -v tuigreet >/dev/null 2>&1; then
 vt = 1
 
 [default_session]
-command = "tuigreet --time --remember --asterisks --cmd niri-session"
+command = "tuigreet --time --remember --remember-session --asterisks --sessions /usr/share/wayland-sessions --cmd niri-session"
 user = "greetd"
 GREETD
     systemctl enable greetd.service
@@ -751,6 +760,30 @@ install_rune() {
     return "${PIPESTATUS[0]}"
 }
 
+install_mango() {
+    # Terra, limited to mangowm (unless Terra is already set up, as on Ultramarine).
+    if ! grep -qs '^\[terra\]' /etc/yum.repos.d/*.repo; then
+        if $DRY_RUN; then run "write /etc/yum.repos.d/terra.repo (only mangowm)"
+        else
+            sudo tee /etc/yum.repos.d/terra.repo >/dev/null <<'TERRA'
+[terra]
+name=Terra $releasever (only MangoWM; added by One-Handed Fedora Remix)
+baseurl=https://repos.fyralabs.com/terra$releasever
+type=rpm
+skip_if_unavailable=True
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://repos.fyralabs.com/terra$releasever/key.asc
+enabled=1
+metadata_expire=4h
+# Only MangoWM comes from Terra; everything else stays Fedora's.
+includepkgs=mangowm
+TERRA
+        fi
+    fi
+    dnf_ install -y mangowm
+}
+
 install_k9s() {
     if $DRY_RUN; then run "download and verify the latest k9s .rpm, then dnf install it"; return 0; fi
     local arch tmp rpm rc=0
@@ -931,6 +964,7 @@ main() {
     step "Install packages"              install_dnf_packages
     $INSTALL_FRESH_EDITOR && step "Install Fresh editor" install_fresh_editor
     $INSTALL_K9S       && step "Install k9s"             install_k9s
+    $INSTALL_MANGO     && step "Install MangoWM (second session)" install_mango
     $INSTALL_LFK       && step "Install lfk"             install_lfk
     $INSTALL_JETBRAINS_TOOLBOX && step "Install JetBrains Toolbox" install_jetbrains_toolbox
     $INSTALL_RUNE      && step "Install Rune"            install_rune

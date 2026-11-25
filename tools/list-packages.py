@@ -63,6 +63,8 @@ DESCRIBE = {
     "libvirt-daemon-kvm": "libvirt for KVM", "libvirt-daemon-config-network": "the VMs' default network",
     "edk2-ovmf": "UEFI firmware for VMs", "swtpm": "TPM for VMs (Windows 11 guests)",
     "snapper": "Btrfs snapshots (onehand-snapshots)",
+    "xdg-desktop-portal-wlr": "Mango: screen sharing",
+    "slurp": "Mango: picks the screen or area to share",
     "libdnf5-plugin-actions": "snapshot before/after every dnf change",
     "brave-browser": "Brave", "brave-browser-nightly": "Brave Nightly",
     "google-chrome-stable": "Google Chrome",
@@ -87,6 +89,7 @@ SOURCE = {
     "dms": "COPR duxlabs/dms", "quickshell": "COPR duxlabs/dux-repo", "matugen": "COPR duxlabs/dms",
     "keyd": "COPR alternateved/keyd", "lazygit": "COPR atim/lazygit", "yazi": "COPR lihaohong/yazi",
     "niri": "COPR duxlabs/dux-repo (newer than Fedora's)",
+    "mangowm": "Terra (Fyra Labs), limited to this package",
 }
 
 
@@ -176,7 +179,7 @@ def build():
     n_tools = sum(flag(f) for f in ("INSTALL_JETBRAINS_TOOLBOX", "INSTALL_RUNE", "INSTALL_K9S",
                                     "INSTALL_LFK", "INSTALL_FRESH_EDITOR"))
     p += [table([["Fedora packages", str(len(dnf))],
-                 ["From other repositories (COPR, vendors)", str(len(extra))],
+                 ["From other repositories (COPR, vendors)", str(len(extra) + flag("INSTALL_MANGO"))],
                  ["Downloaded releases (GitHub, JetBrains)", str(n_tools)],
                  ["Flatpaks (Flathub)", str(len(flat))],
                  ["Removed", str(len(remove) + len(fremove))]],
@@ -201,6 +204,8 @@ def build():
           "Repositories the kit enables, then these packages from them:", ""]
     rows = [[f"`{pkg}`", describe(pkg, comment), SOURCE.get(pkg, group or "")]
             for group, pkg, comment in extra]
+    if flag("INSTALL_MANGO"):
+        rows.append(["`mangowm`", "MangoWM, the second session (login screen: F3 -> Mango)", SOURCE["mangowm"]])
     p += [table(rows, ["Package", "What it's for", "From"]), ""]
 
     # ---- downloaded releases
@@ -230,6 +235,8 @@ def build():
         rows.append([name, url])
     if flag("ENABLE_GOOGLE_CHROME_REPO"):
         rows.append(["google-chrome", "Google Chrome"])
+    if flag("INSTALL_MANGO"):
+        rows.append(["Terra", "MangoWM only (`includepkgs=mangowm`); left as is where Terra is already set up (Ultramarine)"])
     if flag("ENABLE_CLAUDE_CODE_REPO"):
         rows.append(["Claude Code", "Anthropic's dnf repository (channel: "
                      + (re.search(r"^CLAUDE_CODE_CHANNEL=(\w+)", CONFIG, re.M) or [None, "stable"])[1] + ")"])

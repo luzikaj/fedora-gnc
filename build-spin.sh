@@ -178,6 +178,27 @@ collect_repos() {
         add_repo "$name" "$baseurl"
     done
 
+    if $INSTALL_MANGO; then
+        info "Repo terra (only mangowm, for the second session)"
+        KS_REPOS+=("repo --name=spin-terra --baseurl=https://repos.fyralabs.com/terra${RELEASE} --includepkgs=mangowm")
+        CHECK_REPOS+=("terra|https://repos.fyralabs.com/terra${RELEASE}")
+        EXTRA_PKGS+=(mangowm)
+        cat > "$WORK/yum.repos.d/terra.repo" <<'EOF'
+[terra]
+name=Terra $releasever (only MangoWM; added by One-Handed Fedora Remix)
+baseurl=https://repos.fyralabs.com/terra$releasever
+type=rpm
+skip_if_unavailable=True
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://repos.fyralabs.com/terra$releasever/key.asc
+enabled=1
+metadata_expire=4h
+# Only MangoWM comes from Terra; everything else stays Fedora's.
+includepkgs=mangowm
+EOF
+    fi
+
     if $ENABLE_GOOGLE_CHROME_REPO; then
         info "Repo google-chrome"
         add_repo google-chrome "https://dl.google.com/linux/chrome/rpm/stable/x86_64"

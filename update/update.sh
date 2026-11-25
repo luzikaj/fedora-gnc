@@ -73,7 +73,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 2. development
-step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, yazi, Helix, Rune, virt-manager; Helium removed"
+step "2/10  Development tools: Python 3, .NET 10, JetBrains Toolbox, lfk, yazi, Helix, Rune, Mango, virt-manager; Helium removed"
 run sudo dnf install -y --skip-unavailable python3 python3-devel python3-pip pipx uv dotnet-sdk-10.0 \
     libXtst libXi libXrender xcb-util-keysyms gtk3 curl jq
 if $DRY; then
@@ -115,6 +115,36 @@ else
 fi
 put "$F/rune/config.yaml" "$HOME/.rune/config.yaml"
 ok "Rune: launcher 'Rune'; Menu or Scroll Lock, then e h t d … (docs: rune.md)"
+
+# MangoWM: second session (login screen: F3 -> Mango), from Terra limited to mangowm
+if ! grep -qs '^\[terra\]' /etc/yum.repos.d/*.repo; then
+    if $DRY; then
+        printf '    [dry-run] write /etc/yum.repos.d/terra.repo (only mangowm)\n'
+    else
+        sudo tee /etc/yum.repos.d/terra.repo >/dev/null <<'TERRA'
+[terra]
+name=Terra $releasever (only MangoWM; added by One-Handed Fedora Remix)
+baseurl=https://repos.fyralabs.com/terra$releasever
+type=rpm
+skip_if_unavailable=True
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://repos.fyralabs.com/terra$releasever/key.asc
+enabled=1
+metadata_expire=4h
+# Only MangoWM comes from Terra; everything else stays Fedora's.
+includepkgs=mangowm
+TERRA
+    fi
+fi
+run sudo dnf install -y --skip-unavailable mangowm xdg-desktop-portal-wlr slurp
+put "$F/mango/config.conf" "$HOME/.config/mango/config.conf"
+# The login screen lists every session and remembers the last one.
+if [[ -f /etc/greetd/config.toml ]] && grep -q 'tuigreet' /etc/greetd/config.toml \
+        && ! grep -q -- '--remember-session' /etc/greetd/config.toml; then
+    run sudo sed -i 's|tuigreet --time --remember |tuigreet --time --remember --remember-session --sessions /usr/share/wayland-sessions |' /etc/greetd/config.toml
+fi
+ok "Mango: at the login screen press F3 and pick Mango (docs: mango.md)"
 
 # Virtual machines: KVM + libvirt + virt-manager, no password prompts for admins
 run sudo dnf install -y --skip-unavailable virt-manager virt-install virt-viewer qemu-kvm \
