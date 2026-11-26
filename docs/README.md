@@ -25,6 +25,7 @@ that has its own shortcuts follows the same idea:
 | [Welcome window](welcome.md) | The installer and first-steps checklist |
 | [Virtual machines](virtualization.md) | virt-manager (KVM): keys, 3D guests, keyboard inside guests |
 | [niri Dojo](dojo.md) | Hands-on niri lessons that check each step live (two screens / laptop) |
+| [Commands](commands.md) | Every `onehand-*` command (and installer): what it does, its keys, sudo or not, full help |
 | [Packages](packages.md) | Every package the kit adds or removes, and where it comes from |
 | [Snapshots](snapshots.md) | Undo a bad update or get back a deleted file (system before/after every dnf run, home hourly) |
 

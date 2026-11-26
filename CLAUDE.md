@@ -26,4 +26,7 @@
   `fedora-setup.sh` (setup + ISO), `update/update.sh` and
   `tools/make-update-package.sh`; after changing a package list in
   `fedora-setup.sh` or `niri-spin-base.ks`, run `tools/list-packages.py`
-  (writes `docs/packages.md`). Run the checks in `.github/workflows/check.yml`.
+  (writes `docs/packages.md`); after adding or changing a command's help
+  header (`files/bin/onehand-*`, `files/*/install-*`), run
+  `tools/list-commands.py` (writes `docs/commands.md`). Run the checks in
+  `.github/workflows/check.yml`.

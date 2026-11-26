@@ -150,7 +150,8 @@ packaged for Fedora.
 but the ISO it builds includes proprietary apps (Chrome, Claude Code, Obsidian),
 so built ISOs aren't for redistribution.
 See [DIFFERENCES.md](DIFFERENCES.md) for everything that differs from stock Fedora,
-and [docs/packages.md](docs/packages.md) for every package it adds or removes.
+[docs/packages.md](docs/packages.md) for every package it adds or removes, and
+[docs/commands.md](docs/commands.md) for every `onehand-*` command.
 
 ---
 
