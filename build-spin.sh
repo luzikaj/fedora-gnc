@@ -501,6 +501,21 @@ systemctl enable niri-spin-flatpaks.service
 POST_EOF
         fi
 
+        # Built where SELinux is off (a container on GitHub's Ubuntu runners):
+        # the installer's own relabelling does nothing there, so label the whole
+        # image explicitly, last, or the system can't log anyone in (enforcing).
+        if [[ ! -e /sys/fs/selinux/enforce ]]; then
+            cat <<'POST_EOF'
+%post --erroronfail
+# SELinux labels for every file (the build host had SELinux off).
+fc=/etc/selinux/targeted/contexts/files/file_contexts
+setfiles -F -e /proc -e /sys -e /dev -e /run "$fc" /
+echo "SELinux labels: /usr/bin/bash = $(getfattr --only-values -n security.selinux /usr/bin/bash 2>/dev/null || echo MISSING)"
+%end
+
+POST_EOF
+        fi
+
     } > "$FINAL_KS"
 
     if command -v ksvalidator &>/dev/null; then

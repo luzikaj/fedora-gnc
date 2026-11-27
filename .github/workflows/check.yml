@@ -1,5 +1,6 @@
 # Quick checks on every push: scripts parse, configs are well-formed.
-# (The ISO itself is built on your own Fedora machine with ./build-spin.sh.)
+# (The ISO is built by the private repository luzikaj/onehand-iso, or with
+# ./build-spin.sh on a Fedora machine: BUILDING.md.)
 name: check
 on: [push, pull_request]
 jobs:

@@ -6,7 +6,8 @@ been done end to end; the timings are from a real build in a VirtualBox VM.
 
 | You want to… | Go to |
 |---|---|
-| make a new installer ISO | [1–5](#1-prepare-a-build-machine) |
+| make a new installer ISO without a VM (GitHub builds it) | [Build it on GitHub](#build-it-on-github-no-vm) |
+| make a new installer ISO on your own machine / VM | [1–5](#1-prepare-a-build-machine) |
 | test the ISO in a VM | [6](#6-test-it-in-a-vm) |
 | install on a PC or laptop | [7](#7-install-on-real-hardware) |
 | update a machine that's already set up | [8](#8-update-machines-that-are-already-set-up) |
@@ -37,6 +38,44 @@ to get One-Handed Fedora Remix 45. Building another release from the same machin
 supported by Fedora's tools.
 
 ---
+
+## Build it on GitHub (no VM)
+
+The private repository **luzikaj/onehand-iso** builds the ISO with GitHub
+Actions from this kit, so steps 1–5 below aren't needed. It's separate and
+private on purpose: this kit is public, but the ISO contains software that
+isn't ours to share, so it must never be public.
+
+**Build:** on GitHub open luzikaj/onehand-iso → Actions → **build-iso** → *Run
+workflow* (pick the kit branch and Fedora release if you need to), or
+
+```
+gh workflow run build-iso -R luzikaj/onehand-iso
+```
+
+It also runs by itself every Monday, but only if the kit changed since the
+last ISO. A build takes about 1–1½ hours; follow it with
+`gh run watch -R luzikaj/onehand-iso`.
+
+**Download** (GitHub CLI signed in once with `gh auth login`):
+
+```
+tools/download-iso.sh              # newest ISO: downloaded, joined, checked, in out/iso-…/
+tools/download-iso.sh iso-TAG      # a specific one (gh release list -R luzikaj/onehand-iso)
+```
+
+GitHub takes files up to 2 GB, so the release holds the ISO in parts plus
+`SHA256SUMS`; the script joins and checks them. Then go on with
+[6](#6-test-it-in-a-vm) or [7](#7-install-on-real-hardware). The newest three
+ISOs are kept.
+
+How it works: the workflow runs `tools/ci-build-iso.sh` in a privileged
+`fedora:<release>` container on an Ubuntu runner (livemedia-creator needs root
+and loop devices). That runs `build-spin.sh` as an ordinary user, exactly as
+in a VM. The container has SELinux off, so `build-spin.sh` labels the whole
+image itself in a last `%post` step, and `ci-build-iso.sh` refuses an ISO
+without labels (it would boot but refuse every login). A failed run keeps the
+installer logs for 7 days as its `build-logs` artifact.
 
 ## 1. Prepare a build machine
 

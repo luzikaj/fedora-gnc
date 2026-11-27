@@ -228,7 +228,7 @@ LazyVim's own help: press Space and wait; the menu lists everything.
 | `niri-spin-base.ks` | Live-system basics for the ISO: language, time zone, installer. |
 | `branding.ks` | The spin's name, "One-Handed Fedora Remix", and logo for the system and the installer. Change the name with `PRODUCT="..." ./build-spin.sh`. |
 | `update/` | The update script for machines that are already set up; `tools/make-update-package.sh` packs it with the current files. |
-| `tools/` | `make-update-package.sh` (update package), `wallpaper/build.sh` (re-renders the cheat-sheet wallpaper). |
+| `tools/` | `make-update-package.sh` (update package), `wallpaper/build.sh` (re-renders the cheat-sheet wallpaper), `ci-build-iso.sh` (the GitHub build), `download-iso.sh` (fetch a GitHub-built ISO). |
 | `docs/` | Shortcut guides, one per tool. |
 
 To change a shortcut or setting, edit the file in `files/` and re-run
@@ -251,7 +251,10 @@ already has a login manager (such as GDM), it's kept: pick "niri" there.
 The short version is below; the full walkthrough with timings, testing and
 troubleshooting is in [BUILDING.md](BUILDING.md).
 
-On a Fedora machine of the release you want (about 30 GB free):
+Without a build machine: the private repository `luzikaj/onehand-iso` builds
+it on GitHub (Actions → build-iso), and `tools/download-iso.sh` fetches it
+(BUILDING.md, "Build it on GitHub"). Otherwise, on a Fedora machine of the
+release you want (about 30 GB free):
 
 ```
 ./build-spin.sh --generate-only   # checks every repository and package first
