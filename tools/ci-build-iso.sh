@@ -34,7 +34,7 @@ info "Building Fedora ${RELEASE}"
 df -h "$SRC" /var/tmp
 sudo -u builder -H env RELEASE="$RELEASE" bash -c "cd '$SRC' && ./build-spin.sh"
 
-iso="$(ls -t "$SRC"/out/*/*.iso "$SRC"/out/*.iso 2>/dev/null | head -1)"
+iso="$(find "$SRC/out" -name '*.iso' -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)"
 [[ -s "$iso" ]] || die "No ISO in $SRC/out."
 info "ISO: $iso ($(du -h "$iso" | cut -f1))"
 
@@ -44,7 +44,8 @@ mnt="$(mktemp -d)" ex="$(mktemp -d)" rootfs=""
 mount -o loop,ro "$iso" "$mnt"
 sq="$mnt/LiveOS/squashfs.img"
 [[ -f "$sq" ]] || die "No LiveOS/squashfs.img in the ISO."
-if unsquashfs -l "$sq" | grep -q 'LiveOS/rootfs.img$'; then
+unsquashfs -l "$sq" > "$ex/list"
+if grep -q 'LiveOS/rootfs.img$' "$ex/list"; then
     unsquashfs -q -d "$ex/sq" "$sq" LiveOS/rootfs.img
     rootfs="$(mktemp -d)"
     mount -o loop,ro "$ex/sq/LiveOS/rootfs.img" "$rootfs"
