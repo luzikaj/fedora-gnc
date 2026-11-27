@@ -16,7 +16,8 @@
 - **Machines:** this kit on a Fedora-based system (one machine is Ultramarine
   44 updated with `update/`), a Lenovo laptop (Ryzen 7 PRO 4750U, 16 GB) and an
   ISO built by the private repo `luzikaj/onehand-iso` (GitHub Actions running
-  `tools/ci-build-iso.sh`) or in a VirtualBox VM (`build-spin.sh`).
+  `tools/ci-build-iso.sh`) or in a VM (`build-spin.sh`).
+  VMs are **VMware Workstation** on Windows (not VirtualBox).
 - **Personal use only**: the ISO is not redistributed. This repo is public;
   ISOs live only in the private `onehand-iso` repo, never here.
 - **Sessions:** niri (main) and Mango (second, `files/mango/config.conf`,

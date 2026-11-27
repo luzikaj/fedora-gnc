@@ -3,6 +3,8 @@
 Newest first. Note what changed and why; the ISO name carries the build date.
 
 ## 2026-11-27
+- VM docs are for VMware Workstation now (VirtualBox dropped): 3D acceleration,
+  graphics memory, UEFI, and the `mks.enable3d` fix when 3D is greyed out.
 - The ISO can be built on GitHub instead of in a VM: the private repository
   `luzikaj/onehand-iso` runs `build-spin.sh` in a privileged Fedora container
   (`tools/ci-build-iso.sh`), by hand or every Monday when the kit changed, and

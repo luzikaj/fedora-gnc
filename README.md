@@ -271,8 +271,9 @@ model, screens, the keys, updates. Open it again any time
 from the launcher (Mod + ') as "Welcome". On installed machines,
 `fedora-setup` is available as a command too, for setting up another user.
 
-For a VirtualBox VM: 4 GB RAM or more, 2+ CPUs, VMSVGA graphics with 3D
-acceleration on. (Ghostty may not start in VirtualBox; the Welcome window uses
+For a VMware VM: 4 GB RAM or more, 2+ CPUs, Display → **Accelerate 3D
+graphics** on with 1–2 GB graphics memory, UEFI firmware (niri needs 3D; without
+it the screen stays black). (Ghostty may not start in a VM; the Welcome window uses
 the lighter foot terminal, which does.)
 
 The repository is public, but built ISOs aren't for sharing: they include

@@ -2,7 +2,8 @@
 
 How to turn this repository into a bootable installer ISO, test it and install
 it, plus how to update machines that are already set up. Every step here has
-been done end to end; the timings are from a real build in a VirtualBox VM.
+been done end to end; the timings are from a real build in a VM. (Easiest of
+all: let GitHub build it, see [Build it on GitHub](#build-it-on-github-no-vm).)
 
 | You want to… | Go to |
 |---|---|
@@ -103,8 +104,8 @@ done so far.
 | Network | needed | wired or fast Wi-Fi: ≈ 3–4 GB of packages are downloaded |
 | 3D graphics | not needed for building | |
 
-On Windows, close other VMs first; VirtualBox on Windows' hypervisor fails to
-start a VM when memory runs out (`WHvSetupPartition failed: ERROR_NO_SYSTEM_RESOURCES`).
+On Windows, close other VMs first: a VM on Windows' hypervisor fails to start
+when memory runs out (`WHvSetupPartition failed: ERROR_NO_SYSTEM_RESOURCES`).
 
 Bring the system up to date before building:
 
@@ -228,24 +229,30 @@ install", then Firmware **UEFI**, Video **Virtio + 3D acceleration**, Display
 Spice **Listen: None + OpenGL**. Details: [docs/virtualization.md](docs/virtualization.md).
 Remove the test VM afterwards with `virsh undefine remix-test --nvram --remove-all-storage`.
 
-### Test it in VirtualBox (on Windows)
+### Test it in VMware Workstation (on Windows)
 
-1. **Copy the ISO out of the build VM** (e.g. through a shared folder) and
-   **check the copy**. A cut-short copy has happened before. In PowerShell:
-   ```
-   Get-FileHash .\OneHanded-Fedora-Remix-45-*.iso -Algorithm SHA256
-   ```
-   The hash must equal the `sha256sum` from the build VM.
-2. **Create a VM:** type Fedora (64-bit), 4–8 GB RAM, 2–4 CPUs, 60 GB disk,
-   **EFI on**. "Skip unattended installation" may be greyed out; that's fine.
-3. **Before the first start:** Settings → switch to **Expert** → Display:
-   graphics controller **VMSVGA**, **3D acceleration on**, maximum video memory.
-   (niri needs it. If VirtualBox can't offer 3D, test on real hardware instead.)
+1. **Get the ISO checked:** `tools\download-iso.ps1` downloads, joins and
+   checks a GitHub-built one. An ISO copied from elsewhere: compare
+   `Get-FileHash .\OneHanded-Fedora-Remix-45-*.iso -Algorithm SHA256` with
+   its `SHA256SUMS` (a cut-short copy has happened before).
+2. **Create a VM:** Create a New Virtual Machine → Typical → "I will install
+   the operating system later" → Linux, **Fedora 64-bit** → 60 GB disk.
+3. **Before the first start**, VM → Settings:
+   - **Memory** 4–8 GB, **Processors** 2–4;
+   - **CD/DVD**: "Use ISO image file" → the ISO, "Connect at power on";
+   - **Display**: tick **Accelerate 3D graphics**, **Graphics memory** 1–2 GB.
+     niri needs it: without it the screen stays black after
+     `Calling import-environment without a list…`;
+   - **Options → Advanced → Firmware type: UEFI**.
+
+   3D greyed out? Update the Windows GPU driver; or, with the VM off and
+   VMware closed, add `mks.enable3d = "TRUE"` to the VM's `.vmx` file.
 4. **Boot.** The live session logs into niri and the **Welcome** window opens:
    - `h` / `t` or the arrows move, Enter chooses, Esc goes back.
    - Choose **Install One-Handed Fedora Remix on this computer**.
-5. In VirtualBox, **Ghostty doesn't start** (no GPU). Mod + Enter opens
-   **foot** instead.
+5. If **Ghostty doesn't start** (weak virtual GPU), Mod + Enter opens **foot**
+   instead. Still a black screen with 3D on: Ctrl + Alt + F3, log in as
+   `liveuser`, `journalctl --user -b | grep -iE "niri|error" | tail -30`.
 
 ## 7. Install on real hardware
 
@@ -333,7 +340,7 @@ login screen (GDM, SDDM) is kept: choose **niri** there.
 | **"The installer stopped"** | The error lines from all installer logs are printed above it. Full logs: `build/installer-logs/` and `build/livemedia-creator.log`. |
 | **"Only N GB free"** | Delete old `out/` folders, or enlarge the VM disk (`MIN_FREE_GB` lowers the limit at your own risk). |
 | `anaconda … pre-release` in the log | Older kits; the build now passes `--isfinal`. |
-| `Calling import-environment without a list…` on the VM screen | Harmless warning. If the screen stays black, the VM has no 3D graphics (see step 6). |
+| `Calling import-environment without a list…` on the VM screen | Harmless warning. If the screen stays black, the VM has no 3D graphics: VMware → Settings → Display → Accelerate 3D graphics (see step 6). |
 | Installer says **"root Wayland socket not found"** | It was started with `sudo`. Start it as the desktop user: `liveinst` (the Welcome window does this). |
 | **Ghostty doesn't start** | No GPU (VMs). Mod + Enter falls back to foot. |
 | **Typed text comes out with stray capitals** | A sticky Shift tap was still active; it's forgotten after 1 s. Wait a moment, or press Backspace and retype. |
