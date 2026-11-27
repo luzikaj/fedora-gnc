@@ -64,6 +64,17 @@ tools/download-iso.sh              # newest ISO: downloaded, joined, checked, in
 tools/download-iso.sh iso-TAG      # a specific one (gh release list -R luzikaj/onehand-iso)
 ```
 
+On Windows, in PowerShell (GitHub CLI: `winget install --id GitHub.cli`, then
+`gh auth login`; the script also works copied on its own, e.g. to Downloads):
+
+```
+.\tools\download-iso.ps1             # newest ISO, joined and checked, in out\iso-…\
+.\tools\download-iso.ps1 iso-TAG     # a specific one
+```
+
+If Windows won't run scripts: `powershell -ExecutionPolicy Bypass -File .\tools\download-iso.ps1`.
+Then write it with Rufus in **DD mode** (or Fedora Media Writer).
+
 GitHub takes files up to 2 GB, so the release holds the ISO in parts plus
 `SHA256SUMS`; the script joins and checks them. Then go on with
 [6](#6-test-it-in-a-vm) or [7](#7-install-on-real-hardware). The newest three

@@ -7,7 +7,8 @@ Newest first. Note what changed and why; the ISO name carries the build date.
   `luzikaj/onehand-iso` runs `build-spin.sh` in a privileged Fedora container
   (`tools/ci-build-iso.sh`), by hand or every Monday when the kit changed, and
   keeps the newest three ISOs as releases (in parts under GitHub's 2 GB limit).
-  `tools/download-iso.sh` downloads, joins and checks one. Private because the
+  `tools/download-iso.sh` (Windows: `tools/download-iso.ps1`) downloads, joins
+  and checks one. Private because the
   ISO isn't ours to share; this kit stays public.
 - `build-spin.sh` labels the whole image for SELinux when the build host has
   SELinux off (a container), and the CI build refuses an ISO without labels.
